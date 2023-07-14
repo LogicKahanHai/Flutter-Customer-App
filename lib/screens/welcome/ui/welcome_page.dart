@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/screens/auth/login/ui/login_page.dart';
 import 'package:pk_customer_app/screens/welcome/bloc/welcome_bloc.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -11,13 +13,38 @@ class WelcomePage extends StatefulWidget {
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
+class _WelcomePageState extends State<WelcomePage>
+    with TickerProviderStateMixin {
   final WelcomeBloc _welcomeBloc = WelcomeBloc();
+  late AnimationController _innerAnimations;
+  late AnimationController _outerAnimations;
+
+  //This function is only so that if the user clicks the back button, the page reloads properly.
+
+  void initialiseStuff() {
+    _welcomeBloc.add(WelcomeInitialEvent());
+    _innerAnimations = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _outerAnimations = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+      reverseDuration: const Duration(milliseconds: 1500),
+    );
+  }
 
   @override
   void initState() {
+    initialiseStuff();
     super.initState();
-    _welcomeBloc.add(WelcomeInitialEvent());
+  }
+
+  @override
+  void dispose() {
+    _innerAnimations.dispose();
+    _outerAnimations.dispose();
+    super.dispose();
   }
 
   @override
@@ -29,19 +56,31 @@ class _WelcomePageState extends State<WelcomePage> {
         buildWhen: (previous, current) => current is! WelcomeActionState,
         listener: (context, state) {
           if (state is WelcomeLoginActionState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Do login'),
-                duration: Duration(seconds: 1),
-              ),
-            );
+            Navigator.of(context)
+                .push(
+              RouteAnimations(
+                      nextPage: const LoginPage(),
+                      animationDirection: AnimationDirection.leftToRight)
+                  .createRoute(),
+            )
+                .then((value) {
+              _innerAnimations.reset();
+              _outerAnimations.reset();
+              initialiseStuff();
+            });
           } else if (state is WelcomeRegisterActionState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Do register'),
-                duration: Duration(seconds: 1),
-              ),
-            );
+            Navigator.of(context)
+                .push(
+              RouteAnimations(
+                      nextPage: const LoginPage(),
+                      animationDirection: AnimationDirection.leftToRight)
+                  .createRoute(),
+            )
+                .then((value) {
+              _innerAnimations.reset();
+              _outerAnimations.reset();
+              initialiseStuff();
+            });
           } else if (state is WelcomeGuestActionState) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -75,7 +114,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Image.asset('assets/images/pk-logo-min.png')
-                                .animate()
+                                .animate(controller: _innerAnimations)
                                 .fade(
                                   delay: 0.ms,
                                   duration: 400.ms,
@@ -93,7 +132,9 @@ class _WelcomePageState extends State<WelcomePage> {
                             Column(
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    _innerAnimations.reverse();
+                                    await _outerAnimations.reverse();
                                     _welcomeBloc.add(WelcomeLoginEvent());
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -108,7 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                     ),
                                   ),
                                 )
-                                    .animate()
+                                    .animate(controller: _innerAnimations)
                                     .fade(
                                       delay: 250.ms,
                                       duration: 400.ms,
@@ -164,7 +205,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                     ),
                                   ),
                                 )
-                                    .animate()
+                                    .animate(controller: _innerAnimations)
                                     .fade(
                                       delay: 500.ms,
                                       duration: 400.ms,
@@ -179,8 +220,21 @@ class _WelcomePageState extends State<WelcomePage> {
                                       begin: -0.1,
                                       end: 0.0,
                                     ),
-                              ],
-                            ),
+                              ]
+                                  .animate(interval: 250.ms)
+                                  .fade(
+                                    duration: 400.ms,
+                                    begin: 0.0,
+                                    end: 1.0,
+                                    curve: Curves.easeInOut,
+                                  )
+                                  .slideY(
+                                    curve: Curves.easeInOut,
+                                    duration: 400.ms,
+                                    begin: -0.1,
+                                    end: 0.0,
+                                  ),
+                            ).animate(controller: _innerAnimations),
                             TextButton(
                               onPressed: () {
                                 _welcomeBloc.add(WelcomeGuestEvent());
@@ -196,7 +250,7 @@ class _WelcomePageState extends State<WelcomePage> {
                                 ),
                               ),
                             )
-                                .animate()
+                                .animate(controller: _innerAnimations)
                                 .fade(
                                   delay: 750.ms,
                                   duration: 400.ms,
@@ -220,7 +274,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: Stack(
                           children: [
                             Image.asset('assets/images/bottom-left-under.png')
-                                .animate()
+                                .animate(controller: _outerAnimations)
                                 .fade(
                                   delay: 100.ms,
                                   duration: 600.ms,
@@ -239,7 +293,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               bottom: 0,
                               child: Image.asset(
                                       'assets/images/bottom-left-over.png')
-                                  .animate()
+                                  .animate(controller: _outerAnimations)
                                   .fade(
                                     delay: 0.ms,
                                     duration: 400.ms,
@@ -264,7 +318,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         child: Stack(
                           children: [
                             Image.asset('assets/images/top-right-under.png')
-                                .animate()
+                                .animate(controller: _outerAnimations)
                                 .fade(
                                   delay: 100.ms,
                                   duration: 600.ms,
@@ -283,7 +337,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               right: 0,
                               child: Image.asset(
                                       'assets/images/top-right-over.png')
-                                  .animate()
+                                  .animate(controller: _outerAnimations)
                                   .fade(
                                     delay: 0.ms,
                                     duration: 400.ms,

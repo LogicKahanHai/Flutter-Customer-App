@@ -18,6 +18,10 @@ class PKTheme {
       ),
     ),
     fontFamily: GoogleFonts.dmSans().fontFamily,
+    textTheme: const TextTheme(
+        displaySmall: TextStyle(
+      color: primaryColor,
+    )),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
