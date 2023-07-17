@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class PKTheme {
   static const Color primaryColor = Color(0xFFff6b00);
+  static const Color bottomNavBarBg = Color(0xFFF8E9E4);
 
   static final ThemeData themeData = ThemeData(
     primaryColor: primaryColor,
@@ -19,9 +20,10 @@ class PKTheme {
     ),
     fontFamily: GoogleFonts.dmSans().fontFamily,
     textTheme: const TextTheme(
-        displaySmall: TextStyle(
-      color: primaryColor,
-    )),
+      displaySmall: TextStyle(
+        color: primaryColor,
+      ),
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
