@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/screens/home/ui/home_page.dart';
+import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +23,7 @@ class AppRoot extends StatelessWidget {
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
         ),
-        child: HomePage(),
+        child: WelcomePage(),
       ),
     );
   }
