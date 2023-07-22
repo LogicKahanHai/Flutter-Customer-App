@@ -1,82 +1,103 @@
+import 'package:flutter/material.dart';
 import 'package:pk_customer_app/models/models.dart';
+import 'package:pk_customer_app/repos/repos.dart';
 
-class ProducRepo {
-  static List<ProductModel> productList = [
-    const ProductModel(
+class ProductRepo extends ChangeNotifier {
+  static List<ProductModel> _productList = [
+    ProductModel(
       id: '1',
       name: 'Laddoos',
       description: 'description',
       image: 'assets/images/products/chakli.png',
       price: 100,
-      variants: [
+      variants: const [
         {'400': '400 g'},
         {'500': '500 g'},
         {'600': '600 g'}
       ],
-      quantity: 1,
+      selectedVariant: '400',
+      rating: 4.6,
       isInCart: false,
     ),
-    const ProductModel(
+    ProductModel(
       id: '2',
       name: 'Chakli',
       description: 'description',
       image: 'assets/images/products/chakli.png',
       price: 200,
-      variants: [
+      variants: const [
         {'400': '400 g'},
         {'500': '500 g'},
         {'600': '600 g'},
         {'700': '700 g'}
       ],
-      quantity: 1,
+      selectedVariant: '400',
+      rating: 4.8,
       isInCart: false,
     ),
-    const ProductModel(
+    ProductModel(
       id: '3',
       name: 'Modak',
       description: 'description',
       image: 'assets/images/products/chakli.png',
       price: 100,
-      variants: [
+      variants: const [
         {'400': '400 g'},
         {'500': '500 g'}
       ],
-      quantity: 1,
+      selectedVariant: '400',
+      rating: 4.7,
       isInCart: false,
     ),
   ];
 
-  static List<ProductModel> get getProducts => productList;
+  static List<ProductModel> get getProducts => _productList;
 
   static set setProducts(List<ProductModel> products) {
-    productList = products;
+    _productList = products;
   }
 
+  static int get productCount => _productList.length;
+
   static ProductModel getProductById(String id) {
-    return productList.firstWhere((element) => element.id == id);
+    return _productList.firstWhere((element) => element.id == id);
   }
 
   static bool isProductInCart(String id) {
-    return productList.firstWhere((element) => element.id == id).isInCart;
+    return _productList.firstWhere((element) => element.id == id).isInCart;
+  }
+
+  static bool updateSelectedVariant(String id, String variant) {
+    _productList = _productList.map((e) {
+      if (e.id == id) {
+        return e.copyWith(selectedVariant: variant);
+      } else {
+        return e;
+      }
+    }).toList();
+    return true;
   }
 
   static void addToCart(String id) {
-    productList = productList.map((e) {
-      if (e.id == id) {
-        return e.copyWith(isInCart: true);
-      } else {
-        return e;
-      }
-    }).toList();
+    _productList.where((element) => element.id == id).first.isInCart = true;
   }
 
   static void removeFromCart(String id) {
-    productList = productList.map((e) {
-      if (e.id == id && e.isInCart) {
-        return e.copyWith(isInCart: false);
+    _productList.where((element) => element.id == id).first.isInCart = false;
+  }
+
+  static void updateProducts() {
+    print('Updating Products');
+    final List<ProductModel> cartList = cartState.products;
+    _productList.forEach((element) {
+      if (cartList.contains(element)) {
+        element.isInCart = true;
       } else {
-        return e;
+        element.isInCart = false;
       }
-    }).toList();
+    });
+    for (var element in _productList) {
+      print(element.isInCart);
+    }
   }
 }

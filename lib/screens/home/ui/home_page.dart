@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/home/bloc/home_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/components/home_components.dart';
+
+import '../../../repos/repos.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -42,9 +45,25 @@ class _HomePageState extends State<HomePage>
       backgroundColor: Colors.grey.shade200,
       body: BlocConsumer<HomeBloc, HomeState>(
         bloc: _homeBloc,
-        listenWhen: (previous, current) => current is HomeActionState,
+        listenWhen: (previous, current) {
+          print('in listenWhen');
+          return current is HomeActionState;
+        },
         buildWhen: (previous, current) => current is! HomeActionState,
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is HomeAddToCartSuccess) {
+            print('in listener');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Added to cart'),
+                backgroundColor: PKTheme.primaryColor,
+                duration: Duration(milliseconds: 500),
+              ),
+            );
+            BlocProvider.of<PersistBloc>(context)
+                .add(PersistOnCartUpdateEvent(cart: cartState));
+          }
+        },
         builder: (context, state) {
           switch (state.runtimeType) {
             case HomeLoading:
@@ -58,110 +77,113 @@ class _HomePageState extends State<HomePage>
               return Center(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      const HomeAddressSelectComponent()
-                          .animate(controller: _animationController)
-                          .fade(
-                            delay: 0.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 0.ms,
-                            begin: -0.1,
-                            end: 0.0,
-                          ),
-                      const SizedBox(height: 20),
-                      const HomeSearchComponent()
-                          .animate(controller: _animationController)
-                          .fade(
-                            delay: 250.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 250.ms,
-                            begin: -0.1,
-                            end: 0.0,
-                          ),
-                      const SizedBox(height: 20),
-                      const HomeOffersCarousel()
-                          .animate(controller: _animationController)
-                          .fade(
-                            delay: 500.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 500.ms,
-                            begin: -0.1,
-                            end: 0.0,
-                          ),
-                      const SizedBox(height: 20),
-                      const HomeCategoryList()
-                          .animate(controller: _animationController)
-                          .fade(
-                            delay: 750.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 750.ms,
-                            begin: -0.1,
-                            end: 0.0,
-                          ),
-                      const SizedBox(height: 20),
-                      const HomeFavProducts()
-                          .animate(controller: _animationController)
-                          .fade(
-                            delay: 1000.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 1000.ms,
-                            begin: -0.1,
-                            end: 0.0,
-                          ),
-                      const SizedBox(height: 20),
-                      const HomeAbout()
-                          .animate(controller: _animationController)
-                          .fade(
-                            delay: 1250.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 1250.ms,
-                            begin: -0.1,
-                            end: 0.0,
-                          ),
-                    ],
+                  child: BlocProvider(
+                    create: (context) => HomeBloc(),
+                    child: Column(
+                      children: [
+                        const HomeAddressSelectComponent()
+                            .animate(controller: _animationController)
+                            .fade(
+                              delay: 0.ms,
+                              duration: 400.ms,
+                              begin: 0.0,
+                              end: 1.0,
+                              curve: Curves.easeInOut,
+                            )
+                            .slideY(
+                              curve: Curves.easeInOut,
+                              duration: 400.ms,
+                              delay: 0.ms,
+                              begin: -0.1,
+                              end: 0.0,
+                            ),
+                        const SizedBox(height: 20),
+                        const HomeSearchComponent()
+                            .animate(controller: _animationController)
+                            .fade(
+                              delay: 250.ms,
+                              duration: 400.ms,
+                              begin: 0.0,
+                              end: 1.0,
+                              curve: Curves.easeInOut,
+                            )
+                            .slideY(
+                              curve: Curves.easeInOut,
+                              duration: 400.ms,
+                              delay: 250.ms,
+                              begin: -0.1,
+                              end: 0.0,
+                            ),
+                        const SizedBox(height: 20),
+                        const HomeOffersCarousel()
+                            .animate(controller: _animationController)
+                            .fade(
+                              delay: 500.ms,
+                              duration: 400.ms,
+                              begin: 0.0,
+                              end: 1.0,
+                              curve: Curves.easeInOut,
+                            )
+                            .slideY(
+                              curve: Curves.easeInOut,
+                              duration: 400.ms,
+                              delay: 500.ms,
+                              begin: -0.1,
+                              end: 0.0,
+                            ),
+                        const SizedBox(height: 20),
+                        const HomeCategoryList()
+                            .animate(controller: _animationController)
+                            .fade(
+                              delay: 750.ms,
+                              duration: 400.ms,
+                              begin: 0.0,
+                              end: 1.0,
+                              curve: Curves.easeInOut,
+                            )
+                            .slideY(
+                              curve: Curves.easeInOut,
+                              duration: 400.ms,
+                              delay: 750.ms,
+                              begin: -0.1,
+                              end: 0.0,
+                            ),
+                        const SizedBox(height: 20),
+                        const HomeFavProducts()
+                            .animate(controller: _animationController)
+                            .fade(
+                              delay: 1000.ms,
+                              duration: 400.ms,
+                              begin: 0.0,
+                              end: 1.0,
+                              curve: Curves.easeInOut,
+                            )
+                            .slideY(
+                              curve: Curves.easeInOut,
+                              duration: 400.ms,
+                              delay: 1000.ms,
+                              begin: -0.1,
+                              end: 0.0,
+                            ),
+                        const SizedBox(height: 20),
+                        const HomeAbout()
+                            .animate(controller: _animationController)
+                            .fade(
+                              delay: 1250.ms,
+                              duration: 400.ms,
+                              begin: 0.0,
+                              end: 1.0,
+                              curve: Curves.easeInOut,
+                            )
+                            .slideY(
+                              curve: Curves.easeInOut,
+                              duration: 400.ms,
+                              delay: 1250.ms,
+                              begin: -0.1,
+                              end: 0.0,
+                            ),
+                      ],
+                    ),
                   ),
                 ),
               );

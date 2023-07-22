@@ -1,7 +1,14 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:pk_customer_app/constants/theme.dart';
+
+import '../../../../common/blocs/export_blocs.dart';
+import '../../../../models/models.dart';
+import '../../../../repos/repos.dart';
 
 class HomeFavProducts extends StatefulWidget {
   const HomeFavProducts({Key? key}) : super(key: key);
@@ -29,14 +36,32 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
             ),
           ),
           const SizedBox(height: 20),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: List<Product>.generate(
-                5,
-                (index) => const Product(),
-              ).toList(),
+          SizedBox(
+            height: 311,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: ProductRepo.productCount,
+              itemBuilder: (context, index) {
+                return Product(
+                  index: index,
+                  onATCTap: () {
+                    BlocProvider.of<HomeBloc>(context).add(
+                      HomeAddToCartEvent(
+                        product: ProductRepo.getProductById(
+                          ProductRepo.getProducts[index].id,
+                        ),
+                      ),
+                    );
+                    BlocProvider.of<PersistBloc>(context).add(
+                      PersistOnCartUpdateEvent(
+                        cart: cartState,
+                      ),
+                    );
+                    setState(() {});
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -49,22 +74,36 @@ class Product extends StatefulWidget {
   //[ ]: Add a constructor to accept the product details
   //[ ]: Add the ADD button functionality
   //-> Might want to move this widget to a more accessible place for reusability
-
-  const Product({Key? key}) : super(key: key);
+  final int index;
+  final void Function() onATCTap;
+  const Product({
+    Key? key,
+    required this.index,
+    required this.onATCTap,
+  }) : super(key: key);
 
   @override
   State<Product> createState() => _ProductState();
 }
 
 class _ProductState extends State<Product> {
-  String _dropdownValue = '400 g';
+  late ProductModel _product;
+  String? _dropdownValue;
+  @override
+  void initState() {
+    _product = ProductRepo.getProducts[widget.index];
+    _dropdownValue = _product.variants[0].keys.first;
+    super.initState();
+  }
 
   void _onChanged(String? value) {
     if (value is String) {
       if (value == _dropdownValue) return;
-      setState(() {
-        _dropdownValue = value;
-      });
+      if (ProductRepo.updateSelectedVariant(_product.id, value)) {
+        setState(() {
+          _dropdownValue = value;
+        });
+      }
     }
   }
 
@@ -94,39 +133,39 @@ class _ProductState extends State<Product> {
             Container(
               width: 160,
               height: 160,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(10),
                   bottomLeft: Radius.circular(10),
                 ),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/products/chakli.png'),
+                  image: AssetImage(_product.image),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Chakli',
-                  style: TextStyle(
+                  _product.name,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.star,
                       color: Colors.green,
                       size: 18,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
-                      '4.8',
-                      style: TextStyle(
+                      _product.rating.toString(),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -138,16 +177,16 @@ class _ProductState extends State<Product> {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Text(
-                  '₹ 100',
-                  style: TextStyle(
+                Text(
+                  '₹ ${_product.price.round()}',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '₹ 120',
+                  '₹ ${_product.price.round() + 50}',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade600,
@@ -176,27 +215,27 @@ class _ProductState extends State<Product> {
                       color: Colors.transparent,
                     ),
                     elevation: 1,
-                    items: const [
-                      DropdownMenuItem(
-                        value: '400 g',
-                        child: Text('400 g'),
-                      ),
-                      DropdownMenuItem(
-                        value: '500 g',
-                        child: Text('500 g'),
-                      ),
-                      DropdownMenuItem(
-                        value: '600 g',
-                        child: Text('600 g'),
-                      ),
-                    ],
+                    items: _product.variants.map(
+                      (variant) {
+                        return DropdownMenuItem(
+                          value: variant.keys.first,
+                          child: Text(
+                            variant.values.first,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList(),
                     value: _dropdownValue,
                     onChanged: _onChanged,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: widget.onATCTap,
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
                         (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
@@ -216,13 +255,30 @@ class _ProductState extends State<Product> {
                     shadowColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.transparent),
                   ),
-                  child: const Text(
-                    'ADD',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: _product.isInCart
+                      ? const Row(
+                          children: [
+                            Icon(
+                              Icons.check,
+                              size: 16,
+                            ),
+                            // SizedBox(width: 5),
+                            Text(
+                              'ADDED',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : const Text(
+                          'ADD',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ],
             )

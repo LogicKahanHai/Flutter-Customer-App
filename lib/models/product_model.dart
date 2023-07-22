@@ -1,30 +1,28 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:equatable/equatable.dart';
-
-class ProductModel extends Equatable {
+class ProductModel {
   final String id;
   final String name;
   final String description;
   final String image;
   final double price;
   final List<Map<String, String>> variants;
-  final int quantity;
-  final bool isInCart;
-  const ProductModel({
+  final String selectedVariant;
+  final double rating;
+  bool isInCart;
+  ProductModel({
     required this.id,
     required this.name,
     required this.description,
     required this.image,
     required this.price,
     required this.variants,
-    required this.quantity,
+    required this.selectedVariant,
+    required this.rating,
     this.isInCart = false,
   });
-  @override
-  List<Object?> get props =>
-      [name, description, image, price, quantity, variants, isInCart];
+  
 
   ProductModel copyWith({
     String? id,
@@ -33,7 +31,8 @@ class ProductModel extends Equatable {
     String? image,
     double? price,
     List<Map<String, String>>? variants,
-    int? quantity,
+    String? selectedVariant,
+    double? rating,
     bool? isInCart,
   }) {
     return ProductModel(
@@ -42,9 +41,10 @@ class ProductModel extends Equatable {
       description: description ?? this.description,
       image: image ?? this.image,
       price: price ?? this.price,
-      quantity: quantity ?? this.quantity,
-      isInCart: isInCart ?? this.isInCart,
       variants: variants ?? this.variants,
+      selectedVariant: selectedVariant ?? this.selectedVariant,
+      rating: rating ?? this.rating,
+      isInCart: isInCart ?? this.isInCart,
     );
   }
 
@@ -56,7 +56,8 @@ class ProductModel extends Equatable {
       'image': image,
       'price': price,
       'variants': variants,
-      'quantity': quantity,
+      'selectedVariant': selectedVariant,
+      'rating': rating,
       'isInCart': isInCart,
     };
   }
@@ -70,10 +71,11 @@ class ProductModel extends Equatable {
       price: map['price'] as double,
       variants: List<Map<String, String>>.from(
         (map['variants'] as List<dynamic>).map<Map<String, String>>(
-          (x) => x,
+          (x) => x as Map<String, String>
         ),
-      ),
-      quantity: map['quantity'] as int,
+      ) as List<Map<String, String>>,
+      selectedVariant: map['selectedVariant'] as String,
+      rating: map['rating'] as double,
       isInCart: map['isInCart'] as bool,
     );
   }

@@ -38,8 +38,7 @@ class PersistBloc extends HydratedBloc<PersistEvent, PersistState> {
     on<PersistOnCartUpdateEvent>((event, emit) {
       //[ ]: Add the code to update the Cart Data in the Local Storage
       try {
-        CartRepo.setCart = event.cart;
-        emit(PersistCartUpdated(cart: event.cart));
+        emit(PersistCartUpdated(cart: cartState));
       } catch (e) {
         emit(PersistStateEmpty());
       }
@@ -50,13 +49,26 @@ class PersistBloc extends HydratedBloc<PersistEvent, PersistState> {
   PersistState? fromJson(Map<String, dynamic> json) {
     print(json);
     if (json['user'] == null) {
-      return PersistStateEmpty();
+      print('PersistStateEmpty()');
+      // return PersistStateEmpty();
+      if (json['user'] != null) {
+        UserRepo.setUser = UserModel.fromMap(json['user']);
+      }
+      if (json['cart'] != null) {
+        print('json[cart]');
+        print(CartModel.fromMap(json['cart']).products.length);
+        cartState = CartModel.fromMap(json['cart']);
+        print(cartState.products.length);
+        ProductRepo.updateProducts();
+      }
+      return PersistStateHasData();
     } else {
       if (json['user'] != null) {
         UserRepo.setUser = UserModel.fromMap(json['user']);
       }
       if (json['cart'] != null) {
-        CartRepo.setCart = CartModel.fromMap(json['cart']);
+        cartState = CartModel.fromMap(json['cart']);
+        ProductRepo.updateProducts();
       }
       return PersistStateHasData();
     }
@@ -67,6 +79,7 @@ class PersistBloc extends HydratedBloc<PersistEvent, PersistState> {
     if (state is PersistUserUpdated) {
       return state.toMap();
     } else if (state is PersistCartUpdated) {
+      print(state.toMap());
       return state.toMap();
     } else {
       return null;

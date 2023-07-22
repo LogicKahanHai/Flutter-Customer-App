@@ -12,3 +12,7 @@ class HomeLoading extends HomeState {}
 class HomeLoadedSuccess extends HomeState {}
 
 class HomeLoadedFailure extends HomeState {}
+
+class HomeAddToCartSuccess extends HomeActionState {}
+
+class HomeAddToCartFailure extends HomeActionState {}

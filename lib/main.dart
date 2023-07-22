@@ -53,7 +53,7 @@ class _AppRootState extends State<AppRoot> {
                     statusBarColor: Colors.transparent,
                     statusBarIconBrightness: Brightness.dark,
                   ),
-                  child: WelcomePage(),
+                  child: HomePage(),
                 ),
               );
             case PersistStateHasData:
@@ -76,3 +76,7 @@ class _AppRootState extends State<AppRoot> {
     );
   }
 }
+
+///[ ]: Product Model is not able to retrieve data from Map... Map<String, String> v/s Map<String, dynamic> ka locha hai
+///[ ]: Jab product model sahi ho jaayega then cart se products ko update karna hai.. ig ho gaya hai just ye upar wala error rehta hai... 
+///[ ]: Ya to User Data persist ho rahi hai ya phir cart... to iska jugaad lagana hai ab.
