@@ -4,8 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/screens/auth/verify/bloc/verify_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
+
+import '../../../../common/blocs/export_blocs.dart';
+import '../../../../models/models.dart';
+import '../../../../repos/repos.dart';
 
 class OtpPage extends StatefulWidget {
   final String phone;
@@ -122,6 +125,9 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
             _otpController.clear();
             _verifyBloc.add(VerifyFailureHandlerEvent(phone: widget.phone));
           } else if (state is VerifySuccess) {
+            UserRepo.setUser = UserModel(phone: widget.phone);
+            BlocProvider.of<PersistBloc>(context).add(
+                PersistOnUserUpdateEvent(user: UserRepo.getUser as UserModel));
             _innerAnimations.reverse();
             await _outerAnimations.reverse();
             pushToHomePage();
