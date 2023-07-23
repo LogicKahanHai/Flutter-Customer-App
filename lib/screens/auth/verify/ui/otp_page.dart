@@ -8,7 +8,6 @@ import 'package:pk_customer_app/screens/home/ui/home_page.dart';
 
 import '../../../../common/blocs/export_blocs.dart';
 import '../../../../models/models.dart';
-import '../../../../repos/repos.dart';
 
 class OtpPage extends StatefulWidget {
   final String phone;
@@ -25,6 +24,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
   late FocusNode _otpFocusNode;
   late AnimationController _outerAnimations;
   final VerifyBloc _verifyBloc = VerifyBloc();
+  final UserBloc _userBloc = UserBloc();
 
   @override
   void dispose() {
@@ -32,6 +32,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
     _outerAnimations.dispose();
     _otpFocusNode.dispose();
     _otpController.dispose();
+    _verifyBloc.close();
     super.dispose();
   }
 
@@ -63,6 +64,8 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     try {} catch (e) {
+      _innerAnimations.reset();
+      _outerAnimations.reset();
       initialiseStuff();
     }
 
@@ -125,9 +128,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
             _otpController.clear();
             _verifyBloc.add(VerifyFailureHandlerEvent(phone: widget.phone));
           } else if (state is VerifySuccess) {
-            UserRepo.setUser = UserModel(phone: widget.phone);
-            BlocProvider.of<PersistBloc>(context).add(
-                PersistOnUserUpdateEvent(user: UserRepo.getUser as UserModel));
+            _userBloc.add(UserLoginEvent(user: UserModel(phone: widget.phone)));
             _innerAnimations.reverse();
             await _outerAnimations.reverse();
             pushToHomePage();

@@ -6,8 +6,6 @@ import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/home/bloc/home_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/components/home_components.dart';
 
-import '../../../repos/repos.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -46,13 +44,11 @@ class _HomePageState extends State<HomePage>
       body: BlocConsumer<HomeBloc, HomeState>(
         bloc: _homeBloc,
         listenWhen: (previous, current) {
-          print('in listenWhen');
           return current is HomeActionState;
         },
         buildWhen: (previous, current) => current is! HomeActionState,
         listener: (context, state) {
           if (state is HomeAddToCartSuccess) {
-            print('in listener');
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Added to cart'),
@@ -60,8 +56,6 @@ class _HomePageState extends State<HomePage>
                 duration: Duration(milliseconds: 500),
               ),
             );
-            BlocProvider.of<PersistBloc>(context)
-                .add(PersistOnCartUpdateEvent(cart: cartState));
           }
         },
         builder: (context, state) {
