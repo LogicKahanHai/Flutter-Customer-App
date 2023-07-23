@@ -1,5 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 
 class ProductModel {
   final String id;
@@ -22,7 +21,6 @@ class ProductModel {
     required this.rating,
     this.isInCart = false,
   });
-  
 
   ProductModel copyWith({
     String? id,
@@ -48,7 +46,7 @@ class ProductModel {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
       'name': name,
@@ -62,26 +60,24 @@ class ProductModel {
     };
   }
 
-  factory ProductModel.fromMap(Map<String, dynamic> map) {
-    return ProductModel(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      description: map['description'] as String,
-      image: map['image'] as String,
-      price: map['price'] as double,
-      variants: List<Map<String, String>>.from(
-        (map['variants'] as List<dynamic>).map<Map<String, String>>(
-          (x) => x as Map<String, String>
-        ),
-      ) as List<Map<String, String>>,
-      selectedVariant: map['selectedVariant'] as String,
-      rating: map['rating'] as double,
-      isInCart: map['isInCart'] as bool,
-    );
-  }
+  ProductModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as String,
+        name = json['name'] as String,
+        description = json['description'] as String,
+        image = json['image'] as String,
+        price = json['price'] as double,
+        variants = (json['variants'] as List<dynamic>)
+            .map((e) => Map<String, String>.from(e as Map))
+            .toList(),
+        selectedVariant = json['selectedVariant'] as String,
+        rating = json['rating'] as double,
+        isInCart = json['isInCart'] as bool;
 
-  String toJson() => json.encode(toMap());
-
-  factory ProductModel.fromJson(String source) =>
-      ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is ProductModel && other.id == id;
+      
+  @override
+  int get hashCode => id.hashCode;
+      
 }

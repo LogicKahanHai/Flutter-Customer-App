@@ -18,6 +18,18 @@ class HomeFavProducts extends StatefulWidget {
 }
 
 class _HomeFavProductsState extends State<HomeFavProducts> {
+  final _cartBloc = CartBloc();
+
+  @override
+  void initState() {
+    _cartBloc.add(CartInitEvent());
+    super.initState();
+  }
+
+  void rfcTap(ProductModel product) {}
+
+  void atcTap(ProductModel product) {}
+
   @override
   Widget build(BuildContext context) {
     //[ ]: Make this container clickable and redirect to the product page
@@ -38,32 +50,56 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
           const SizedBox(height: 20),
           SizedBox(
             height: 311,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: ProductRepo.productCount,
-              itemBuilder: (context, index) {
-                return Product(
-                  index: index,
-                  onATCTap: () {
-                    BlocProvider.of<HomeBloc>(context).add(
-                      HomeAddToCartEvent(
-                        product: ProductRepo.getProductById(
-                          ProductRepo.getProducts[index].id,
-                        ),
-                      ),
-                    );
-                    BlocProvider.of<PersistBloc>(context).add(
-                      PersistOnCartUpdateEvent(
-                        cart: cartState,
-                      ),
-                    );
-                    setState(() {});
-                  },
-                );
+            child: BlocConsumer<CartBloc, CartState>(
+              listenWhen: (previous, current) => current is CartError,
+              buildWhen: (previous, current) => current is! CartError,
+              listener: (context, state) {
+                if (state is CartError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Item already in cart')));
+                }
+              },
+              builder: (context, state) {
+                if (state is CartLoaded) {
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: ProductRepo.productCount,
+                    itemBuilder: (context, index) {
+                      return Product(
+                        index: index,
+                        rfcTap: () {
+                          ProductModel product = ProductRepo.products[index];
+                          setState(() {
+                            ProductRepo.removeFromCart(product.id);
+                            context.read<CartBloc>().add(CartRemoveProductEvent(
+                                ProductRepo.getProductById(product.id)));
+                          });
+                        },
+                        atcTap: () {
+                          ProductModel product = ProductRepo.products[index];
+                          setState(() {
+                            ProductRepo.addToCart(product.id);
+                            context.read<CartBloc>().add(CartAddProductEvent(
+                                ProductRepo.getProductById(product.id)));
+                          });
+                        },
+                      );
+                    },
+                  );
+                }
+                if (state is CartLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return const Center(
+                    child: Text('Something Went wrong.'),
+                  );
+                }
               },
             ),
-          ),
+          )
         ],
       ),
     );
@@ -75,11 +111,13 @@ class Product extends StatefulWidget {
   //[ ]: Add the ADD button functionality
   //-> Might want to move this widget to a more accessible place for reusability
   final int index;
-  final void Function() onATCTap;
+  final void Function() rfcTap;
+  final void Function() atcTap;
   const Product({
     Key? key,
     required this.index,
-    required this.onATCTap,
+    required this.rfcTap,
+    required this.atcTap,
   }) : super(key: key);
 
   @override
@@ -88,23 +126,11 @@ class Product extends StatefulWidget {
 
 class _ProductState extends State<Product> {
   late ProductModel _product;
-  String? _dropdownValue;
+
   @override
   void initState() {
-    _product = ProductRepo.getProducts[widget.index];
-    _dropdownValue = _product.variants[0].keys.first;
+    _product = ProductRepo.products[widget.index];
     super.initState();
-  }
-
-  void _onChanged(String? value) {
-    if (value is String) {
-      if (value == _dropdownValue) return;
-      if (ProductRepo.updateSelectedVariant(_product.id, value)) {
-        setState(() {
-          _dropdownValue = value;
-        });
-      }
-    }
   }
 
   @override
@@ -197,45 +223,45 @@ class _ProductState extends State<Product> {
             ),
             const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                      color: Colors.black38,
-                      width: 1,
-                    ),
-                  ),
-                  height: 40,
-                  padding: const EdgeInsets.only(left: 5),
-                  child: DropdownButton(
-                    underline: Container(
-                      height: 0,
-                      color: Colors.transparent,
-                    ),
-                    elevation: 1,
-                    items: _product.variants.map(
-                      (variant) {
-                        return DropdownMenuItem(
-                          value: variant.keys.first,
-                          child: Text(
-                            variant.values.first,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        );
-                      },
-                    ).toList(),
-                    value: _dropdownValue,
-                    onChanged: _onChanged,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(5),
+                //     border: Border.all(
+                //       color: Colors.black38,
+                //       width: 1,
+                //     ),
+                //   ),
+                //   height: 40,
+                //   padding: const EdgeInsets.only(left: 5),
+                //   child: DropdownButton(
+                //     underline: Container(
+                //       height: 0,
+                //       color: Colors.transparent,
+                //     ),
+                //     elevation: 1,
+                //     items: _product.variants.map(
+                //       (variant) {
+                //         return DropdownMenuItem(
+                //           value: variant.keys.first,
+                //           child: Text(
+                //             variant.values.first,
+                //             style: const TextStyle(
+                //               fontSize: 16,
+                //               fontWeight: FontWeight.w600,
+                //             ),
+                //           ),
+                //         );
+                //       },
+                //     ).toList(),
+                //     value: _dropdownValue,
+                //     onChanged: _onChanged,
+                //     borderRadius: BorderRadius.circular(5),
+                //   ),
+                // ),
                 ElevatedButton(
-                  onPressed: widget.onATCTap,
+                  onPressed: _product.isInCart ? widget.rfcTap : widget.atcTap,
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
                         (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
@@ -273,7 +299,7 @@ class _ProductState extends State<Product> {
                           ],
                         )
                       : const Text(
-                          'ADD',
+                          'ADD TO CART',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
