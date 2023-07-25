@@ -12,3 +12,5 @@ class UserModel {
         'phone': phone,
       };
 }
+
+//[ ]: phone and addresses and cust id

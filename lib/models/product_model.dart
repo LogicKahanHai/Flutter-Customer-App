@@ -5,8 +5,8 @@ class ProductModel {
   final String name;
   final String description;
   final String image;
-  final double price;
-  final List<Map<String, String>> variants;
+  final double price; //[ ]: Every variant has different price
+  final List<Map<String, String>> variants; //[ ]: New model for variants
   final String selectedVariant;
   final double rating;
   bool isInCart;
