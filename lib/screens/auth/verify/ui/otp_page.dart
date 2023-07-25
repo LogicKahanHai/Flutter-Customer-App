@@ -4,11 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/screens/auth/login/bloc/login_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
 
+import '../../../../common/blocs/export_blocs.dart';
+import '../../../../models/models.dart';
+
 class OtpPage extends StatefulWidget {
-  const OtpPage({super.key});
+  final String phone;
+  const OtpPage({super.key, required this.phone});
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -16,13 +19,31 @@ class OtpPage extends StatefulWidget {
 
 class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late FocusNode _otpFocusNode;
-  late TextEditingController _otpController;
   late AnimationController _innerAnimations;
+  late TextEditingController _otpController;
+  late FocusNode _otpFocusNode;
   late AnimationController _outerAnimations;
-  final LoginBloc _loginBloc = LoginBloc();
+  final VerifyBloc _verifyBloc = VerifyBloc();
+  final UserBloc _userBloc = UserBloc();
+
+  @override
+  void dispose() {
+    _innerAnimations.dispose();
+    _outerAnimations.dispose();
+    _otpFocusNode.dispose();
+    _otpController.dispose();
+    _verifyBloc.close();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    initialiseStuff();
+    super.initState();
+  }
 
   void initialiseStuff() {
+    _verifyBloc.add(VerifyInitialEvent(phone: widget.phone));
     _innerAnimations = AnimationController(
       vsync: this,
       duration: 600.ms,
@@ -41,23 +62,10 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
   }
 
   @override
-  void initState() {
-    initialiseStuff();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _innerAnimations.dispose();
-    _outerAnimations.dispose();
-    _otpFocusNode.dispose();
-    _otpController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     try {} catch (e) {
+      _innerAnimations.reset();
+      _outerAnimations.reset();
       initialiseStuff();
     }
 
@@ -102,24 +110,25 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
       });
     }
 
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocConsumer<LoginBloc, LoginState>(
-        bloc: _loginBloc,
-        listenWhen: (previous, current) => current is OtpActionState,
-        buildWhen: (previous, current) => current is! OtpActionState,
+      body: BlocConsumer<VerifyBloc, VerifyState>(
+        bloc: _verifyBloc,
+        listenWhen: (previous, current) => current is VerifyActionState,
+        buildWhen: (previous, current) => current is! VerifyActionState,
         listener: (context, state) async {
-          if (state is OtpErrorState) {
+          if (state is VerifyFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Invalid OTP'),
-                duration: Duration(seconds: 1),
+              SnackBar(
+                content: Text(state.error),
+                duration: const Duration(seconds: 1),
               ),
             );
             await Future.delayed(const Duration(seconds: 1));
             _otpController.clear();
-          } else if (state is OtpSuccessState) {
+            _verifyBloc.add(VerifyFailureHandlerEvent(phone: widget.phone));
+          } else if (state is VerifySuccess) {
+            _userBloc.add(UserLoginEvent(user: UserModel(phone: widget.phone)));
             _innerAnimations.reverse();
             await _outerAnimations.reverse();
             pushToHomePage();
@@ -127,9 +136,10 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
         },
         builder: (context, state) {
           switch (state.runtimeType) {
-            case OtpLoadingState:
+            case VerifyCodeSending:
               return const Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(
                       color: PKTheme.primaryColor,
@@ -137,7 +147,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                     ),
                     SizedBox(height: 20.0),
                     Text(
-                      'Verifying OTP',
+                      'Sending OTP',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 18.0,
@@ -147,7 +157,8 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                   ],
                 ),
               );
-            default:
+            case VerifyCodeSentSuccess:
+              final String phone = (state as VerifyCodeSentSuccess).phone;
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -232,7 +243,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                                           ),
                                       children: [
                                         TextSpan(
-                                          text: '+91*****94685',
+                                          text: '+91*****${phone.substring(5)}',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
@@ -306,9 +317,10 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                                   ElevatedButton(
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        _loginBloc.add(
-                                          OtpVerifyEvent(
-                                            otp: _otpController.text,
+                                        _verifyBloc.add(
+                                          VerifyCodeEvent(
+                                            phone: phone,
+                                            code: _otpController.text,
                                           ),
                                         );
                                       }
@@ -479,6 +491,36 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+              );
+            case VerifyCodeSentFailure:
+              return const Center(
+                child: Text('Something went wrong!'),
+              );
+            case VerifyLoading:
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      color: PKTheme.primaryColor,
+                      strokeWidth: 3,
+                    ),
+                    SizedBox(height: 20.0),
+                    Text(
+                      'Verifying OTP',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            default:
+              return const Center(
+                //[ ]:Change this in prod.
+                child: Text('Something went wrong! couldnt catch'),
               );
           }
         },

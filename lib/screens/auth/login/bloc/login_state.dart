@@ -5,18 +5,14 @@ abstract class LoginState {}
 
 abstract class LoginActionState extends LoginState {}
 
-abstract class OtpActionState extends LoginState {}
-
 class LoginInitial extends LoginState {}
 
 class LoginLoadingState extends LoginState {}
 
 class LoginLoadedState extends LoginState {}
 
-class LoginOtpSentState extends LoginActionState {}
+class LoginOtpSentState extends LoginActionState {
+  final String phone;
 
-class OtpLoadingState extends OtpActionState {}
-
-class OtpSuccessState extends OtpActionState {}
-
-class OtpErrorState extends OtpActionState {}
+  LoginOtpSentState({required this.phone});
+}

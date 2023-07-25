@@ -7,10 +7,8 @@ abstract class OtpEvent extends LoginEvent {}
 
 class LoginInitialEvent extends LoginEvent {}
 
-class LoginOtpContinueEvent extends LoginEvent {}
+class LoginOtpContinueEvent extends LoginEvent {
+  final String phone;
 
-class OtpVerifyEvent extends OtpEvent {
-  final String otp;
-
-  OtpVerifyEvent({required this.otp});
+  LoginOtpContinueEvent({required this.phone});
 }

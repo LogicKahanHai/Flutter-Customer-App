@@ -46,3 +46,4 @@ app.*.map.json
 
 /lib/unused.txt
 /lib/screens/trial/
+/lib/common/aise hi/

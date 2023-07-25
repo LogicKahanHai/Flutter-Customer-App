@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/auth/login/bloc/login_bloc.dart';
-import 'package:pk_customer_app/screens/auth/login/ui/otp_page.dart';
+import 'package:pk_customer_app/screens/auth/verify/ui/otp_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -67,7 +67,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             Navigator.of(context)
                 .push(
               RouteAnimations(
-                      nextPage: const OtpPage(),
+                      nextPage: OtpPage(
+                        phone: state.phone,
+                      ),
                       animationDirection: AnimationDirection.leftToRight)
                   .createRoute(),
             )
@@ -297,7 +299,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                               _innerAnimations.reverse();
                                               await _outerAnimations.reverse();
                                               _loginBloc
-                                                  .add(LoginOtpContinueEvent());
+                                                  .add(
+                                                  LoginOtpContinueEvent(
+                                                      phone: _phoneController
+                                                          .text));
                                             }
                                           },
                                           child: const Text('Continue'),
