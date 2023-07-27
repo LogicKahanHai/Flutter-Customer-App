@@ -24,9 +24,7 @@ class CartLoaded extends CartState {
   List<Object> get props => [products];
 
   Map<String, dynamic> toJson() {
-    print('product: ${products.map((e) => e.toJson()).toList()}');
     return <String, dynamic>{
-     
       'products': products.map((e) => e.toJson()).toList(),
     };
   }

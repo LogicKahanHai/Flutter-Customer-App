@@ -1,9 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:pk_customer_app/constants/theme.dart';
 
 import '../../../../common/blocs/export_blocs.dart';
@@ -136,7 +137,9 @@ class _ProductState extends State<Product> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: Platform.isIOS
+          ? const EdgeInsets.all(15)
+          : const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       margin: const EdgeInsets.only(right: 10),
       width: 200,
       decoration: const BoxDecoration(
