@@ -68,4 +68,29 @@ class ProductModel {
       rating: rating ?? this.rating,
     );
   }
+
+  ProductModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as String,
+        name = json['name'] as String,
+        description = json['description'] as String,
+        image = json['image'] as String,
+        variants = List<VariantModel>.from(
+          json['variants']?.map(
+            (x) => VariantModel.fromJson(x as Map<String, dynamic>),
+          ) as Iterable<dynamic>,
+        ),
+        selectedVariant = VariantModel.fromJson(
+          json['selectedVariant'] as Map<String, dynamic>,
+        ),
+        rating = (json['rating'] as num).toDouble();
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'description': description,
+        'image': image,
+        'variants': List<dynamic>.from(variants.map((x) => x.toJson())),
+        'selectedVariant': selectedVariant.toJson(),
+        'rating': rating,
+      };
 }

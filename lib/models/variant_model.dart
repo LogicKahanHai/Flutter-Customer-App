@@ -32,4 +32,19 @@ class VariantModel {
         key.hashCode ^
         value.hashCode;
   }
+
+  VariantModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'] as String,
+        regPrice = json['regPrice'] as double,
+        salePrice = json['salePrice'] as double,
+        key = json['key'] as String,
+        value = json['value'] as String;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'regPrice': regPrice,
+        'salePrice': salePrice,
+        'key': key,
+        'value': value,
+      };
 }

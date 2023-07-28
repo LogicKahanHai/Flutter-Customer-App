@@ -34,8 +34,9 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
           return;
         }
         try {
-          ProductRepo.addToCart(event.product.id);
-          CartRepo.products.add(ProductRepo.getProductById(event.product.id));
+          //TODO: add to cart
+          // ProductRepo.addToCart(event.product.id);
+          // CartRepo.products.add(ProductRepo.getProductById(event.product.id));
           emit(
             CartLoaded(products: CartRepo.products.toList()),
           );
@@ -46,8 +47,9 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     on<CartRemoveProductEvent>((event, emit) async {
       if (state is CartLoaded) {
         try {
-          ProductRepo.removeFromCart(event.product.id);
-          CartRepo.products.remove(event.product);
+          //TODO: remove from cart
+          // ProductRepo.removeFromCart(event.product.id);
+          // CartRepo.products.remove(event.product);
           emit(
             CartLoaded(
                 products: List.from((state as CartLoaded).products)
@@ -65,10 +67,10 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
           .map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
           .toList();
       CartRepo.products = products.toSet();
-      for (ProductModel element in CartRepo.products.toList()) {
-        ProductRepo.addToCart(element.id);
-        ProductRepo.updateSelectedVariant(element.id, element.selectedVariant);
-      }
+      // for (ProductModel element in CartRepo.products.toList()) {
+      //   ProductRepo.addToCart(element.id);
+      //   ProductRepo.updateSelectedVariant(element.id, element.selectedVariant);
+      // }
       return CartLoaded(products: products);
     } catch (e) {
       return null;
