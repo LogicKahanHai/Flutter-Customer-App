@@ -246,7 +246,10 @@ class _ProductState extends State<Product> {
                 //   ),
                 // ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    BlocProvider.of<CartBloc>(context)
+                        .add(CartAddProductEvent(_product));
+                  },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
                         (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
@@ -266,25 +269,27 @@ class _ProductState extends State<Product> {
                     shadowColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.transparent),
                   ),
-                  child:
-                      // ? const Row(
-                      //     children: [
-                      //       Icon(
-                      //         Icons.check,
-                      //         size: 16,
-                      //       ),
-                      //       // SizedBox(width: 5),
-                      //       Text(
-                      //         'ADDED',
-                      //         style: TextStyle(
-                      //           fontSize: 12,
-                      //           fontWeight: FontWeight.bold,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   )
-                      const Text(
-                          'ADD TO CART',
+                  child: CartRepo.cart.products
+                          .where((element) => element.productId == _product.id)
+                          .isNotEmpty
+                      ? const Row(
+                          children: [
+                            Icon(
+                              Icons.check,
+                              size: 16,
+                            ),
+                            // SizedBox(width: 5),
+                            Text(
+                              'ADDED',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : const Text(
+                          'ADD',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

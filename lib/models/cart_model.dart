@@ -3,30 +3,22 @@
 import 'package:pk_customer_app/models/models.dart';
 
 class CartModel {
-  static Set<ProductModel> products = {};
+  Set<CartItemModel> products = {};
 
-  static get cart => products;
+  get cart => products;
 
-  static set setCart(List<ProductModel> cart) {
+  set setCart(List<CartItemModel> cart) {
     products.addAll(cart);
   }
 
-  static void handleAddToCart(ProductModel product) {
-    final index = products.toList().indexWhere(
-          (element) => element.id == product.id,
-        );
-    if (index != -1) {
-      if (products.toList()[index].selectedVariant.id ==
-          product.selectedVariant.id) {
-        //TODO: Update the quantity of the product
-        return;
-      } else {
-        //TODO: Add the product to cart
-        return;
-      }
-    }
+  void addProduct(ProductModel product) {
+    products.add(CartItemModel.fromProduct(product));
+  }
+
+  void removeProduct(ProductModel product) {
+    products.removeWhere((item) => item.productId == product.id);
   }
 
   double get total =>
-      products.fold(0, (sum, item) => sum + item.selectedVariant.salePrice);
+      products.fold(0, (sum, item) => sum + item.salePrice);
 }
