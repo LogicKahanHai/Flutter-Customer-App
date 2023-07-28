@@ -1,22 +1,32 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 
 import 'package:pk_customer_app/models/models.dart';
 
 class CartModel {
-  final List<ProductModel> products;
-  const CartModel({
-    this.products = const [],
-  });
+  static Set<ProductModel> products = {};
 
-  CartModel.fromJson(String source)
-      : products = List<ProductModel>.from(
-          json.decode(source)['products']?.map(
-                (x) => ProductModel.fromJson(x as Map<String, dynamic>),
-              ) as Iterable<dynamic>,
+  static get cart => products;
+
+  static set setCart(List<ProductModel> cart) {
+    products.addAll(cart);
+  }
+
+  static void handleAddToCart(ProductModel product) {
+    final index = products.toList().indexWhere(
+          (element) => element.id == product.id,
         );
+    if (index != -1) {
+      if (products.toList()[index].selectedVariant.id ==
+          product.selectedVariant.id) {
+        //TODO: Update the quantity of the product
+        return;
+      } else {
+        //TODO: Add the product to cart
+        return;
+      }
+    }
+  }
 
-  Map<String, dynamic> toJson() => {
-        'products': List<dynamic>.from(products.map((x) => x.toJson())),
-      };
+  double get total =>
+      products.fold(0, (sum, item) => sum + item.selectedVariant.salePrice);
 }

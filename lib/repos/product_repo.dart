@@ -19,45 +19,111 @@ class ProductRepo {
         name: 'Laddoos',
         description: 'description',
         image: 'assets/images/products/chakli.png',
-        price: 100,
-        variants: const [
-          {'400': '400 g'},
-          {'500': '500 g'},
-          {'600': '600 g'}
+        variants: [
+          VariantModel(
+            id: '400',
+            regPrice: 150,
+            salePrice: 100,
+            key: '400',
+            value: '400 g',
+          ),
+          VariantModel(
+            id: '500',
+            regPrice: 150,
+            salePrice: 100,
+            key: '500',
+            value: '500 g',
+          ),
+          VariantModel(
+            id: '600',
+            regPrice: 150,
+            salePrice: 100,
+            key: '600',
+            value: '600 g',
+          ),
+          VariantModel(
+            id: '700',
+            regPrice: 150,
+            salePrice: 100,
+            key: '700',
+            value: '700 g',
+          ),
         ],
-        selectedVariant: '400',
+        selectedVariant: VariantModel(
+          id: '400',
+          regPrice: 150,
+          salePrice: 100,
+          key: '400',
+          value: '400 g',
+        ),
         rating: 4.6,
-        isInCart: false,
       ),
       ProductModel(
         id: '2',
         name: 'Chakli',
         description: 'description',
         image: 'assets/images/products/chakli.png',
-        price: 200,
-        variants: const [
-          {'400': '400 g'},
-          {'500': '500 g'},
-          {'600': '600 g'},
-          {'700': '700 g'}
+        variants: [
+          VariantModel(
+            id: '400',
+            regPrice: 150,
+            salePrice: 100,
+            key: '400',
+            value: '400 g',
+          ),
+          VariantModel(
+            id: '500',
+            regPrice: 150,
+            salePrice: 100,
+            key: '500',
+            value: '500 g',
+          ),
+          VariantModel(
+            id: '600',
+            regPrice: 150,
+            salePrice: 100,
+            key: '600',
+            value: '600 g',
+          ),
         ],
-        selectedVariant: '400',
+        selectedVariant: VariantModel(
+          id: '400',
+          regPrice: 150,
+          salePrice: 100,
+          key: '400',
+          value: '400 g',
+        ),
         rating: 4.8,
-        isInCart: false,
       ),
       ProductModel(
         id: '3',
         name: 'Modak',
         description: 'description',
         image: 'assets/images/products/chakli.png',
-        price: 100,
-        variants: const [
-          {'400': '400 g'},
-          {'500': '500 g'}
+        variants: [
+          VariantModel(
+            id: '400',
+            regPrice: 150,
+            salePrice: 100,
+            key: '400',
+            value: '400 g',
+          ),
+          VariantModel(
+            id: '500',
+            regPrice: 150,
+            salePrice: 100,
+            key: '500',
+            value: '500 g',
+          ),
         ],
-        selectedVariant: '400',
+        selectedVariant: VariantModel(
+          id: '400',
+          regPrice: 150,
+          salePrice: 100,
+          key: '400',
+          value: '400 g',
+        ),
         rating: 4.7,
-        isInCart: false,
       ),
     ];
   }
@@ -75,14 +141,19 @@ class ProductRepo {
     return _products.firstWhere((element) => element.id == id);
   }
 
-  static bool isProductInCart(String id) {
-    return _products.firstWhere((element) => element.id == id).isInCart;
+  static VariantModel getVariantById(String id, String variantId) {
+    return _products
+        .firstWhere((element) => element.id == id)
+        .variants
+        .firstWhere((element) => element.id == variantId);
   }
 
-  static bool updateSelectedVariant(String id, String variant) {
+  
+
+  static bool updateSelectedVariant(String id, String variantId) {
     _products = _products.map((e) {
       if (e.id == id) {
-        return e.copyWith(selectedVariant: variant);
+        return e.copyWith(selectedVariant: getVariantById(id, variantId));
       } else {
         return e;
       }
@@ -90,15 +161,15 @@ class ProductRepo {
     return true;
   }
 
-  static void addToCart(String id) {
-    final index = _products.indexWhere((element) => element.id == id);
-    _products[index].isInCart = true;
-  }
+  // static void addToCart(String id) {
+  //   final index = _products.indexWhere((element) => element.id == id);
+  //   _products[index].isInCart = true;
+  // }
 
-  static void removeFromCart(String id) {
-    final index = _products.indexWhere((element) => element.id == id);
-    _products[index].isInCart = false;
-  }
+  // static void removeFromCart(String id) {
+  //   final index = _products.indexWhere((element) => element.id == id);
+  //   _products[index].isInCart = false;
+  // }
 
   // static void updateProducts() {
   //   print('Updating Products');

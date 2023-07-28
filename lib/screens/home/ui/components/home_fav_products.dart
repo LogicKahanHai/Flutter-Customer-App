@@ -69,22 +69,8 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
                     itemBuilder: (context, index) {
                       return Product(
                         index: index,
-                        rfcTap: () {
-                          ProductModel product = ProductRepo.products[index];
-                          setState(() {
-                            ProductRepo.removeFromCart(product.id);
-                            context.read<CartBloc>().add(CartRemoveProductEvent(
-                                ProductRepo.getProductById(product.id)));
-                          });
-                        },
-                        atcTap: () {
-                          ProductModel product = ProductRepo.products[index];
-                          setState(() {
-                            ProductRepo.addToCart(product.id);
-                            context.read<CartBloc>().add(CartAddProductEvent(
-                                ProductRepo.getProductById(product.id)));
-                          });
-                        },
+                        
+                        
                       );
                     },
                   );
@@ -112,13 +98,9 @@ class Product extends StatefulWidget {
   //[ ]: Add the ADD button functionality
   //-> Might want to move this widget to a more accessible place for reusability
   final int index;
-  final void Function() rfcTap;
-  final void Function() atcTap;
   const Product({
     Key? key,
     required this.index,
-    required this.rfcTap,
-    required this.atcTap,
   }) : super(key: key);
 
   @override
@@ -207,7 +189,7 @@ class _ProductState extends State<Product> {
             Row(
               children: [
                 Text(
-                  '₹ ${_product.price.round()}',
+                  '₹ ${_product.selectedVariant.salePrice.round()}',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -215,7 +197,7 @@ class _ProductState extends State<Product> {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '₹ ${_product.price.round() + 50}',
+                  '₹ ${_product.selectedVariant.regPrice.round()}',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade600,
@@ -264,7 +246,7 @@ class _ProductState extends State<Product> {
                 //   ),
                 // ),
                 ElevatedButton(
-                  onPressed: _product.isInCart ? widget.rfcTap : widget.atcTap,
+                  onPressed: () {},
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
                         (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
@@ -284,24 +266,24 @@ class _ProductState extends State<Product> {
                     shadowColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.transparent),
                   ),
-                  child: _product.isInCart
-                      ? const Row(
-                          children: [
-                            Icon(
-                              Icons.check,
-                              size: 16,
-                            ),
-                            // SizedBox(width: 5),
-                            Text(
-                              'ADDED',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        )
-                      : const Text(
+                  child:
+                      // ? const Row(
+                      //     children: [
+                      //       Icon(
+                      //         Icons.check,
+                      //         size: 16,
+                      //       ),
+                      //       // SizedBox(width: 5),
+                      //       Text(
+                      //         'ADDED',
+                      //         style: TextStyle(
+                      //           fontSize: 12,
+                      //           fontWeight: FontWeight.bold,
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   )
+                      const Text(
                           'ADD TO CART',
                           style: TextStyle(
                             fontSize: 14,
