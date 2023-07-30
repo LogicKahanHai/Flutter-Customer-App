@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:pk_customer_app/models/product_model.dart';
+import 'package:pk_customer_app/repos/product_repo.dart';
 
 class CartItemModel {
   final String id;
@@ -9,6 +10,7 @@ class CartItemModel {
   final String variantName;
   final double regPrice;
   final double salePrice;
+  int quantity;
   CartItemModel({
     required this.id,
     required this.productId,
@@ -17,6 +19,7 @@ class CartItemModel {
     required this.variantName,
     required this.regPrice,
     required this.salePrice,
+    required this.quantity,
   });
 
   CartItemModel.fromJson(Map<String, dynamic> json)
@@ -26,7 +29,8 @@ class CartItemModel {
         productName = json['productName'],
         variantName = json['variantName'],
         regPrice = json['regPrice'],
-        salePrice = json['salePrice'];
+        salePrice = json['salePrice'],
+        quantity = json['quantity'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -36,14 +40,25 @@ class CartItemModel {
         'variantName': variantName,
         'regPrice': regPrice,
         'salePrice': salePrice,
+        'quantity': quantity,
       };
 
   CartItemModel.fromProduct(ProductModel product)
       : id = product.id,
         productId = product.id,
-        variantId = product.selectedVariant.id,
+        variantId = product.selectedVariant,
         productName = product.name,
-        variantName = product.selectedVariant.value,
-        regPrice = product.selectedVariant.regPrice,
-        salePrice = product.selectedVariant.salePrice;
+        variantName = ProductRepo.getVariantById(
+          product.id,
+          product.selectedVariant,
+        ).value,
+        regPrice = ProductRepo.getVariantById(
+          product.id,
+          product.selectedVariant,
+        ).regPrice,
+        salePrice = ProductRepo.getVariantById(
+          product.id,
+          product.selectedVariant,
+        ).salePrice,
+        quantity = 1;
 }

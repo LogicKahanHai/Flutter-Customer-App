@@ -69,8 +69,6 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
                     itemBuilder: (context, index) {
                       return Product(
                         index: index,
-                        
-                        
                       );
                     },
                   );
@@ -109,10 +107,24 @@ class Product extends StatefulWidget {
 
 class _ProductState extends State<Product> {
   late ProductModel _product;
+  late String _dropdownValue;
+  bool isAdded = false;
+  late List<VariantModel> _variants;
+
+  void getVariants() {
+    _variants = ProductRepo.variants
+        .where((variant) => variant.productId == _product.id)
+        .toList();
+  }
 
   @override
   void initState() {
     _product = ProductRepo.products[widget.index];
+    getVariants();
+    if (_product.selectedVariant == '') {
+      ProductRepo.updateSelectedVariant(_product.id, _variants[0].id);
+    }
+    _dropdownValue = _product.selectedVariant;
     super.initState();
   }
 
@@ -189,7 +201,10 @@ class _ProductState extends State<Product> {
             Row(
               children: [
                 Text(
-                  '₹ ${_product.selectedVariant.salePrice.round()}',
+                  '₹ ${ProductRepo.getVariantById(
+                    _product.id,
+                    _product.selectedVariant,
+                  ).salePrice.round()}',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -197,7 +212,10 @@ class _ProductState extends State<Product> {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '₹ ${_product.selectedVariant.regPrice.round()}',
+                  '₹ ${ProductRepo.getVariantById(
+                    _product.id,
+                    _product.selectedVariant,
+                  ).regPrice.round()}',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade600,
@@ -208,47 +226,56 @@ class _ProductState extends State<Product> {
             ),
             const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Container(
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(5),
-                //     border: Border.all(
-                //       color: Colors.black38,
-                //       width: 1,
-                //     ),
-                //   ),
-                //   height: 40,
-                //   padding: const EdgeInsets.only(left: 5),
-                //   child: DropdownButton(
-                //     underline: Container(
-                //       height: 0,
-                //       color: Colors.transparent,
-                //     ),
-                //     elevation: 1,
-                //     items: _product.variants.map(
-                //       (variant) {
-                //         return DropdownMenuItem(
-                //           value: variant.keys.first,
-                //           child: Text(
-                //             variant.values.first,
-                //             style: const TextStyle(
-                //               fontSize: 16,
-                //               fontWeight: FontWeight.w600,
-                //             ),
-                //           ),
-                //         );
-                //       },
-                //     ).toList(),
-                //     value: _dropdownValue,
-                //     onChanged: _onChanged,
-                //     borderRadius: BorderRadius.circular(5),
-                //   ),
-                // ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                      color: Colors.black38,
+                      width: 1,
+                    ),
+                  ),
+                  height: 40,
+                  padding: const EdgeInsets.only(left: 5),
+                  child: DropdownButton(
+                    underline: Container(
+                      height: 0,
+                      color: Colors.transparent,
+                    ),
+                    elevation: 1,
+                    items: _variants.map(
+                      (variant) {
+                        return DropdownMenuItem(
+                          value: variant.key,
+                          child: Text(
+                            variant.value,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList(),
+                    value: _dropdownValue,
+                    onChanged: _onChanged,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     BlocProvider.of<CartBloc>(context)
-                        .add(CartAddProductEvent(_product));
+                        .add(CartAddProductEvent(_product.id, _dropdownValue));
+                    setState(() {
+                      isAdded = true;
+                    });
+                    await Future.delayed(const Duration(milliseconds: 5000),
+                        () {
+                      setState(() {
+                        isAdded = false;
+                      });
+                    });
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
@@ -269,9 +296,7 @@ class _ProductState extends State<Product> {
                     shadowColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.transparent),
                   ),
-                  child: CartRepo.cart.products
-                          .where((element) => element.productId == _product.id)
-                          .isNotEmpty
+                  child: isAdded
                       ? const Row(
                           children: [
                             Icon(
@@ -303,4 +328,12 @@ class _ProductState extends State<Product> {
       ),
     );
   }
+
+  void _onChanged(String? value) {
+    setState(() {
+      _dropdownValue = value!;
+    });
+  }
 }
+
+//DONE: Use single list for all variants and add product id for separation.

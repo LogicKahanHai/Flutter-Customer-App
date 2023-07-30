@@ -9,20 +9,16 @@ class ProductModel {
   final String name;
   final String description;
   final String image;
-  final List<VariantModel> variants;
-  final VariantModel selectedVariant;
+  final String selectedVariant;
   final double rating;
   ProductModel({
     required this.id,
     required this.name,
     required this.description,
     required this.image,
-    required this.variants,
     required this.selectedVariant,
     required this.rating,
   });
-
-  
 
   @override
   bool operator ==(covariant ProductModel other) {
@@ -32,7 +28,6 @@ class ProductModel {
         other.name == name &&
         other.description == description &&
         other.image == image &&
-        listEquals(other.variants, variants) &&
         other.selectedVariant == selectedVariant &&
         other.rating == rating;
   }
@@ -43,11 +38,9 @@ class ProductModel {
         name.hashCode ^
         description.hashCode ^
         image.hashCode ^
-        variants.hashCode ^
         selectedVariant.hashCode ^
         rating.hashCode;
   }
-      
 
   ProductModel copyWith({
     String? id,
@@ -55,7 +48,7 @@ class ProductModel {
     String? description,
     String? image,
     List<VariantModel>? variants,
-    VariantModel? selectedVariant,
+    String? selectedVariant,
     double? rating,
   }) {
     return ProductModel(
@@ -63,7 +56,6 @@ class ProductModel {
       name: name ?? this.name,
       description: description ?? this.description,
       image: image ?? this.image,
-      variants: variants ?? this.variants,
       selectedVariant: selectedVariant ?? this.selectedVariant,
       rating: rating ?? this.rating,
     );
@@ -74,14 +66,7 @@ class ProductModel {
         name = json['name'] as String,
         description = json['description'] as String,
         image = json['image'] as String,
-        variants = List<VariantModel>.from(
-          json['variants']?.map(
-            (x) => VariantModel.fromJson(x as Map<String, dynamic>),
-          ) as Iterable<dynamic>,
-        ),
-        selectedVariant = VariantModel.fromJson(
-          json['selectedVariant'] as Map<String, dynamic>,
-        ),
+        selectedVariant = json['selectedVariant'] as String,
         rating = (json['rating'] as num).toDouble();
 
   Map<String, dynamic> toJson() => {
@@ -89,8 +74,7 @@ class ProductModel {
         'name': name,
         'description': description,
         'image': image,
-        'variants': List<dynamic>.from(variants.map((x) => x.toJson())),
-        'selectedVariant': selectedVariant.toJson(),
+        'selectedVariant': selectedVariant,
         'rating': rating,
       };
 }
