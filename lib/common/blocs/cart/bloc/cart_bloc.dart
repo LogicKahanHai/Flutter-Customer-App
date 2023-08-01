@@ -10,14 +10,12 @@ part 'cart_state.dart';
 class CartBloc extends HydratedBloc<CartEvent, CartState> {
   CartBloc() : super(CartLoading()) {
     on<CartInitEvent>((event, emit) async {
-      emit(CartLoading());
-
-      await Future.delayed(const Duration(seconds: 1));
       try {
         if (state is CartLoaded) {
           emit(state);
         } else {
-          emit(CartLoaded(products: CartRepo.products.toList()));
+          // emit(CartLoaded(products: CartRepo.products.toList()));
+          emit(CartLoaded(const []));
         }
       } catch (e) {
         emit(CartError(message: e.toString()));
@@ -26,52 +24,50 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
 
     on<CartAddProductEvent>((event, emit) async {
       if (state is CartLoaded) {
-        final index = (state as CartLoaded)
-            .products
-            .indexWhere((element) => element.id == event.product.id);
-        if (index != -1) {
-          emit(const CartError(message: 'Product already in cart'));
-          return;
-        }
+        ProductModel product = ProductRepo.getProductById(event.productId)
+            .copyWith(selectedVariant: event.variantId);
         try {
-          //TODO: add to cart
+          //DONE: add to cart
+          CartRepo.addProduct(product);
+          
           // ProductRepo.addToCart(event.product.id);
           // CartRepo.products.add(ProductRepo.getProductById(event.product.id));
+          //DONE: Make Cart State persistant.
           emit(
-            CartLoaded(products: CartRepo.products.toList()),
+            CartLoaded(CartRepo.products),
           );
         } catch (_) {}
       }
     });
 
-    on<CartRemoveProductEvent>((event, emit) async {
-      if (state is CartLoaded) {
-        try {
-          //TODO: remove from cart
-          // ProductRepo.removeFromCart(event.product.id);
-          // CartRepo.products.remove(event.product);
-          emit(
-            CartLoaded(
-                products: List.from((state as CartLoaded).products)
-                  ..remove(event.product)),
-          );
-        } catch (_) {}
-      }
-    });
+    // on<CartRemoveProductEvent>((event, emit) async {
+    //   if (state is CartLoaded) {
+    //     try {
+    //       //TODDO: remove from cart
+    //       // ProductRepo.removeFromCart(event.product.id);
+    //       // CartRepo.products.remove(event.product);
+    //       emit(
+    //         CartLoaded(
+    //             products: List.from((state as CartLoaded).products)
+    //               ..remove(event.product)),
+    //       );
+    //     } catch (_) {}
+    //   }
+    // });
   }
 
   @override
   CartState? fromJson(Map<String, dynamic> json) {
     try {
-      final products = (json['products'] as List<dynamic>)
-          .map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
+      final products = (json['cartItems'] as List<dynamic>)
+          .map((e) => CartItemModel.fromJson(e as Map<String, dynamic>))
           .toList();
-      CartRepo.products = products.toSet();
+      // CartRepo.setCart(products);
       // for (ProductModel element in CartRepo.products.toList()) {
       //   ProductRepo.addToCart(element.id);
       //   ProductRepo.updateSelectedVariant(element.id, element.selectedVariant);
       // }
-      return CartLoaded(products: products);
+      return CartLoaded(products);
     } catch (e) {
       return null;
     }

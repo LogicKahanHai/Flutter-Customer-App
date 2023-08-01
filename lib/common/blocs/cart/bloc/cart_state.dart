@@ -16,16 +16,24 @@ class CartInitial extends CartState {}
 class CartLoading extends CartState {}
 
 class CartLoaded extends CartState {
-  final List<ProductModel> products;
+  final List<CartItemModel> cartItems;
 
-  const CartLoaded({required this.products});
+  CartLoaded(this.cartItems) {
+    if (CartRepo.products.isNotEmpty) {
+      return;
+    }
+    if (cartItems.isNotEmpty) {
+      CartRepo.setCart(cartItems);
+      return;
+    }
+  }
 
   @override
-  List<Object> get props => [products];
+  List<Object> get props => [cartItems];
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'products': products.map((e) => e.toJson()).toList(),
+      'cartItems': cartItems.map((e) => e.toJson()).toList(),
     };
   }
 }
