@@ -15,7 +15,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
           emit(state);
         } else {
           // emit(CartLoaded(products: CartRepo.products.toList()));
-          emit(CartLoaded(cartItems: const []));
+          emit(CartLoaded(const []));
         }
       } catch (e) {
         emit(CartError(message: e.toString()));
@@ -32,9 +32,9 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
           
           // ProductRepo.addToCart(event.product.id);
           // CartRepo.products.add(ProductRepo.getProductById(event.product.id));
-          //TODO: Make Cart State persistant.
+          //DONE: Make Cart State persistant.
           emit(
-            CartLoaded(cartItems: CartRepo.products),
+            CartLoaded(CartRepo.products),
           );
         } catch (_) {}
       }
@@ -43,7 +43,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     // on<CartRemoveProductEvent>((event, emit) async {
     //   if (state is CartLoaded) {
     //     try {
-    //       //TODO: remove from cart
+    //       //TODDO: remove from cart
     //       // ProductRepo.removeFromCart(event.product.id);
     //       // CartRepo.products.remove(event.product);
     //       emit(
@@ -58,21 +58,17 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
 
   @override
   CartState? fromJson(Map<String, dynamic> json) {
-    print('trying to load cart from json');
     try {
       final products = (json['cartItems'] as List<dynamic>)
           .map((e) => CartItemModel.fromJson(e as Map<String, dynamic>))
           .toList();
-      print('cart loaded from json');
       // CartRepo.setCart(products);
-      print(products);
       // for (ProductModel element in CartRepo.products.toList()) {
       //   ProductRepo.addToCart(element.id);
       //   ProductRepo.updateSelectedVariant(element.id, element.selectedVariant);
       // }
-      return CartLoaded(cartItems: products);
+      return CartLoaded(products);
     } catch (e) {
-      print(e);
       return null;
     }
   }
@@ -80,7 +76,6 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
   @override
   Map<String, dynamic>? toJson(CartState state) {
     if (state is CartLoaded) {
-      print('in cart bloc to json');
       return state.toJson();
     } else {
       return null;

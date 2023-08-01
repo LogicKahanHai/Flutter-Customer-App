@@ -92,30 +92,28 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
 }
 
 class Product extends StatefulWidget {
-  //[ ]: Add a constructor to accept the product details
-  //[ ]: Add the ADD button functionality
-  //-> Might want to move this widget to a more accessible place for reusability
-  final int index;
   const Product({
     Key? key,
     required this.index,
   }) : super(key: key);
 
+  //[ ]: Add a constructor to accept the product details
+  //[ ]: Add the ADD button functionality
+  //-> Might want to move this widget to a more accessible place for reusability
+  final int index;
+
   @override
   State<Product> createState() => _ProductState();
 }
 
-class _ProductState extends State<Product> {
-  late ProductModel _product;
-  late String _dropdownValue;
+class _ProductState extends State<Product> with TickerProviderStateMixin {
+  late AnimationController controller;
+  bool isATCLoading = false;
   bool isAdded = false;
-  late List<VariantModel> _variants;
 
-  void getVariants() {
-    _variants = ProductRepo.variants
-        .where((variant) => variant.productId == _product.id)
-        .toList();
-  }
+  late String _dropdownValue;
+  late ProductModel _product;
+  late List<VariantModel> _variants;
 
   @override
   void initState() {
@@ -126,7 +124,33 @@ class _ProductState extends State<Product> {
       _product = ProductRepo.getProductById(_product.id);
     }
     _dropdownValue = _product.selectedVariant;
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..addListener(() {
+        setState(() {});
+      });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void getVariants() {
+    _variants = ProductRepo.variants
+        .where((variant) => variant.productId == _product.id)
+        .toList();
+  }
+
+  void _onChanged(String? value) {
+    if (value == null) return;
+    setState(() {
+      _dropdownValue = value;
+      isAdded = false;
+    });
   }
 
   @override
@@ -266,17 +290,34 @@ class _ProductState extends State<Product> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    if (isAdded) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Item already in cart'),
+                        ),
+                      );
+                      return;
+                    }
+                    setState(() {
+                      isATCLoading = true;
+                    });
+                    controller.forward();
                     BlocProvider.of<CartBloc>(context)
                         .add(CartAddProductEvent(_product.id, _dropdownValue));
-                    setState(() {
-                      isAdded = true;
-                    });
-                    await Future.delayed(const Duration(milliseconds: 5000),
+                    await Future.delayed(const Duration(milliseconds: 1000),
                         () {
                       setState(() {
-                        isAdded = false;
+                        isAdded = true;
+                        isATCLoading = false;
                       });
+                      controller.reset();
                     });
+                    // await Future.delayed(const Duration(milliseconds: 5000),
+                    //     () {
+                    //   setState(() {
+                    //     isAdded = false;
+                    //   });
+                    // });
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
@@ -314,13 +355,22 @@ class _ProductState extends State<Product> {
                             ),
                           ],
                         )
-                      : const Text(
-                          'ADD',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      : isATCLoading
+                          ? SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                color: PKTheme.primaryColor,
+                                value: controller.value,
+                              ),
+                            )
+                          : const Text(
+                              'ADD',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                 ),
               ],
             )
@@ -328,13 +378,6 @@ class _ProductState extends State<Product> {
         ),
       ),
     );
-  }
-
-  void _onChanged(String? value) {
-    if (value == null) return;
-    setState(() {
-      _dropdownValue = value;
-    });
   }
 }
 

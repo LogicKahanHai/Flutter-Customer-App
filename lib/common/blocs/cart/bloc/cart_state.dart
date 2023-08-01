@@ -18,8 +18,14 @@ class CartLoading extends CartState {}
 class CartLoaded extends CartState {
   final List<CartItemModel> cartItems;
 
-  CartLoaded({required this.cartItems}) {
-    CartRepo.setCart(cartItems);
+  CartLoaded(this.cartItems) {
+    if (CartRepo.products.isNotEmpty) {
+      return;
+    }
+    if (cartItems.isNotEmpty) {
+      CartRepo.setCart(cartItems);
+      return;
+    }
   }
 
   @override
