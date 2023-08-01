@@ -1,7 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+
+import '../../../../common/blocs/export_blocs.dart';
+import '../../../../models/models.dart';
+import '../../../../repos/repos.dart';
 
 class HomeFavProducts extends StatefulWidget {
   const HomeFavProducts({Key? key}) : super(key: key);
@@ -11,6 +19,18 @@ class HomeFavProducts extends StatefulWidget {
 }
 
 class _HomeFavProductsState extends State<HomeFavProducts> {
+  final _cartBloc = CartBloc();
+
+  @override
+  void initState() {
+    _cartBloc.add(CartInitEvent());
+    super.initState();
+  }
+
+  void rfcTap(ProductModel product) {}
+
+  void atcTap(ProductModel product) {}
+
   @override
   Widget build(BuildContext context) {
     //[ ]: Make this container clickable and redirect to the product page
@@ -29,16 +49,42 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
             ),
           ),
           const SizedBox(height: 20),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: List<Product>.generate(
-                5,
-                (index) => const Product(),
-              ).toList(),
+          SizedBox(
+            height: 311,
+            child: BlocConsumer<CartBloc, CartState>(
+              listenWhen: (previous, current) => current is CartError,
+              buildWhen: (previous, current) => current is! CartError,
+              listener: (context, state) {
+                if (state is CartError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Item already in cart')));
+                }
+              },
+              builder: (context, state) {
+                if (state is CartLoaded) {
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: ProductRepo.productCount,
+                    itemBuilder: (context, index) {
+                      return Product(
+                        index: index,
+                      );
+                    },
+                  );
+                }
+                if (state is CartLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return const Center(
+                    child: Text('Something Went wrong.'),
+                  );
+                }
+              },
             ),
-          ),
+          )
         ],
       ),
     );
@@ -46,32 +92,73 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
 }
 
 class Product extends StatefulWidget {
+  const Product({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
+
   //[ ]: Add a constructor to accept the product details
   //[ ]: Add the ADD button functionality
   //-> Might want to move this widget to a more accessible place for reusability
-
-  const Product({Key? key}) : super(key: key);
+  final int index;
 
   @override
   State<Product> createState() => _ProductState();
 }
 
-class _ProductState extends State<Product> {
-  String _dropdownValue = '400 g';
+class _ProductState extends State<Product> with TickerProviderStateMixin {
+  late AnimationController controller;
+  bool isATCLoading = false;
+  bool isAdded = false;
+
+  late String _dropdownValue;
+  late ProductModel _product;
+  late List<VariantModel> _variants;
+
+  @override
+  void initState() {
+    _product = ProductRepo.products[widget.index];
+    getVariants();
+    if (_product.selectedVariant == '') {
+      ProductRepo.updateSelectedVariant(_product.id, _variants[0].id);
+      _product = ProductRepo.getProductById(_product.id);
+    }
+    _dropdownValue = _product.selectedVariant;
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..addListener(() {
+        setState(() {});
+      });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void getVariants() {
+    _variants = ProductRepo.variants
+        .where((variant) => variant.productId == _product.id)
+        .toList();
+  }
 
   void _onChanged(String? value) {
-    if (value is String) {
-      if (value == _dropdownValue) return;
-      setState(() {
-        _dropdownValue = value;
-      });
-    }
+    if (value == null) return;
+    setState(() {
+      _dropdownValue = value;
+      isAdded = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: Platform.isIOS
+          ? const EdgeInsets.all(15)
+          : const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       margin: const EdgeInsets.only(right: 10),
       width: 200,
       decoration: const BoxDecoration(
@@ -94,39 +181,39 @@ class _ProductState extends State<Product> {
             Container(
               width: 160,
               height: 160,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(10),
                   bottomLeft: Radius.circular(10),
                 ),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/products/chakli.png'),
+                  image: AssetImage(_product.image),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Chakli',
-                  style: TextStyle(
+                  _product.name,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.star,
                       color: Colors.green,
                       size: 18,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
-                      '4.8',
-                      style: TextStyle(
+                      _product.rating.toString(),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -138,16 +225,22 @@ class _ProductState extends State<Product> {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Text(
-                  '₹ 100',
-                  style: TextStyle(
+                Text(
+                  '₹ ${ProductRepo.getVariantById(
+                    _product.id,
+                    _product.selectedVariant,
+                  ).salePrice.round()}',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '₹ 120',
+                  '₹ ${ProductRepo.getVariantById(
+                    _product.id,
+                    _product.selectedVariant,
+                  ).regPrice.round()}',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey.shade600,
@@ -176,27 +269,56 @@ class _ProductState extends State<Product> {
                       color: Colors.transparent,
                     ),
                     elevation: 1,
-                    items: const [
-                      DropdownMenuItem(
-                        value: '400 g',
-                        child: Text('400 g'),
-                      ),
-                      DropdownMenuItem(
-                        value: '500 g',
-                        child: Text('500 g'),
-                      ),
-                      DropdownMenuItem(
-                        value: '600 g',
-                        child: Text('600 g'),
-                      ),
-                    ],
+                    items: _variants.map(
+                      (variant) {
+                        return DropdownMenuItem(
+                          value: variant.key,
+                          child: Text(
+                            variant.value,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList(),
                     value: _dropdownValue,
                     onChanged: _onChanged,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    if (isAdded) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Item already in cart'),
+                        ),
+                      );
+                      return;
+                    }
+                    setState(() {
+                      isATCLoading = true;
+                    });
+                    controller.forward();
+                    BlocProvider.of<CartBloc>(context)
+                        .add(CartAddProductEvent(_product.id, _dropdownValue));
+                    await Future.delayed(const Duration(milliseconds: 1000),
+                        () {
+                      setState(() {
+                        isAdded = true;
+                        isATCLoading = false;
+                      });
+                      controller.reset();
+                    });
+                    // await Future.delayed(const Duration(milliseconds: 5000),
+                    //     () {
+                    //   setState(() {
+                    //     isAdded = false;
+                    //   });
+                    // });
+                  },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.resolveWith(
                         (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
@@ -216,13 +338,39 @@ class _ProductState extends State<Product> {
                     shadowColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.transparent),
                   ),
-                  child: const Text(
-                    'ADD',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: isAdded
+                      ? const Row(
+                          children: [
+                            Icon(
+                              Icons.check,
+                              size: 16,
+                            ),
+                            // SizedBox(width: 5),
+                            Text(
+                              'ADDED',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : isATCLoading
+                          ? SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                color: PKTheme.primaryColor,
+                                value: controller.value,
+                              ),
+                            )
+                          : const Text(
+                              'ADD',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                 ),
               ],
             )
@@ -232,3 +380,5 @@ class _ProductState extends State<Product> {
     );
   }
 }
+
+//DONE: Use single list for all variants and add product id for separation.

@@ -1,30 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/screens/home/ui/home_page.dart';
 import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
       overlays: [SystemUiOverlay.top]);
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: await getApplicationDocumentsDirectory(),
+  );
   runApp(const AppRoot());
 }
 
-class AppRoot extends StatelessWidget {
+class AppRoot extends StatefulWidget {
   const AppRoot({super.key});
 
   @override
+  State<AppRoot> createState() => _AppRootState();
+}
+
+class _AppRootState extends State<AppRoot> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: PKTheme.themeData,
-      debugShowCheckedModeBanner: false,
-      home: const AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => UserBloc()..add(UserInitEvent())),
+        BlocProvider(create: (_) => CartBloc()..add(CartInitEvent())),
+      ],
+      child: MaterialApp(
+        theme: PKTheme.themeData,
+        debugShowCheckedModeBanner: false,
+        home: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+          ),
+          child: BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserAuthState) {
+                if (state.user == null) {
+                  return const WelcomePage();
+                }
+                return const HomePage();
+              }
+              return const WelcomePage();
+            },
+          ),
         ),
-        child: WelcomePage(),
       ),
     );
   }
 }
+
+///[ ]: Product Model is not able to retrieve data from Map... Map<String, String> v/s Map<String, dynamic> ka locha hai
+///[ ]: Jab product model sahi ho jaayega then cart se products ko update karna hai.. ig ho gaya hai just ye upar wala error rehta hai... 
+///[ ]: Ya to User Data persist ho rahi hai ya phir cart... to iska jugaad lagana hai ab.
