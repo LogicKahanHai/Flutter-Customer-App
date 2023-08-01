@@ -137,8 +137,15 @@ class ProductRepo {
   }
 
   static VariantModel getVariantById(String id, String variantId) {
-    return _variants.firstWhere(
-        (element) => element.productId == id && element.id == variantId);
+    try {
+
+      return _variants.firstWhere(
+          (element) => element.productId == id && element.id == variantId);
+    } catch (e) {
+      return _variants.firstWhere(
+        (element) => element.productId == id,
+      );
+    }
   }
 
   static bool updateSelectedVariant(String id, String variantId) {
@@ -152,7 +159,6 @@ class ProductRepo {
       }).toList();
       return true;
     } catch (e) {
-      print('I am error in \'updateSelectedVariant\': $e');
       return false;
     }
   }

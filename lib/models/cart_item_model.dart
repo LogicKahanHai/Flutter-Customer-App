@@ -43,8 +43,8 @@ class CartItemModel {
         'quantity': quantity,
       };
 
-  CartItemModel.fromProduct(ProductModel product)
-      : id = product.id,
+  CartItemModel.fromProduct(ProductModel product, int cartItemlength)
+      : id = cartItemlength.toString(),
         productId = product.id,
         variantId = product.selectedVariant,
         productName = product.name,

@@ -24,36 +24,17 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
 
     on<CartAddProductEvent>((event, emit) async {
       if (state is CartLoaded) {
-        print('in cart add product event');
         ProductModel product = ProductRepo.getProductById(event.productId)
             .copyWith(selectedVariant: event.variantId);
-        final index = (state as CartLoaded)
-            .cartItems
-            .indexWhere((element) => element.productId == product.id);
-        if (index != -1) {
-          if ((state as CartLoaded).cartItems[index].variantId ==
-              product.selectedVariant) {
-            CartRepo.increaseQuantity(
-                (state as CartLoaded).cartItems[index].id);
-            emit(
-              CartLoaded(cartItems: CartRepo.cart.products.toList()),
-            );
-            return;
-          } else {
-            CartRepo.addProduct(product);
-            emit(
-              CartLoaded(cartItems: CartRepo.cart.products.toList()),
-            );
-            return;
-          }
-        }
         try {
-          //TODO: add to cart
+          //DONE: add to cart
           CartRepo.addProduct(product);
+          
           // ProductRepo.addToCart(event.product.id);
           // CartRepo.products.add(ProductRepo.getProductById(event.product.id));
+          //TODO: Make Cart State persistant.
           emit(
-            CartLoaded(cartItems: CartRepo.cart.products.toList()),
+            CartLoaded(cartItems: CartRepo.products),
           );
         } catch (_) {}
       }

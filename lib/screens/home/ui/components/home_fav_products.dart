@@ -123,6 +123,7 @@ class _ProductState extends State<Product> {
     getVariants();
     if (_product.selectedVariant == '') {
       ProductRepo.updateSelectedVariant(_product.id, _variants[0].id);
+      _product = ProductRepo.getProductById(_product.id);
     }
     _dropdownValue = _product.selectedVariant;
     super.initState();
@@ -330,8 +331,9 @@ class _ProductState extends State<Product> {
   }
 
   void _onChanged(String? value) {
+    if (value == null) return;
     setState(() {
-      _dropdownValue = value!;
+      _dropdownValue = value;
     });
   }
 }
