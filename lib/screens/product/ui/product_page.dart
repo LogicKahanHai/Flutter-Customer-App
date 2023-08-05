@@ -1,10 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
+//TODO: Add Functionality to Bottom Navigation Bar
+
 import 'package:flutter/material.dart';
 
 import 'package:pk_customer_app/models/models.dart';
-import 'package:pk_customer_app/repos/product_repo.dart';
+import 'package:pk_customer_app/repos/repos.dart';
+
+import '../components/pdt_components.dart';
 
 class ProductPage extends StatefulWidget {
   final ProductModel product;
@@ -18,41 +22,131 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  late List<VariantModel> variants;
+  int quantity = 1;
+
+  @override
+  void initState() {
+    variants = ProductRepo.variants
+        .where((variant) => variant.productId == widget.product.id)
+        .toList();
+    super.initState();
+  }
+
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F5F5),
+      backgroundColor: Colors.grey.shade200,
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        title: Text(widget.product.name,
+            style: const TextStyle(fontSize: 22, color: Colors.black)),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
+      ),
       body: Center(
-        child: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10.0,
-                  horizontal: 20,
-                ),
-                color: Colors.white,
-                child: Row(children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  const Spacer(),
-                  const Text(
-                    'Details',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+        child: SizedBox(
+          width: double.infinity,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: 'Home > Products > ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text: widget.product.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
-                  const SizedBox(width: 30),
-                ]),
-              ),
-            ],
+                ),
+                // const SizedBox(height: 20),
+                ImageCarousel(product: widget.product),
+                const SizedBox(height: 20),
+                ItemDetails(product: widget.product),
+                const SizedBox(height: 20),
+                SizeQty(
+                  variants: variants,
+                  onSizeChanged: (newVariant) {
+                    if (newVariant != null) {
+                      ProductRepo.updateSelectedVariant(
+                          widget.product.id, newVariant);
+                    }
+                  },
+                  onQuantChanged: (newVal) {
+                    setState(() {
+                      quantity = newVal;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                BuyCartButtons(
+                  addToCart: () {
+                    //[ ]: Add event to add to cart
+                  },
+                ),
+                const SizedBox(height: 20),
+                const PincodeComponent(),
+                const SizedBox(height: 20),
+                const InFoGredients(),
+                const SizedBox(height: 20),
+                const ReviewsComponent(),
+              ],
+            ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: _currentIndex,
+        onTap: (index) => setState(() => _currentIndex = index),
+        selectedIconTheme: const IconThemeData(color: Colors.black),
+        unselectedIconTheme: const IconThemeData(color: Colors.black),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: '',
+            activeIcon: Icon(Icons.home),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark_border_outlined),
+            label: '',
+            activeIcon: Icon(Icons.bookmark),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            label: '',
+            activeIcon: Icon(Icons.account_circle),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: '',
+            activeIcon: Icon(Icons.shopping_bag),
+          ),
+        ],
       ),
     );
   }

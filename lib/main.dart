@@ -5,9 +5,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/repos/product_repo.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
-import 'package:pk_customer_app/screens/product/ui/product_page.dart';
 import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
 Future<void> main() async {
@@ -54,7 +52,7 @@ class _AppRootState extends State<AppRoot> {
                 if (state.user == null) {
                   return const WelcomePage();
                 }
-                return ProductPage(ProductRepo.products[0]);
+                return const HomePage();
               }
               return const WelcomePage();
             },

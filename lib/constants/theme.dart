@@ -70,6 +70,9 @@ class PKTheme {
         ),
       ),
     ),
+    bottomAppBarTheme: const BottomAppBarTheme(
+      color: Colors.red,
+    ),
   );
   // static const Color primaryColorDark = Color(0xFFc43e00);
 }
