@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/reusable/bottom_nav_bar.dart';
 import 'package:pk_customer_app/screens/home/bloc/home_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/components/home_components.dart';
 
@@ -39,36 +40,37 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      body: BlocConsumer<HomeBloc, HomeState>(
-        bloc: _homeBloc,
-        listenWhen: (previous, current) {
-          return current is HomeActionState;
-        },
-        buildWhen: (previous, current) => current is! HomeActionState,
-        listener: (context, state) {
-          if (state is HomeAddToCartSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Added to cart'),
-                backgroundColor: PKTheme.primaryColor,
-                duration: Duration(milliseconds: 500),
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          switch (state.runtimeType) {
-            case HomeLoading:
-              return const Center(
+    return BlocConsumer<HomeBloc, HomeState>(
+      bloc: _homeBloc,
+      listenWhen: (previous, current) {
+        return current is HomeActionState;
+      },
+      listener: (context, state) {
+        if (state is HomeAddToCartSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Added to cart'),
+              backgroundColor: PKTheme.primaryColor,
+              duration: Duration(milliseconds: 500),
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        switch (state.runtimeType) {
+          case HomeLoading:
+            return Scaffold(
+              backgroundColor: Colors.grey.shade200,
+              body: const Center(
                 child: CircularProgressIndicator(
                   color: PKTheme.primaryColor,
                   strokeWidth: 3,
                 ),
-              );
-            case HomeLoadedSuccess:
-              return Center(
+              ),
+            );
+          case HomeLoadedSuccess:
+            return Scaffold(
+              body: Center(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: BlocProvider(
@@ -180,12 +182,29 @@ class _HomePageState extends State<HomePage>
                     ),
                   ),
                 ),
-              );
-            default:
-              return const SizedBox();
-          }
-        },
-      ),
+              ),
+              bottomNavigationBar: bottomNavBar(
+                      currentIndex: 0, context: context, currentPage: 'home')
+                  .animate(controller: _animationController)
+                  .fade(
+                    delay: 1250.ms,
+                    duration: 400.ms,
+                    begin: 0.0,
+                    end: 1.0,
+                    curve: Curves.easeInOut,
+                  )
+                  .slideY(
+                    curve: Curves.easeInOut,
+                    duration: 400.ms,
+                    delay: 1250.ms,
+                    begin: 0.1,
+                    end: 0.0,
+                  ),
+            );
+          default:
+            return const SizedBox();
+        }
+      },
     );
   }
 }

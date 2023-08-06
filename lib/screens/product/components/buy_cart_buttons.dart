@@ -17,6 +17,9 @@ class BuyCartButtons extends StatefulWidget {
 
 class _BuyCartButtonsState extends State<BuyCartButtons> {
 
+  bool isATCLoading = false;
+  bool isAdded = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,52 +44,73 @@ class _BuyCartButtonsState extends State<BuyCartButtons> {
             ],
           ),
           const SizedBox(height: 10),
-          // ? ElevatedButton(
-          //     onPressed: () {
-          //       //[ ]: Add event to navigate to cart
-          //       // context.read<ProductBloc>().add(GoToCartEvent());
-          //     },
-          //     style: ButtonStyle(
-          //       overlayColor: MaterialStateProperty.resolveWith(
-          //           (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
-          //       backgroundColor: MaterialStateProperty.resolveWith(
-          //           (states) => Colors.transparent),
-          //       foregroundColor: MaterialStateProperty.resolveWith(
-          //           (states) => PKTheme.primaryColor),
-          //       minimumSize: MaterialStateProperty.resolveWith(
-          //           (states) => const Size(double.infinity, 52.0)),
-          //       // shape: MaterialStateProperty.resolveWith(
-          //       //   (states) => RoundedRectangleBorder(
-          //       //     borderRadius: BorderRadius.circular(8.0),
-          //       //     side: const BorderSide(
-          //       //       color: PKTheme.primaryColor,
-          //       //       width: 2.0,
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //       shadowColor: MaterialStateProperty.resolveWith(
-          //           (states) => Colors.transparent),
-          //     ),
-          //     child: const Text(
-          //       'GO TO CART',
-          //       style: TextStyle(
-          //         fontSize: 18,
-          //         fontWeight: FontWeight.bold,
-          //       ),
-          //     ),
-          //   )
           ElevatedButton(
-            onPressed: widget.addToCart,
-            style: ElevatedButton.styleFrom(
+            onPressed: () async {
+              setState(() {
+                isATCLoading = true;
+              });
+              widget.addToCart();
+              await Future.delayed(const Duration(milliseconds: 500), () {
+                setState(() {
+                  isATCLoading = false;
+                  isAdded = true;
+                });
+              });
+              await Future.delayed(const Duration(milliseconds: 5000), () {
+                setState(() {
+                  isAdded = false;
+                });
+              });
+            },
+            style: isAdded
+                ? ButtonStyle(
+                    overlayColor: MaterialStateProperty.resolveWith(
+                        (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
+                    backgroundColor: MaterialStateProperty.resolveWith(
+                        (states) => Colors.transparent),
+                    foregroundColor: MaterialStateProperty.resolveWith(
+                        (states) => PKTheme.primaryColor),
+                    minimumSize: MaterialStateProperty.resolveWith(
+                        (states) => const Size(double.infinity, 52.0)),
+                    // shape: MaterialStateProperty.resolveWith(
+                    //   (states) => RoundedRectangleBorder(
+                    //     borderRadius: BorderRadius.circular(8.0),
+                    //     side: const BorderSide(
+                    //       color: PKTheme.primaryColor,
+                    //       width: 2.0,
+                    //     ),
+                    //   ),
+                    // ),
+                    shadowColor: MaterialStateProperty.resolveWith(
+                        (states) => Colors.transparent),
+                  )
+                : ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 52.0),
             ),
-            child: const Text(
-              'ADD TO CART',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: isAdded
+                ? const Text(
+                    'GO TO CART',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : isATCLoading
+                    ? const SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : const Text(
+                        'ADD TO CART',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
           ),
           const SizedBox(height: 10),
           ElevatedButton(

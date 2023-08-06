@@ -35,7 +35,7 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
 
   @override
   Widget build(BuildContext context) {
-    //[ ]: Make this container clickable and redirect to the product page
+    //[x]: Make this container clickable and redirect to the product page
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -100,7 +100,7 @@ class Product extends StatefulWidget {
   }) : super(key: key);
 
   //[ ]: Add a constructor to accept the product details
-  //[ ]: Add the ADD button functionality
+  //[x]: Add the ADD button functionality
   //-> Might want to move this widget to a more accessible place for reusability
   final int index;
 
@@ -323,12 +323,12 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                         });
                         controller.reset();
                       });
-                      // await Future.delayed(const Duration(milliseconds: 5000),
-                      //     () {
-                      //   setState(() {
-                      //     isAdded = false;
-                      //   });
-                      // });
+                      await Future.delayed(const Duration(milliseconds: 5000),
+                          () {
+                        setState(() {
+                          isAdded = false;
+                        });
+                      });
                     },
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.resolveWith(

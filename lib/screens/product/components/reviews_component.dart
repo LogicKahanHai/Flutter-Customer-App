@@ -106,6 +106,7 @@ class _ReviewsComponentState extends State<ReviewsComponent> {
               ),
               const Spacer(),
               TextButton(
+                //TODO: Add See All Reviews functionality
                 onPressed: () {},
                 child: const Text(
                   'See All',
@@ -228,7 +229,6 @@ class _ReviewsComponentState extends State<ReviewsComponent> {
           ),
           const SizedBox(height: 20),
           Divider(color: Colors.grey.shade700, thickness: 1),
-          const SizedBox(height: 20),
         ],
       ),
     );

@@ -1,12 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
-//TODO: Add Functionality to Bottom Navigation Bar
+//DONE: Add Functionality to Bottom Navigation Bar
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
+import 'package:pk_customer_app/reusable/bottom_nav_bar.dart';
 
 import '../components/pdt_components.dart';
 
@@ -105,6 +108,10 @@ class _ProductPageState extends State<ProductPage> {
                 BuyCartButtons(
                   addToCart: () {
                     //[ ]: Add event to add to cart
+                    BlocProvider.of<CartBloc>(context).add(
+                      CartAddProductEvent(
+                          widget.product.id, widget.product.selectedVariant),
+                    );
                   },
                 ),
                 const SizedBox(height: 20),
@@ -118,35 +125,10 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+      bottomNavigationBar: bottomNavBar(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        selectedIconTheme: const IconThemeData(color: Colors.black),
-        unselectedIconTheme: const IconThemeData(color: Colors.black),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: '',
-            activeIcon: Icon(Icons.home),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_border_outlined),
-            label: '',
-            activeIcon: Icon(Icons.bookmark),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
-            label: '',
-            activeIcon: Icon(Icons.account_circle),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag_outlined),
-            label: '',
-            activeIcon: Icon(Icons.shopping_bag),
-          ),
-        ],
+        context: context,
+        currentPage: 'product',
       ),
     );
   }

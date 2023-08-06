@@ -1,0 +1,115 @@
+import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/route_animations.dart';
+import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/screens/home/ui/home_page.dart';
+
+Widget bottomNavBar({
+  required int currentIndex,
+  required String currentPage,
+  required BuildContext context,
+}) {
+  return BottomNavigationBar(
+    type: BottomNavigationBarType.shifting,
+    showSelectedLabels: false,
+    showUnselectedLabels: false,
+    currentIndex: currentIndex,
+    onTap: (index) {
+      switch (index) {
+        case 0:
+          if (currentPage != 'home') {
+            Navigator.pushReplacement(
+                context,
+                RouteAnimations(
+                  nextPage: const HomePage(),
+                  animationDirection: AnimationDirection.leftToRight,
+                ).createRoute());
+          }
+          break;
+        case 1:
+          if (currentIndex != 1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Coming soon'),
+                backgroundColor: PKTheme.primaryColor,
+                duration: Duration(milliseconds: 1000),
+              ),
+            );
+            // if (currentPage != 'home') {
+            //   Navigator.pushReplacement(
+            //       context,
+            //       RouteAnimations(
+            //         nextPage: const HomePage(),
+            //         animationDirection: AnimationDirection.leftToRight,
+            //       ).createRoute());
+            // }
+          }
+          break;
+        case 2:
+          if (currentIndex != 2) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Coming soon'),
+                backgroundColor: PKTheme.primaryColor,
+                duration: Duration(milliseconds: 500),
+              ),
+            );
+            // if (currentPage != 'home') {
+            //   Navigator.pushReplacement(
+            //       context,
+            //       RouteAnimations(
+            //         nextPage: const HomePage(),
+            //         animationDirection: AnimationDirection.leftToRight,
+            //       ).createRoute());
+            // }
+          }
+          break;
+        case 3:
+          if (currentIndex != 3) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Coming soon'),
+                backgroundColor: PKTheme.primaryColor,
+                duration: Duration(milliseconds: 500),
+              ),
+            );
+            // if (currentPage != 'home') {
+            //   Navigator.pushReplacement(
+            //       context,
+            //       RouteAnimations(
+            //         nextPage: const HomePage(),
+            //         animationDirection: AnimationDirection.leftToRight,
+            //       ).createRoute());
+            // }
+          }
+          break;
+        default:
+          return;
+      }
+    },
+    selectedIconTheme: const IconThemeData(color: Colors.black),
+    unselectedIconTheme: const IconThemeData(color: Colors.black),
+    items: const [
+      BottomNavigationBarItem(
+        backgroundColor: PKTheme.bottomNavBarBg,
+        icon: Icon(Icons.home_outlined),
+        label: '',
+        activeIcon: Icon(Icons.home),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.bookmark_border_outlined),
+        label: '',
+        activeIcon: Icon(Icons.bookmark),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.account_circle_outlined),
+        label: '',
+        activeIcon: Icon(Icons.account_circle),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.shopping_bag_outlined),
+        label: '',
+        activeIcon: Icon(Icons.shopping_bag),
+      ),
+    ],
+  );
+}
