@@ -5,12 +5,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pk_customer_app/common/blocs/export_blocs.dart';
+import 'package:pk_customer_app/constants/route_animations.dart';
 
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/reusable/bottom_nav_bar.dart';
+import 'package:pk_customer_app/screens/cart/ui/cart_page.dart';
 
+import '../../../common/blocs/export_blocs.dart';
 import '../components/pdt_components.dart';
 
 class ProductPage extends StatefulWidget {
@@ -33,10 +35,12 @@ class _ProductPageState extends State<ProductPage> {
     variants = ProductRepo.variants
         .where((variant) => variant.productId == widget.product.id)
         .toList();
+    selectedVariant = widget.product.selectedVariant;
     super.initState();
   }
 
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
+  late String selectedVariant;
 
   @override
   Widget build(BuildContext context) {
@@ -52,78 +56,105 @@ class _ProductPageState extends State<ProductPage> {
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: Center(
-        child: SizedBox(
-          width: double.infinity,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: 'Home > Products > ',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                          ),
+      body: Stack(
+        children: [
+          Center(
+            child: SizedBox(
+              width: double.infinity,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: 'Home > Products > ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: widget.product.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        TextSpan(
-                          text: widget.product.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    // const SizedBox(height: 20),
+                    ImageCarousel(product: widget.product),
+                    const SizedBox(height: 20),
+                    ItemDetails(product: widget.product),
+                    const SizedBox(height: 20),
+                    SizeQty(
+                      variants: variants,
+                      onSizeChanged: (newVariant) {
+                        if (newVariant != null) {
+                          ProductRepo.updateSelectedVariant(
+                              widget.product.id, newVariant);
+                          setState(() {
+                            selectedVariant = newVariant;
+                          });
+                        }
+                      },
+                      onQuantChanged: (newVal) {
+                        setState(() {
+                          quantity = newVal;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    BuyCartButtons(
+                      addToCart: () {
+                        //[ ]: Add event to add to cart
+                        BlocProvider.of<CartBloc>(context).add(
+                          CartAddProductEvent(
+                              widget.product.id, selectedVariant),
+                        );
+                        setState(() {});
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    const PincodeComponent(),
+                    const SizedBox(height: 20),
+                    const InFoGredients(),
+                    const SizedBox(height: 20),
+                    const ReviewsComponent(),
+                    CartRepo.cart.cartProducts.isNotEmpty
+                        ? const SizedBox(height: 65)
+                        : const SizedBox.shrink(),
+                  ],
                 ),
-                // const SizedBox(height: 20),
-                ImageCarousel(product: widget.product),
-                const SizedBox(height: 20),
-                ItemDetails(product: widget.product),
-                const SizedBox(height: 20),
-                SizeQty(
-                  variants: variants,
-                  onSizeChanged: (newVariant) {
-                    if (newVariant != null) {
-                      ProductRepo.updateSelectedVariant(
-                          widget.product.id, newVariant);
-                    }
-                  },
-                  onQuantChanged: (newVal) {
-                    setState(() {
-                      quantity = newVal;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20),
-                BuyCartButtons(
-                  addToCart: () {
-                    //[ ]: Add event to add to cart
-                    BlocProvider.of<CartBloc>(context).add(
-                      CartAddProductEvent(
-                          widget.product.id, widget.product.selectedVariant),
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                const PincodeComponent(),
-                const SizedBox(height: 20),
-                const InFoGredients(),
-                const SizedBox(height: 20),
-                const ReviewsComponent(),
-              ],
+              ),
             ),
           ),
-        ),
+          CartRepo.cart.cartProducts.isNotEmpty
+              ? Container(
+                  alignment: Alignment.bottomCenter,
+                  child: CartTeaser(
+                    cart: CartRepo.cart,
+                    onCheckoutPressed: () {
+                      Navigator.push(
+                          context,
+                          RouteAnimations(
+                            nextPage: const CartPage(),
+                            animationDirection: AnimationDirection.leftToRight,
+                          ).createRoute());
+                    },
+                  ),
+                )
+              : Container(),
+        ],
       ),
       bottomNavigationBar: bottomNavBar(
         currentIndex: _currentIndex,

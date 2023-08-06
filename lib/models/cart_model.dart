@@ -6,5 +6,11 @@ class CartModel {
   List<CartItemModel> cartProducts;
   CartModel(this.cartProducts);
   
-
+  double get total {
+    double total = 0;
+    for (var element in cartProducts) {
+      total += element.total;
+    }
+    return total;
+  }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:pk_customer_app/constants/theme.dart';
 
-
 class BuyCartButtons extends StatefulWidget {
   final void Function() addToCart;
   const BuyCartButtons({
@@ -16,7 +15,6 @@ class BuyCartButtons extends StatefulWidget {
 }
 
 class _BuyCartButtonsState extends State<BuyCartButtons> {
-
   bool isATCLoading = false;
   bool isAdded = false;
 
@@ -46,21 +44,29 @@ class _BuyCartButtonsState extends State<BuyCartButtons> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () async {
-              setState(() {
-                isATCLoading = true;
-              });
-              widget.addToCart();
-              await Future.delayed(const Duration(milliseconds: 500), () {
+              if (isATCLoading) return;
+              if (isAdded) {
+                Navigator.pop(context);
+                return;
+              }
+
+              try {
                 setState(() {
-                  isATCLoading = false;
-                  isAdded = true;
+                  isATCLoading = true;
                 });
-              });
-              await Future.delayed(const Duration(milliseconds: 5000), () {
-                setState(() {
-                  isAdded = false;
+                widget.addToCart();
+                await Future.delayed(const Duration(milliseconds: 500), () {
+                  setState(() {
+                    isATCLoading = false;
+                    isAdded = true;
+                  });
                 });
-              });
+                await Future.delayed(const Duration(seconds: 10), () {
+                  setState(() {
+                    isAdded = false;
+                  });
+                });
+              } catch (_) {}
             },
             style: isAdded
                 ? ButtonStyle(
@@ -85,11 +91,11 @@ class _BuyCartButtonsState extends State<BuyCartButtons> {
                         (states) => Colors.transparent),
                   )
                 : ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 52.0),
-            ),
+                    minimumSize: const Size(double.infinity, 52.0),
+                  ),
             child: isAdded
                 ? const Text(
-                    'GO TO CART',
+                    'ADDED TO CART',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

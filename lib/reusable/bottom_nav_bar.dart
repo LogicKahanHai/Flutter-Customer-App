@@ -17,16 +17,18 @@ Widget bottomNavBar({
       switch (index) {
         case 0:
           if (currentPage != 'home') {
+            //FIXME: This should basically pop the stack till home page and not push a new page, because new page loads again and calls the server again.
             Navigator.pushReplacement(
                 context,
                 RouteAnimations(
                   nextPage: const HomePage(),
-                  animationDirection: AnimationDirection.leftToRight,
+                  animationDirection: AnimationDirection.rightToLeft,
                 ).createRoute());
           }
           break;
         case 1:
           if (currentIndex != 1) {
+            //FIXME: This is a temporary fix, remove this when the "Saved/bookmark page" is ready.
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Coming soon'),
@@ -46,6 +48,7 @@ Widget bottomNavBar({
           break;
         case 2:
           if (currentIndex != 2) {
+            //FIXME: This is a temporary fix, remove this when the "Profile page" is ready.
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Coming soon'),
@@ -65,6 +68,7 @@ Widget bottomNavBar({
           break;
         case 3:
           if (currentIndex != 3) {
+            //FIXME: This is a temporary fix, remove this when the "Cart page" is ready.
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Coming soon'),

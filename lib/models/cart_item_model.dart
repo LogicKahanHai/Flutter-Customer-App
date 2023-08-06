@@ -61,4 +61,7 @@ class CartItemModel {
           product.selectedVariant,
         ).salePrice,
         quantity = 1;
+
+  double get total =>
+      regPrice != salePrice ? salePrice * quantity : regPrice * quantity;
 }
