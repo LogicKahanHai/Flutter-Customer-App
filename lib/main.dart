@@ -8,6 +8,8 @@ import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
 import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
+//TODO: Figure a way to make the Bottom Navbar stay after the home page animation. pages change in the above portion of the code but the navbar stays the same.
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
@@ -62,7 +64,3 @@ class _AppRootState extends State<AppRoot> {
     );
   }
 }
-
-///[ ]: Product Model is not able to retrieve data from Map... Map<String, String> v/s Map<String, dynamic> ka locha hai
-///[ ]: Jab product model sahi ho jaayega then cart se products ko update karna hai.. ig ho gaya hai just ye upar wala error rehta hai... 
-///[ ]: Ya to User Data persist ho rahi hai ya phir cart... to iska jugaad lagana hai ab.

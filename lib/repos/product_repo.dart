@@ -1,14 +1,19 @@
 import 'package:pk_customer_app/models/models.dart';
 
 class ProductRepo {
-  ProductRepo();
+  ProductRepo() {
+    getProducts();
+  }
 
   static late List<ProductModel> _products;
   static late List<VariantModel> _variants;
+  static late List<ReviewModel> _reviews;
 
-  static get products => _products;
+  static List<ProductModel> get products => _products;
 
-  static get variants => _variants;
+  static List<VariantModel> get variants => _variants;
+
+  static List<ReviewModel> get reviews => _reviews;
 
   set setProducts(List<ProductModel> products) {
     _products.addAll(products);
@@ -121,6 +126,49 @@ class ProductRepo {
         value: '500 g',
       ),
     ];
+
+    _reviews = [
+      ReviewModel(
+        productId: 'xyz',
+        name: 'Sakshi',
+        title: 'Amazing taste',
+        rating: 4.5,
+        image: 'https://placehold.co/150',
+      ),
+      ReviewModel(
+        productId: 'xyz',
+        name: 'Sakshi',
+        title: 'Woww!!',
+        review:
+            'I ordered chakli and it tasted just like my dadi’s. Can’t get over it. You must try it!',
+        rating: 4.5,
+        image: 'https://placehold.co/150',
+      ),
+      ReviewModel(
+        productId: 'xyz',
+        name: 'Naveen',
+        title: 'Amazing taste',
+        review:
+            'I ordered chakli and it tasted just like my dadi’s. I\'m a hosteller',
+        rating: 4.5,
+      ),
+      ReviewModel(
+        productId: 'xyz',
+        name: 'Uma',
+        title: 'Amazing taste',
+        review:
+            'Do quis cupidatat duis cupidatat laborum ex dolor consequat quis voluptate ex.',
+        rating: 4.5,
+        image: 'https://placehold.co/150',
+      ),
+      ReviewModel(
+        productId: 'xyz',
+        name: 'Ankita',
+        rating: 4.5,
+        review: 'Wow! Loved it.',
+        image: 'https://placehold.co/150',
+      ),
+    ];
   }
 
   static int get productCount {
@@ -138,13 +186,23 @@ class ProductRepo {
 
   static VariantModel getVariantById(String id, String variantId) {
     try {
-
       return _variants.firstWhere(
           (element) => element.productId == id && element.id == variantId);
     } catch (e) {
       return _variants.firstWhere(
         (element) => element.productId == id,
       );
+    }
+  }
+
+  static int getDiscount(String id, String variantId) {
+    try {
+      final variant = _variants.firstWhere(
+          (element) => element.productId == id && element.id == variantId);
+      return ((variant.regPrice - variant.salePrice) / variant.regPrice * 100)
+          .round();
+    } catch (e) {
+      return 0;
     }
   }
 

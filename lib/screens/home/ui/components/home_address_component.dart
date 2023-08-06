@@ -59,7 +59,8 @@ class _HomeAddressSelectComponentState
                             style: TextStyle(color: Colors.red),
                           )
                         ],
-                      )
+                      ),
+                      const SizedBox(height: 15),
                     ],
                   ),
                   TextButton(
