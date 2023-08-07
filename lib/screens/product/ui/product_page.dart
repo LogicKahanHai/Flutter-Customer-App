@@ -30,12 +30,23 @@ class _ProductPageState extends State<ProductPage> {
   late List<VariantModel> variants;
   int quantity = 1;
 
-  @override
-  void initState() {
+  void initStuff() {
     variants = ProductRepo.variants
         .where((variant) => variant.productId == widget.product.id)
         .toList();
     selectedVariant = widget.product.selectedVariant;
+    setState(() {});
+  }
+
+  void refresh(String newVariant) {
+    setState(() {
+      selectedVariant = newVariant;
+    });
+  }
+
+  @override
+  void initState() {
+    initStuff();
     super.initState();
   }
 
@@ -44,12 +55,14 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    ProductModel pdt = widget.product;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        title: Text(widget.product.name,
+        title: Text(pdt.name,
             style: const TextStyle(fontSize: 22, color: Colors.black)),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
@@ -80,7 +93,7 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                             ),
                             TextSpan(
-                              text: widget.product.name,
+                              text: pdt.name,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -92,19 +105,16 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                     ),
                     // const SizedBox(height: 20),
-                    ImageCarousel(product: widget.product),
+                    ImageCarousel(product: pdt),
                     const SizedBox(height: 20),
-                    ItemDetails(product: widget.product),
+                    ItemDetails(productId: pdt.id, variantId: selectedVariant),
                     const SizedBox(height: 20),
                     SizeQty(
                       variants: variants,
                       onSizeChanged: (newVariant) {
                         if (newVariant != null) {
-                          ProductRepo.updateSelectedVariant(
-                              widget.product.id, newVariant);
-                          setState(() {
-                            selectedVariant = newVariant;
-                          });
+                          ProductRepo.updateSelectedVariant(pdt.id, newVariant);
+                          refresh(newVariant);
                         }
                       },
                       onQuantChanged: (newVal) {
@@ -119,7 +129,10 @@ class _ProductPageState extends State<ProductPage> {
                         //[ ]: Add event to add to cart
                         BlocProvider.of<CartBloc>(context).add(
                           CartAddProductEvent(
-                              widget.product.id, selectedVariant),
+                            productId: pdt.id,
+                            variantId: selectedVariant,
+                            quantity: quantity,
+                          ),
                         );
                         setState(() {});
                       },
@@ -131,7 +144,7 @@ class _ProductPageState extends State<ProductPage> {
                     const SizedBox(height: 20),
                     const ReviewsComponent(),
                     CartRepo.cart.cartProducts.isNotEmpty
-                        ? const SizedBox(height: 65)
+                        ? Container(height: 65, color: Colors.white)
                         : const SizedBox.shrink(),
                   ],
                 ),
@@ -145,11 +158,12 @@ class _ProductPageState extends State<ProductPage> {
                     cart: CartRepo.cart,
                     onCheckoutPressed: () {
                       Navigator.push(
-                          context,
-                          RouteAnimations(
-                            nextPage: const CartPage(),
-                            animationDirection: AnimationDirection.leftToRight,
-                          ).createRoute());
+                        context,
+                        RouteAnimations(
+                          nextPage: const CartPage(),
+                          animationDirection: AnimationDirection.leftToRight,
+                        ).createRoute(),
+                      ).then((value) => initStuff());
                     },
                   ),
                 )

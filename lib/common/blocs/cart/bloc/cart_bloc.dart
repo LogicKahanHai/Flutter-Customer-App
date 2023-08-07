@@ -28,8 +28,27 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
             .copyWith(selectedVariant: event.variantId);
         try {
           //DONE: add to cart
-          CartRepo.addProduct(product);
-          
+          CartRepo.addProduct(product, event.quantity);
+
+          // ProductRepo.addToCart(event.product.id);
+          // CartRepo.products.add(ProductRepo.getProductById(event.product.id));
+          //DONE: Make Cart State persistant.
+          emit(
+            CartLoaded(CartRepo.products),
+          );
+        } catch (_) {}
+      }
+    });
+
+    on<CartRemoveProductEvent>((event, emit) async {
+      if (state is CartLoaded) {
+        ProductModel product = ProductRepo.getProductById(event.productId)
+            .copyWith(selectedVariant: event.variantId);
+        try {
+          //DONE: add to cart
+
+          CartRepo.removeProduct(product);
+
           // ProductRepo.addToCart(event.product.id);
           // CartRepo.products.add(ProductRepo.getProductById(event.product.id));
           //DONE: Make Cart State persistant.
@@ -76,6 +95,7 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
   @override
   Map<String, dynamic>? toJson(CartState state) {
     if (state is CartLoaded) {
+      print('object');
       return state.toJson();
     } else {
       return null;

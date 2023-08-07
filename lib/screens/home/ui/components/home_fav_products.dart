@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/product/ui/product_page.dart';
@@ -71,6 +72,9 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
                     itemBuilder: (context, index) {
                       return Product(
                         index: index,
+                        onChangedSetState: () {
+                          setState(() {});
+                        },
                       );
                     },
                   );
@@ -94,8 +98,10 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
 }
 
 class Product extends StatefulWidget {
+  final void Function() onChangedSetState;
   const Product({
     Key? key,
+    required this.onChangedSetState,
     required this.index,
   }) : super(key: key);
 
@@ -153,6 +159,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
       _dropdownValue = value;
       isAdded = false;
     });
+    widget.onChangedSetState();
   }
 
   @override
@@ -295,7 +302,10 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                         },
                       ).toList(),
                       value: _dropdownValue,
-                      onChanged: _onChanged,
+                      onChanged: (value) {
+                        _onChanged(value);
+                        setState(() {});
+                      },
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
@@ -314,7 +324,11 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                       });
                       controller.forward();
                       BlocProvider.of<CartBloc>(context).add(
-                          CartAddProductEvent(_product.id, _dropdownValue));
+                        CartAddProductEvent(
+                          productId: _product.id,
+                          variantId: _dropdownValue,
+                        ),
+                      );
                       await Future.delayed(const Duration(milliseconds: 1000),
                           () {
                         setState(() {

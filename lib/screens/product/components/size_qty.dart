@@ -33,9 +33,9 @@ class _SizeQtyState extends State<SizeQty> {
 
   void _onSizeChanged(String? newVar) {
     setState(() {
-      widget.onSizeChanged(newVar);
       _dropdownValue = newVar!;
     });
+    widget.onSizeChanged(newVar);
   }
 
   void _onQuantChanged(dynamic change) {
