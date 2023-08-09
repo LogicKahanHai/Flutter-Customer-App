@@ -143,7 +143,7 @@ class _ProductPageState extends State<ProductPage> {
                     const InFoGredients(),
                     const SizedBox(height: 20),
                     const ReviewsComponent(),
-                    CartRepo.cart.cartProducts.isNotEmpty
+                    CartRepo.products.isNotEmpty
                         ? Container(height: 65, color: Colors.white)
                         : const SizedBox.shrink(),
                   ],
@@ -151,7 +151,7 @@ class _ProductPageState extends State<ProductPage> {
               ),
             ),
           ),
-          CartRepo.cart.cartProducts.isNotEmpty
+          CartRepo.products.isNotEmpty
               ? Container(
                   alignment: Alignment.bottomCenter,
                   child: Teaser(

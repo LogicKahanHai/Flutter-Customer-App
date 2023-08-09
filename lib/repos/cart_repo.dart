@@ -1,9 +1,9 @@
 import 'package:pk_customer_app/models/models.dart';
 
 class CartRepo {
-  static CartModel cart = CartModel([]);
+  static CartModel _cart = CartModel([]);
 
-  static List<CartItemModel> get products => cart.cartProducts;
+  static List<CartItemModel> get products => _cart.cartProducts;
 
   static CartItemModel getCartItemById(String id) =>
       products.where((element) => element.id == id).first;
@@ -12,24 +12,24 @@ class CartRepo {
 
   static void addProduct(ProductModel product, int quant) {
     try {
-      int index = cart.cartProducts.indexWhere(
+      int index = _cart.cartProducts.indexWhere(
         (element) =>
             element.productId == product.id &&
             element.variantId == product.selectedVariant,
       );
       if (index != -1) {
-        cart.cartProducts[index].quantity += quant;
-        cart.cartProducts = cart.cartProducts.toSet().toList();
+        _cart.cartProducts[index].quantity += quant;
+        _cart.cartProducts = _cart.cartProducts.toSet().toList();
         return;
       }
-      cart.cartProducts.add(
+      _cart.cartProducts.add(
         CartItemModel.fromProduct(
           product,
-          cart.cartProducts.toSet().toList().length,
+          _cart.cartProducts.toSet().toList().length,
           quant,
         ),
       );
-      cart.cartProducts = cart.cartProducts.toSet().toList();
+      _cart.cartProducts = _cart.cartProducts.toSet().toList();
       
     } catch (_) {}
   }
@@ -40,14 +40,14 @@ class CartRepo {
         product.quantity--;
         return;
       } else {
-        cart.cartProducts.remove(product);
-        cart.cartProducts = cart.cartProducts.toSet().toList();
+        _cart.cartProducts.remove(product);
+        _cart.cartProducts = _cart.cartProducts.toSet().toList();
       }
     } catch (_) {}
   }
 
   static num get total {
-    double tot = cart.cartProducts.fold(
+    double tot = _cart.cartProducts.fold(
       0,
       (previousValue, element) =>
           previousValue +
@@ -58,7 +58,7 @@ class CartRepo {
     return tot != tot.round() ? tot : tot.round();
   }
 
-  static double get taxes => cart.cartProducts.fold(
+  static double get taxes => _cart.cartProducts.fold(
         0,
         (previousValue, element) =>
             previousValue +
@@ -72,17 +72,17 @@ class CartRepo {
   static double get grandTotal => total + taxes + deliveryCharge;
 
   static void clearCart() {
-    cart.cartProducts.clear();
+    _cart.cartProducts.clear();
   }
 
   static void setCart(List<CartItemModel> newCart) {
     for (var item in newCart) {
-      cart.cartProducts.add(item);
+      _cart.cartProducts.add(item);
     }
   }
 
   // static bool increaseQuantity(String cartItemId) {
-  //   final index = cart.cartProducts
+  //   final index = _cart.cartProducts
   //       .toList()
   //       .indexWhere((element) => element.id == cartItemId);
   //   if (index != -1) {

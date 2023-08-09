@@ -26,7 +26,7 @@ class _CartProductsState extends State<CartProducts> {
       color: Colors.white,
       child: Column(
         children: [
-          if (CartRepo.cart.cartProducts.isEmpty)
+          if (CartRepo.products.isEmpty)
             const Center(
               child: Text('No items in cart'),
             )
@@ -34,7 +34,7 @@ class _CartProductsState extends State<CartProducts> {
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: CartRepo.cart.cartProducts.length,
+              itemCount: CartRepo.products.length,
               itemBuilder: (context, index) {
                 return CartItemUi(
                   index: index,

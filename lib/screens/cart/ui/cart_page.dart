@@ -20,6 +20,7 @@ class _CartPageState extends State<CartPage> {
   double taxes = 0;
   double grandTotal = 0;
   bool isUpdating = false;
+  String paymentMethod = 'gpay';
 
   void refresh() {
     setState(() {
@@ -72,11 +73,11 @@ class _CartPageState extends State<CartPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: Text(
-                      CartRepo.cart.cartProducts.isEmpty
+                      CartRepo.products.isEmpty
                           ? 'No items added'
-                          : CartRepo.cart.cartProducts.length == 1
+                          : CartRepo.products.length == 1
                               ? '1 item added'
-                              : '${CartRepo.cart.cartProducts.length} items added',
+                              : '${CartRepo.products.length} items added',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -108,103 +109,34 @@ class _CartPageState extends State<CartPage> {
                     grandTotal: grandTotal,
                   ),
                   const SizedBox(height: 20),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      'Payment Method',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/gpay.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  'Google Pay',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/icons/cod.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  'Cash on Delivery',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  Payment(updatePaymentMethod: (value) {
+                    setState(() {
+                      paymentMethod = value;
+                    });
+                  }),
                   const SizedBox(height: 20),
                   AdditionalProducts(
                     update: refresh,
                   ),
-                  CartRepo.cart.cartProducts.isNotEmpty
+                  CartRepo.products.isNotEmpty
                       ? Container(height: 65, color: Colors.white)
                       : const SizedBox.shrink(),
                 ],
               ),
             ),
           ),
-          CartRepo.cart.cartProducts.isNotEmpty
+          CartRepo.products.isNotEmpty
               ? Container(
                   alignment: Alignment.bottomCenter,
                   child: Teaser(
                     onButtonPressed: () {
-                      Navigator.push(
-                        context,
-                        RouteAnimations(
-                          nextPage: const CartPage(),
-                          animationDirection: AnimationDirection.leftToRight,
-                        ).createRoute(),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   RouteAnimations(
+                      //     nextPage: const CartPage(),
+                      //     animationDirection: AnimationDirection.leftToRight,
+                      //   ).createRoute(),
+                      // );
                       // .then((value) => initStuff());
                     },
                     value: CartRepo.grandTotal.toStringAsFixed(2),

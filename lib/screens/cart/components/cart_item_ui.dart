@@ -25,7 +25,7 @@ class _CartItemUiState extends State<CartItemUi> {
 
   @override
   void initState() {
-    cartItem = CartRepo.cart.cartProducts[widget.index];
+    cartItem = CartRepo.products[widget.index];
     super.initState();
   }
 
