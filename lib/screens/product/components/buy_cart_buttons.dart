@@ -124,26 +124,9 @@ class _BuyCartButtonsState extends State<BuyCartButtons> {
               //[ ]: Add event to navigate to Buy Now
               // context.read<ProductBloc>().add(GoToCartEvent());
             },
-            style: ButtonStyle(
-              overlayColor: MaterialStateProperty.resolveWith(
-                  (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
-              backgroundColor: MaterialStateProperty.resolveWith(
-                  (states) => Colors.transparent),
-              foregroundColor: MaterialStateProperty.resolveWith(
-                  (states) => PKTheme.primaryColor),
+            style: PKTheme.hollowButtonWithBorder.copyWith(
               minimumSize: MaterialStateProperty.resolveWith(
                   (states) => const Size(double.infinity, 52.0)),
-              shape: MaterialStateProperty.resolveWith(
-                (states) => RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: const BorderSide(
-                    color: PKTheme.primaryColor,
-                    width: 2.0,
-                  ),
-                ),
-              ),
-              shadowColor: MaterialStateProperty.resolveWith(
-                  (states) => Colors.transparent),
             ),
             child: const Text(
               'BUY NOW',

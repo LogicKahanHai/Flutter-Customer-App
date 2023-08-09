@@ -6,9 +6,11 @@ import 'package:pk_customer_app/screens/cart/components/cart_item_ui.dart';
 
 class CartProducts extends StatefulWidget {
   final void Function() updateCart;
+  final bool isUpdating;
   const CartProducts({
     Key? key,
     required this.updateCart,
+    required this.isUpdating,
   }) : super(key: key);
 
   @override
@@ -24,17 +26,22 @@ class _CartProductsState extends State<CartProducts> {
       color: Colors.white,
       child: Column(
         children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: CartRepo.cart.cartProducts.length,
-            itemBuilder: (context, index) {
-              return CartItemUi(
-                index: index,
-                updateCart: widget.updateCart,
-              );
-            },
-          )
+          if (CartRepo.cart.cartProducts.isEmpty)
+            const Center(
+              child: Text('No items in cart'),
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: CartRepo.cart.cartProducts.length,
+              itemBuilder: (context, index) {
+                return CartItemUi(
+                  index: index,
+                  updateCart: widget.updateCart,
+                );
+              },
+            )
         ],
       ),
     );

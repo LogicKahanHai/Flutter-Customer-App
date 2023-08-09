@@ -100,16 +100,19 @@ Widget bottomNavBar({
         activeIcon: Icon(Icons.home),
       ),
       BottomNavigationBarItem(
+        backgroundColor: PKTheme.bottomNavBarBg,
         icon: Icon(Icons.bookmark_border_outlined),
         label: '',
         activeIcon: Icon(Icons.bookmark),
       ),
       BottomNavigationBarItem(
+        backgroundColor: PKTheme.bottomNavBarBg,
         icon: Icon(Icons.account_circle_outlined),
         label: '',
         activeIcon: Icon(Icons.account_circle),
       ),
       BottomNavigationBarItem(
+        backgroundColor: PKTheme.bottomNavBarBg,
         icon: Icon(Icons.shopping_bag_outlined),
         label: '',
         activeIcon: Icon(Icons.shopping_bag),

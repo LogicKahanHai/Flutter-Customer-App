@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
-import 'package:pk_customer_app/common/components/common_components.dart';
+import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/reusable/bottom_nav_bar.dart';
 import 'package:pk_customer_app/screens/home/bloc/home_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/components/home_components.dart';
 

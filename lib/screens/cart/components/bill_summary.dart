@@ -2,6 +2,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/theme.dart';
 
 import 'package:pk_customer_app/repos/repos.dart';
 
@@ -43,9 +44,7 @@ class _BillSummaryState extends State<BillSummary> {
                 ),
               ),
               Text(
-                CartRepo.total != CartRepo.total.round()
-                    ? '₹ ${CartRepo.total}'
-                    : '₹ ${CartRepo.total.round()}',
+                CartRepo.total.toString(),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -58,13 +57,27 @@ class _BillSummaryState extends State<BillSummary> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Delivery Charges and Taxes',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Delivery Charges and Taxes',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  if (CartRepo.total < 1000 && CartRepo.total > 500)
+                    Text(
+                      'order snacks worth ₹ ${1000 - CartRepo.total} more to get free delivery',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: PKTheme.primaryColor,
+                      ),
+                    ),
+                ],
               ),
               Text(
                 CartRepo.taxes != CartRepo.taxes.round()

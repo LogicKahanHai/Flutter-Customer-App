@@ -5,11 +5,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
-import 'package:pk_customer_app/reusable/bottom_nav_bar.dart';
 import 'package:pk_customer_app/screens/cart/ui/cart_page.dart';
 
 import '../../../common/blocs/export_blocs.dart';
@@ -154,9 +154,8 @@ class _ProductPageState extends State<ProductPage> {
           CartRepo.cart.cartProducts.isNotEmpty
               ? Container(
                   alignment: Alignment.bottomCenter,
-                  child: CartTeaser(
-                    cart: CartRepo.cart,
-                    onCheckoutPressed: () {
+                  child: Teaser(
+                    onButtonPressed: () {
                       Navigator.push(
                         context,
                         RouteAnimations(
@@ -165,6 +164,40 @@ class _ProductPageState extends State<ProductPage> {
                         ).createRoute(),
                       ).then((value) => initStuff());
                     },
+                    value: CartRepo.total.toStringAsFixed(2),
+                    buttonTitle: 'Checkout',
+                    description: Row(
+                      children: [
+                        Text(
+                          'Sub Total',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '|',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          CartRepo.products.length == 1
+                              ? '1 item'
+                              : '${CartRepo.products.length} items',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : Container(),

@@ -8,6 +8,8 @@ class CartRepo {
   static CartItemModel getCartItemById(String id) =>
       products.where((element) => element.id == id).first;
 
+
+
   static void addProduct(ProductModel product, int quant) {
     try {
       int index = cart.cartProducts.indexWhere(
@@ -28,6 +30,7 @@ class CartRepo {
         ),
       );
       cart.cartProducts = cart.cartProducts.toSet().toList();
+      
     } catch (_) {}
   }
 
@@ -43,14 +46,17 @@ class CartRepo {
     } catch (_) {}
   }
 
-  static double get total => cart.cartProducts.fold(
-        0,
-        (previousValue, element) =>
-            previousValue +
-            (element.salePrice == 0
-                ? element.regPrice * element.quantity
-                : element.salePrice * element.quantity),
-      );
+  static num get total {
+    double tot = cart.cartProducts.fold(
+      0,
+      (previousValue, element) =>
+          previousValue +
+          (element.salePrice == 0
+              ? element.regPrice * element.quantity
+              : element.salePrice * element.quantity),
+    );
+    return tot != tot.round() ? tot : tot.round();
+  }
 
   static double get taxes => cart.cartProducts.fold(
         0,
@@ -61,7 +67,7 @@ class CartRepo {
                 : element.salePrice * element.quantity * 0.13),
       );
 
-  static double get deliveryCharge => 20;
+  static double get deliveryCharge => taxes == 0 ? 0 : 20.0;
 
   static double get grandTotal => total + taxes + deliveryCharge;
 
