@@ -14,26 +14,22 @@ class CartAddProductEvent extends CartEvent {
   final String productId;
   final String variantId;
   final int quantity;
-  const CartAddProductEvent(
-    {
+  const CartAddProductEvent({
     required this.productId,
     required this.variantId,
     this.quantity = 1,
-  }
-  );
+  });
 
   @override
   List<Object> get props => [productId, variantId];
 }
 
 class CartRemoveProductEvent extends CartEvent {
-  final String productId;
-  final String variantId;
-  const CartRemoveProductEvent(
-    this.productId,
-    this.variantId,
-  );
+  final String cartItemId;
+  const CartRemoveProductEvent({
+    required this.cartItemId,
+  });
 
   @override
-  List<Object> get props => [productId, variantId];
+  List<Object> get props => [cartItemId];
 }

@@ -86,8 +86,7 @@ class _CartItemUiState extends State<CartItemUi> {
                             if (cartItem.quantity > 1) {
                               BlocProvider.of<CartBloc>(context).add(
                                 CartRemoveProductEvent(
-                                  cartItem.productId,
-                                  cartItem.variantId,
+                                  cartItemId: cartItem.id,
                                 ),
                               );
                               widget.updateCart();
@@ -107,8 +106,7 @@ class _CartItemUiState extends State<CartItemUi> {
                                           BlocProvider.of<CartBloc>(context)
                                               .add(
                                             CartRemoveProductEvent(
-                                              cartItem.productId,
-                                              cartItem.variantId,
+                                              cartItemId: cartItem.id,
                                             ),
                                           );
                                           Navigator.pop(context);

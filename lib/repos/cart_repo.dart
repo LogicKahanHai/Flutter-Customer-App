@@ -5,6 +5,9 @@ class CartRepo {
 
   static List<CartItemModel> get products => cart.cartProducts;
 
+  static CartItemModel getCartItemById(String id) =>
+      products.where((element) => element.id == id).first;
+
   static void addProduct(ProductModel product, int quant) {
     try {
       int index = cart.cartProducts.indexWhere(
@@ -26,23 +29,16 @@ class CartRepo {
       );
       cart.cartProducts = cart.cartProducts.toSet().toList();
     } catch (_) {}
-    
   }
 
-  static void removeProduct(ProductModel product) {
+  static void removeProduct(CartItemModel product) {
     try {
-      int index = cart.cartProducts.indexWhere(
-        (element) =>
-            element.productId == product.id &&
-            element.variantId == product.selectedVariant,
-      );
-      if (index != -1) {
-        cart.cartProducts[index].quantity--;
-        if (cart.cartProducts[index].quantity == 0) {
-          cart.cartProducts.removeAt(index);
-        }
-        cart.cartProducts = cart.cartProducts.toSet().toList();
+      if (product.quantity > 1) {
+        product.quantity--;
         return;
+      } else {
+        cart.cartProducts.remove(product);
+        cart.cartProducts = cart.cartProducts.toSet().toList();
       }
     } catch (_) {}
   }
