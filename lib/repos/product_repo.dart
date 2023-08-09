@@ -28,7 +28,7 @@ class ProductRepo {
     _products = [
       ProductModel(
         id: '1',
-        name: 'Laddoos',
+        name: 'Chakli',
         description: 'description',
         image: 'assets/images/products/chakli.png',
         selectedVariant: '',
@@ -36,17 +36,17 @@ class ProductRepo {
       ),
       ProductModel(
         id: '2',
-        name: 'Chakli',
+        name: 'Modak',
         description: 'description',
-        image: 'assets/images/products/chakli.png',
+        image: 'assets/images/products/modak.png',
         selectedVariant: '',
         rating: 4.8,
       ),
       ProductModel(
         id: '3',
-        name: 'Modak',
+        name: 'Chivda',
         description: 'description',
-        image: 'assets/images/products/chakli.png',
+        image: 'assets/images/products/chivda.png',
         selectedVariant: '',
         rating: 4.9,
       ),

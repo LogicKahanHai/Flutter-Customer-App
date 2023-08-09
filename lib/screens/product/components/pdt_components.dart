@@ -5,3 +5,4 @@ export 'pincode_component.dart';
 export 'in_fo_gredients.dart';
 export 'reviews_component.dart';
 export 'size_qty.dart';
+export 'cart_teaser.dart';

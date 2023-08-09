@@ -1,11 +1,18 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/product_repo.dart';
 import 'package:pk_customer_app/reusable/rating_stars.dart';
 
 class ItemDetails extends StatefulWidget {
-  final ProductModel product;
-  const ItemDetails({Key? key, required this.product}) : super(key: key);
+  final String productId;
+  final String variantId;
+  const ItemDetails({
+    Key? key,
+    required this.productId,
+    required this.variantId,
+  }) : super(key: key);
 
   @override
   State<ItemDetails> createState() => _ItemDetailsState();
@@ -16,14 +23,20 @@ class _ItemDetailsState extends State<ItemDetails> {
   @override
   void initState() {
     selectedVariant = ProductRepo.getVariantById(
-      widget.product.id,
-      widget.product.selectedVariant,
+      widget.productId,
+      widget.variantId,
     );
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    selectedVariant = ProductRepo.getVariantById(
+      widget.productId,
+      widget.variantId,
+    );
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -32,7 +45,7 @@ class _ItemDetailsState extends State<ItemDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.product.name,
+            ProductRepo.getProductById(widget.productId).name,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -96,7 +109,7 @@ class _ItemDetailsState extends State<ItemDetails> {
               ),
               const SizedBox(width: 10),
               Text(
-                '${ProductRepo.getDiscount(widget.product.id, selectedVariant.id)}% OFF',
+                '${ProductRepo.getDiscount(widget.productId, selectedVariant.id)}% OFF',
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

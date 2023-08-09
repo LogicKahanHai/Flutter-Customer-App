@@ -10,6 +10,7 @@ class CartItemModel {
   final String variantName;
   final double regPrice;
   final double salePrice;
+  final String image;
   int quantity;
   CartItemModel({
     required this.id,
@@ -19,6 +20,7 @@ class CartItemModel {
     required this.variantName,
     required this.regPrice,
     required this.salePrice,
+    required this.image,
     required this.quantity,
   });
 
@@ -30,6 +32,7 @@ class CartItemModel {
         variantName = json['variantName'],
         regPrice = json['regPrice'],
         salePrice = json['salePrice'],
+        image = json['image'],
         quantity = json['quantity'];
 
   Map<String, dynamic> toJson() => {
@@ -40,10 +43,11 @@ class CartItemModel {
         'variantName': variantName,
         'regPrice': regPrice,
         'salePrice': salePrice,
+        'image': image,
         'quantity': quantity,
       };
 
-  CartItemModel.fromProduct(ProductModel product, int cartItemlength)
+  CartItemModel.fromProduct(ProductModel product, int cartItemlength, int quant)
       : id = cartItemlength.toString(),
         productId = product.id,
         variantId = product.selectedVariant,
@@ -60,5 +64,38 @@ class CartItemModel {
           product.id,
           product.selectedVariant,
         ).salePrice,
-        quantity = 1;
+        image = product.image,
+        quantity = quant;
+
+  double get total =>
+      regPrice != salePrice ? salePrice * quantity : regPrice * quantity;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is CartItemModel &&
+        other.id == id &&
+        other.productId == productId &&
+        other.variantId == variantId &&
+        other.productName == productName &&
+        other.variantName == variantName &&
+        other.regPrice == regPrice &&
+        other.salePrice == salePrice &&
+        other.image == image &&
+        other.quantity == quantity;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        productId.hashCode ^
+        variantId.hashCode ^
+        productName.hashCode ^
+        variantName.hashCode ^
+        regPrice.hashCode ^
+        salePrice.hashCode ^
+        image.hashCode ^
+        quantity.hashCode;
+  }
 }
