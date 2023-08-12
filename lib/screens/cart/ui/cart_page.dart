@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/reusable/common_components.dart';
-import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/screens/cart/components/cart_components.dart';

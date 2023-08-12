@@ -1,7 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
+
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
@@ -11,7 +13,10 @@ import '../../../../models/models.dart';
 
 class OtpPage extends StatefulWidget {
   final String phone;
-  const OtpPage({super.key, required this.phone});
+  const OtpPage({
+    Key? key,
+    required this.phone,
+  }) : super(key: key);
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -63,11 +68,11 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    try {} catch (e) {
-      _innerAnimations.reset();
-      _outerAnimations.reset();
-      initialiseStuff();
-    }
+    // try {} catch (e) {
+    //   _innerAnimations.reset();
+    //   _outerAnimations.reset();
+    //   initialiseStuff();
+    // }
 
     final defaultPinTheme = PinTheme(
       width: 56,
@@ -117,7 +122,18 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
         listenWhen: (previous, current) => current is VerifyActionState,
         buildWhen: (previous, current) => current is! VerifyActionState,
         listener: (context, state) async {
-          if (state is VerifyFailure) {
+
+          if (state is VerifyBackActionState) {
+            Navigator.of(context).pop();
+          } else if (state is VerifyCodeSentFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error),
+                duration: const Duration(seconds: 1),
+              ),
+            );
+            Navigator.of(context).pop();
+          } else if (state is VerifyFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.error),
@@ -128,7 +144,16 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
             _otpController.clear();
             _verifyBloc.add(VerifyFailureHandlerEvent(phone: widget.phone));
           } else if (state is VerifySuccess) {
-            _userBloc.add(UserLoginEvent(user: UserModel(phone: widget.phone)));
+            //DONE: Get User Id from the API response and add that to the user model
+            _userBloc.add(
+              UserLoginEvent(
+                user: UserModel.fromLogin(
+                  state.phone,
+                  state.token,
+                  state.uid,
+                ),
+              ),
+            );
             _innerAnimations.reverse();
             await _outerAnimations.reverse();
             pushToHomePage();
@@ -159,6 +184,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
               );
             case VerifyCodeSentSuccess:
               final String phone = (state as VerifyCodeSentSuccess).phone;
+              final String rid = (state).rid;
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -321,6 +347,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                                           VerifyCodeEvent(
                                             phone: phone,
                                             code: _otpController.text,
+                                            rid: rid,
                                           ),
                                         );
                                       }
@@ -491,10 +518,6 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-              );
-            case VerifyCodeSentFailure:
-              return const Center(
-                child: Text('Something went wrong!'),
               );
             case VerifyLoading:
               return const Center(
