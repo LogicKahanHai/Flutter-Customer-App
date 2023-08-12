@@ -61,7 +61,8 @@ class SearchSnacks extends SearchDelegate {
             textInputAction: TextInputAction.search,
             searchFieldStyle: const TextStyle(
               color: Colors.grey,
-            ));
+          ),
+        );
   List<Map<String, Widget>> items = [
     {
       'title': const Text(

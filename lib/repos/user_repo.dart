@@ -8,7 +8,7 @@ class UserRepo {
       AddressModel(
         id: '1',
         addressType: 'Home',
-        address: '123, ABC Street, XYZ City',
+        addressLine1: '123, ABC Street, XYZ City',
         lat: '12.345678',
         lon: '98.765432',
         userId: '1',
@@ -17,7 +17,7 @@ class UserRepo {
       AddressModel(
         id: '2',
         addressType: 'Office',
-        address: '123, DEF Street, YAZ City',
+        addressLine1: '123, DEF Street, YAZ City',
         lat: '12.345678',
         lon: '98.765432',
         userId: '1',
@@ -29,18 +29,31 @@ class UserRepo {
 
   static UserModel get user => _user;
 
-  static void addAddress(String address, String addressType, String lat,
-      String lon, String pincode) {
+  static void addAddress(
+    String address1,
+    String addressType,
+    String lat,
+    String lon,
+    String pincode,
+    String? address2,
+    String? city,
+    String? state,
+    String? country,
+  ) {
     //[ ]: Every new address can have a new phone number..
     _user.addresses.add(
       AddressModel(
         id: {_user.addresses.length + 1}.toString(),
         addressType: addressType,
-        address: address,
+        addressLine1: address1,
+        addressLine2: address2,
         lat: lat,
         lon: lon,
         pincode: pincode,
         userId: _user.id,
+        city: city,
+        state: state,
+        country: country,
       ),
     );
   }

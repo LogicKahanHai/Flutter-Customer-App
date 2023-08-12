@@ -71,7 +71,8 @@ class _AddressContainerState extends State<AddressContainer> {
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
-                                  UserRepo.currentAddress!.address.toString(),
+                                  UserRepo.currentAddress!.addressLine1
+                                      .toString(),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 )
