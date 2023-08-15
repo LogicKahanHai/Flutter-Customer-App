@@ -79,6 +79,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               initialiseStuff();
             });
           }
+          if (state is LoginErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'OTP could not be sent. Please try again.',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: PKTheme.primaryColor,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
         },
         builder: (context, state) {
           switch (state.runtimeType) {

@@ -15,8 +15,13 @@ class VerifyInitialEvent extends VerifyEvent {
 class VerifyCodeEvent extends VerifyEvent {
   final String phone;
   final String code;
+  final String rid;
 
-  VerifyCodeEvent({required this.phone, required this.code});
+  VerifyCodeEvent({
+    required this.phone,
+    required this.code,
+    required this.rid,
+  });
 }
 
 //? Event to resend the code to the user

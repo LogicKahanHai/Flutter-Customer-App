@@ -10,7 +10,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<HomeInitialEvent>((event, emit) async {
       emit(HomeLoading());
-      await ProductRepo().getProducts();
+      ProductRepo().getProducts();
       await Future.delayed(const Duration(seconds: 2));
       emit(HomeLoadedSuccess());
     });

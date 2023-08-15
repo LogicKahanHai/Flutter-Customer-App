@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/reusable/common_components.dart';
-import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
+import 'package:pk_customer_app/screens/address/ui/address_search_page.dart';
 import 'package:pk_customer_app/screens/cart/components/cart_components.dart';
+
+import '../../../constants/route_animations.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -130,14 +132,13 @@ class _CartPageState extends State<CartPage> {
                   alignment: Alignment.bottomCenter,
                   child: Teaser(
                     onButtonPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   RouteAnimations(
-                      //     nextPage: const CartPage(),
-                      //     animationDirection: AnimationDirection.leftToRight,
-                      //   ).createRoute(),
-                      // );
-                      // .then((value) => initStuff());
+                      Navigator.push(
+                        context,
+                        RouteAnimations(
+                          nextPage: const AddressSearchPage(),
+                          animationDirection: AnimationDirection.leftToRight,
+                        ).createRoute(),
+                      ).then((value) => refresh());
                     },
                     value: CartRepo.grandTotal.toStringAsFixed(2),
                     buttonTitle: 'Add Address',

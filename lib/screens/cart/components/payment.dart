@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 
@@ -33,7 +35,9 @@ class _PaymentState extends State<Payment> {
         ),
         const SizedBox(height: 10),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          padding: Platform.isIOS
+              ? const EdgeInsets.symmetric(horizontal: 15.0)
+              : const EdgeInsets.symmetric(horizontal: 7.0),
           child: Row(
             children: [
               Expanded(

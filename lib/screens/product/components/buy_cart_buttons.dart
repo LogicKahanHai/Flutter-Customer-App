@@ -61,7 +61,7 @@ class _BuyCartButtonsState extends State<BuyCartButtons> {
                     isAdded = true;
                   });
                 });
-                await Future.delayed(const Duration(seconds: 10), () {
+                await Future.delayed(const Duration(milliseconds: 500), () {
                   setState(() {
                     isAdded = false;
                   });
@@ -128,6 +128,7 @@ class _BuyCartButtonsState extends State<BuyCartButtons> {
               minimumSize: MaterialStateProperty.resolveWith(
                   (states) => const Size(double.infinity, 52.0)),
             ),
+            //FIXME: Add event to navigate to Buy Now
             child: const Text(
               'BUY NOW',
               style: TextStyle(
