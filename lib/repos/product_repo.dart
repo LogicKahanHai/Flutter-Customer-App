@@ -2,6 +2,9 @@ import 'package:pk_customer_app/models/models.dart';
 
 class ProductRepo {
   ProductRepo() {
+    lol();
+  }
+  void lol() {
     getProducts();
   }
 
@@ -23,8 +26,7 @@ class ProductRepo {
     _variants.addAll(variants);
   }
 
-  Future<void> getProducts() async {
-    await Future.delayed(const Duration(seconds: 1));
+  void getProducts() {
     _products = [
       ProductModel(
         id: '1',
@@ -49,6 +51,14 @@ class ProductRepo {
         image: 'assets/images/products/chivda.png',
         selectedVariant: '',
         rating: 4.9,
+      ),
+      ProductModel(
+        id: '4',
+        name: 'Puranpoli',
+        description: 'description',
+        image: 'assets/images/products/puran.png',
+        selectedVariant: '',
+        rating: 3.7,
       ),
     ];
 
@@ -84,6 +94,38 @@ class ProductRepo {
         salePrice: 400,
         key: '700',
         value: '700 g',
+      ),
+      VariantModel(
+        id: '5',
+        productId: '4',
+        regPrice: 150,
+        salePrice: 100,
+        key: '5',
+        value: 'Pack of 5 pieces',
+      ),
+      VariantModel(
+        id: '10',
+        productId: '4',
+        regPrice: 250,
+        salePrice: 200,
+        key: '10',
+        value: 'Pack of 10 pieces',
+      ),
+      VariantModel(
+        id: '15',
+        productId: '4',
+        regPrice: 350,
+        salePrice: 300,
+        key: '15',
+        value: 'Pack of 15 pieces',
+      ),
+      VariantModel(
+        id: '20',
+        productId: '4',
+        regPrice: 450,
+        salePrice: 400,
+        key: '20',
+        value: 'Pack of 20 pieces',
       ),
       VariantModel(
         id: '400',

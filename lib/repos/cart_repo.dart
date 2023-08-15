@@ -1,7 +1,7 @@
 import 'package:pk_customer_app/models/models.dart';
 
 class CartRepo {
-  static CartModel _cart = CartModel([]);
+  static final CartModel _cart = CartModel([]);
 
   static List<CartItemModel> get products => _cart.cartProducts;
 

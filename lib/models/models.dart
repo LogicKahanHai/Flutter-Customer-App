@@ -5,3 +5,5 @@ export 'variant_model.dart';
 export 'cart_item_model.dart';
 export 'review_model.dart';
 export 'user_address_model.dart';
+export 'order_model.dart';
+export 'order_item_model.dart';
