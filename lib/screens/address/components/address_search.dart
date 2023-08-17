@@ -1,10 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/map_repo.dart';
+import 'package:pk_customer_app/screens/address/components/components_address.dart';
 import 'package:pk_customer_app/screens/address/ui/address_map_page.dart';
 import 'package:uuid/uuid.dart';
 
@@ -39,8 +42,18 @@ class _AddressSearchState extends State<AddressSearch> {
       child: Column(
         children: [
           GestureDetector(
-            onTap: () {
-              showSearch(context: context, delegate: SearchAddress());
+            onTap: () async {
+              String? selection = await showSearch<String?>(context: context, delegate: SearchAddress());
+              if(selection != null) {
+                MapRepo.getLocDeetsForPlaceId(selection).then((value) {
+                  Navigator.push(
+                      context,
+                      RouteAnimations(
+                        nextPage: MapComponent(initialPosition: value),
+                        animationDirection: AnimationDirection.leftToRight,
+                      ).createRoute());
+                });
+              }
             },
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -118,7 +131,7 @@ class _AddressSearchState extends State<AddressSearch> {
   }
 }
 
-class SearchAddress extends SearchDelegate {
+class SearchAddress extends SearchDelegate<String?> {
   SearchAddress({String? hintText, this.latLng})
       : super(
           searchFieldLabel: hintText ?? 'Try Prime Plaza, CBD Belapur etc..',
@@ -163,37 +176,97 @@ class SearchAddress extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     sessionToken ??= const Uuid().v4();
     if(query.isNotEmpty && query.length >= 3) {
-      List<SuggestionClass>? suggestions;
-      MapRepo.getLocDeetsForAddressSearch(query, sessionToken, latLng).then((value) {
-        suggestions = value['predictions'].map<SuggestionClass>((prediction) {
-          return SuggestionClass(
-            placeId: prediction['place_id'],
-            title: prediction['description'],
-          );
-        }).toList();
-      });
-      return suggestions == null ? const Center(child: CircularProgressIndicator(
-        color: PKTheme.primaryColor,
-      )) :
-        ListView.builder(
-        itemCount: suggestions!.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            onTap: () {
-              close(context, suggestions![index].placeId);
-            },
-            title: Text(suggestions![index].title),
-            leading: const Icon(Icons.location_on),
-          );
+      return FutureBuilder<List<SuggestionClass>>(
+        future: getSuggestions(query),
+        builder: (context, snapshot) {
+          print('snapshot: ${snapshot.data}');
+          if(snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Colors.grey,
+                        width: 0.5,
+                      ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 5,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    onTap: () {
+                      close(context, snapshot.data![index].placeId);
+                    },
+                    title: Text(
+                      snapshot.data![index].title,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(
+                      snapshot.data![index].subtitle,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                    leading: const Icon(
+                      Icons.location_on,
+                      color: PKTheme.primaryColor,
+                      size: 30,
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+          return const Center(child: CircularProgressIndicator(
+            color: PKTheme.primaryColor,
+            strokeWidth: 3,
+          ));
         },
       );
     }
     return Container();
   }
+
+  Future<List<SuggestionClass>> getSuggestions(String query) async {
+    List<dynamic> result = [];
+    try {
+      result = await MapRepo.getLocDeetsForAddressSearch(query);
+    } catch(_) {
+    }
+
+    List<SuggestionClass> suggestions = [];
+    try {
+      for(var place in result) {
+        suggestions.add(SuggestionClass(
+          placeId: place['place_id'],
+          title: place['name'],
+          subtitle: place['formatted_address'],
+        ));
+      }
+    } catch (_) {
+    }
+    return suggestions;
+  }
+
 }
 
 class SuggestionClass {
   final String placeId;
   final String title;
-  SuggestionClass({required this.placeId, required this.title});
+  final String subtitle;
+  SuggestionClass({required this.subtitle, required this.placeId, required this.title});
 }

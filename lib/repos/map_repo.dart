@@ -57,31 +57,42 @@ class MapRepo {
     }
   }
 
-  static Future<Map<String, dynamic>> getLocDeetsForAddressSearch(
-      String query, String? sessionToken, LatLng? latLng) async {
-
-    latLng ??= const LatLng(19.0760, 72.8777);
+  static Future<List<dynamic>> getLocDeetsForAddressSearch(String query) async {
+    const latLng = LatLng(19.0760, 72.8777);
     double lat = double.parse(latLng.latitude.toStringAsFixed(6));
     double lon = double.parse(latLng.longitude.toStringAsFixed(6));
 
-    sessionToken ??= _uuid.v4();
+    List<dynamic> result = [];
 
-    Map<String, dynamic> result = {
-      'token': '',
-      'predictions': [],
-    };
 
+    //FIXME: I am only getting 1 result. I need to get more results and display them in a list.
     final String url =
-        '$_baseUrl/place/autocomplete/json?input=$query&location=$lat%2C$lon&radius=10000&strictbounds=true&sessiontoken=$sessionToken&key=$_apiKey';
+        '$_baseUrl/place/findplacefromtext/json?fields=formatted_address%2Cname%2Cgeometry%2Cplace_id&input=${Uri.encodeComponent(query)}&inputtype=textquery&locationbias=circle%3A20000%40$lat%2C$lon&key=$_apiKey';
 
     final response = await http.get(Uri.parse(url));
 
+
     if (jsonDecode(response.body)['status'] == 'OK') {
-      result['token'] = sessionToken;
-      result['predictions'] = jsonDecode(response.body)['predictions'];
+      result = jsonDecode(response.body)['candidates'];
       return result;
     } else {
       throw Exception('Failed to load location details');
     }
   }
-}
+
+  static Future<LatLng> getLocDeetsForPlaceId(String selection) {
+    final String url =
+        '$_baseUrl/place/details/json?place_id=$selection&fields=geometry&key=$_apiKey';
+
+    return http.get(Uri.parse(url)).then((response) {
+      if (jsonDecode(response.body)['status'] == 'OK') {
+        return LatLng(
+          jsonDecode(response.body)['result']['geometry']['location']['lat'],
+          jsonDecode(response.body)['result']['geometry']['location']['lng'],
+        );
+      } else {
+        throw Exception('Failed to load location details');
+      }
+    });
+    }
+  }

@@ -57,7 +57,7 @@ class _AppRootState extends State<AppRoot> {
                 if (state.user == null) {
                   return const WelcomePage();
                 }
-                UserRepo.user = state.user!;
+                UserRepo(state.user!);
                 return const HomePage();
               }
               return const WelcomePage();

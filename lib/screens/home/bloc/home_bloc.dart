@@ -11,6 +11,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeInitialEvent>((event, emit) async {
       emit(HomeLoading());
       ProductRepo().getProducts();
+
       await Future.delayed(const Duration(seconds: 2));
       emit(HomeLoadedSuccess());
     });

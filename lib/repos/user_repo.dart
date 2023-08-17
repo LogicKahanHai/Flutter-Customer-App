@@ -3,6 +3,10 @@ import 'package:pk_customer_app/models/models.dart';
 class UserRepo {
   static late UserModel _user;
 
+  UserRepo(UserModel user) {
+    _user = user;
+  }
+
   static UserModel get user => _user;
 
   static set user(UserModel newUser) {

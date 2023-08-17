@@ -7,7 +7,8 @@ import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/map_repo.dart';
 
 class MapComponent extends StatefulWidget {
-  const MapComponent({Key? key}) : super(key: key);
+  final LatLng? initialPosition;
+  const MapComponent({Key? key, this.initialPosition}) : super(key: key);
 
   @override
   _MapComponentState createState() => _MapComponentState();
@@ -67,7 +68,6 @@ class _MapComponentState extends State<MapComponent> {
           desiredAccuracy: LocationAccuracy.best);
       return true;
     } catch (e) {
-      print(e);
       showErrorDialog(
         'Location Error',
         e.toString(),
@@ -83,9 +83,11 @@ class _MapComponentState extends State<MapComponent> {
     });
     initStuff().then((value) {
       if (value) {
-        _center = currentPosition != null
-            ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
-            : const LatLng(19.0760, 72.8777);
+        _center = widget.initialPosition != null
+            ? widget.initialPosition!
+            : currentPosition != null
+                ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
+                : const LatLng(19.0760, 72.8777);
         setState(() {
           isLoading = false;
         });
@@ -96,7 +98,7 @@ class _MapComponentState extends State<MapComponent> {
     super.initState();
   }
 
-  late final _center;
+  late final LatLng _center;
 
   void _onMapCreated(GoogleMapController controller) async {
     _controller = controller;

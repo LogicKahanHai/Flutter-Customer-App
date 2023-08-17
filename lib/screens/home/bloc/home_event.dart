@@ -4,8 +4,3 @@ part of 'home_bloc.dart';
 abstract class HomeEvent {}
 
 class HomeInitialEvent extends HomeEvent {}
-
-class HomeAddToCartEvent extends HomeEvent {
-  final ProductModel product;
-  HomeAddToCartEvent({required this.product});
-}
