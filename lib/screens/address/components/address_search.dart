@@ -1,9 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/repos/map_repo.dart';
 import 'package:pk_customer_app/screens/address/ui/address_map_page.dart';
+import 'package:uuid/uuid.dart';
 
 class AddressSearch extends StatefulWidget {
   const AddressSearch({Key? key}) : super(key: key);
@@ -13,6 +16,8 @@ class AddressSearch extends StatefulWidget {
 }
 
 class _AddressSearchState extends State<AddressSearch> {
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -114,7 +119,7 @@ class _AddressSearchState extends State<AddressSearch> {
 }
 
 class SearchAddress extends SearchDelegate {
-  SearchAddress({String? hintText})
+  SearchAddress({String? hintText, this.latLng})
       : super(
           searchFieldLabel: hintText ?? 'Try Prime Plaza, CBD Belapur etc..',
           keyboardType: TextInputType.text,
@@ -123,6 +128,10 @@ class SearchAddress extends SearchDelegate {
             color: Colors.grey,
           ),
         );
+
+  String? sessionToken;
+  LatLng? latLng;
+
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -152,6 +161,39 @@ class SearchAddress extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    sessionToken ??= const Uuid().v4();
+    if(query.isNotEmpty && query.length >= 3) {
+      List<SuggestionClass>? suggestions;
+      MapRepo.getLocDeetsForAddressSearch(query, sessionToken, latLng).then((value) {
+        suggestions = value['predictions'].map<SuggestionClass>((prediction) {
+          return SuggestionClass(
+            placeId: prediction['place_id'],
+            title: prediction['description'],
+          );
+        }).toList();
+      });
+      return suggestions == null ? const Center(child: CircularProgressIndicator(
+        color: PKTheme.primaryColor,
+      )) :
+        ListView.builder(
+        itemCount: suggestions!.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            onTap: () {
+              close(context, suggestions![index].placeId);
+            },
+            title: Text(suggestions![index].title),
+            leading: const Icon(Icons.location_on),
+          );
+        },
+      );
+    }
     return Container();
   }
+}
+
+class SuggestionClass {
+  final String placeId;
+  final String title;
+  SuggestionClass({required this.placeId, required this.title});
 }

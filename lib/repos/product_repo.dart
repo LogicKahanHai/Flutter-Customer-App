@@ -101,7 +101,7 @@ class ProductRepo {
         regPrice: 150,
         salePrice: 100,
         key: '5',
-        value: 'Pack of 5 pieces',
+        value: '5 pieces',
       ),
       VariantModel(
         id: '10',
@@ -109,7 +109,7 @@ class ProductRepo {
         regPrice: 250,
         salePrice: 200,
         key: '10',
-        value: 'Pack of 10 pieces',
+        value: '10 pieces',
       ),
       VariantModel(
         id: '15',
@@ -117,7 +117,7 @@ class ProductRepo {
         regPrice: 350,
         salePrice: 300,
         key: '15',
-        value: 'Pack of 15 pieces',
+        value: '15 pieces',
       ),
       VariantModel(
         id: '20',
@@ -125,7 +125,7 @@ class ProductRepo {
         regPrice: 450,
         salePrice: 400,
         key: '20',
-        value: 'Pack of 20 pieces',
+        value: '20 pieces',
       ),
       VariantModel(
         id: '400',
@@ -237,11 +237,13 @@ class ProductRepo {
     }
   }
 
-  static int getDiscount(String id, String variantId) {
+  static int getDiscount(String id, String variantId, int quantity) {
     try {
       final variant = _variants.firstWhere(
           (element) => element.productId == id && element.id == variantId);
-      return ((variant.regPrice - variant.salePrice) / variant.regPrice * 100)
+      return (((variant.regPrice * quantity) - (variant.salePrice * quantity)) /
+              (variant.regPrice * quantity) *
+              100)
           .round();
     } catch (e) {
       return 0;

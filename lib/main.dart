@@ -6,10 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/models/order_item_model.dart';
-import 'package:pk_customer_app/models/order_model.dart';
 import 'package:pk_customer_app/repos/repos.dart';
-import 'package:pk_customer_app/screens/final/ui/final_success.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
 import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
@@ -60,22 +57,8 @@ class _AppRootState extends State<AppRoot> {
                 if (state.user == null) {
                   return const WelcomePage();
                 }
-                ProductRepo().getProducts();
-                return FinalSuccess(
-                  order: OrderModel(
-                    id: '1',
-                    userId: state.user!.id,
-                    subTotal: 100,
-                    totalAmount: 123,
-                    discount: 10,
-                    shipping: 20,
-                    tax: 13,
-                    orderDate: DateTime.now(),
-                    addressId: '1',
-                    paymentMethod: 'cod',
-                    orderItems: OrderItemModel.dummyList(),
-                  ),
-                );
+                UserRepo.user = state.user!;
+                return const HomePage();
               }
               return const WelcomePage();
             },

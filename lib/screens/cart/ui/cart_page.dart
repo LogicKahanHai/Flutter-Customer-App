@@ -48,16 +48,13 @@ class _CartPageState extends State<CartPage> {
         elevation: 0,
         centerTitle: true,
         title: const Text('Checkout',
-            style: TextStyle(fontSize: 22, color: Colors.black)),
+          style: TextStyle(fontSize: 22, color: Colors.black),
+        ),
         leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          // Navigator.pushAndRemoveUntil(
-          //     context,
-          //     RouteAnimations(
-          //       nextPage: const HomePage(),
-          //       animationDirection: AnimationDirection.rightToLeft,
-          //     ).createRoute(),
-          //     (route) => false),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),

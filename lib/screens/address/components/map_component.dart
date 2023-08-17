@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/repos/map_repo.dart';
 
 class MapComponent extends StatefulWidget {
   const MapComponent({Key? key}) : super(key: key);
@@ -14,11 +15,13 @@ class MapComponent extends StatefulWidget {
 
 class _MapComponentState extends State<MapComponent> {
   late GoogleMapController _controller;
-
+  Map<String, String> locDeets = {};
   bool isLoading = false;
   bool isLocationLoading = false;
+  bool isMoving = false;
   late bool isLocationEnabled;
   late LocationPermission isLocationGranted;
+  late ScreenCoordinate screenCoordinate;
   Position? currentPosition;
 
   void showErrorDialog(String title, String message) {
@@ -95,8 +98,12 @@ class _MapComponentState extends State<MapComponent> {
 
   late final _center;
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     _controller = controller;
+    screenCoordinate = currentPosition != null
+        ? await _controller.getScreenCoordinate(
+            LatLng(currentPosition!.latitude, currentPosition!.longitude))
+        : await _controller.getScreenCoordinate(const LatLng(19.0760, 72.8777));
   }
 
   @override
@@ -105,11 +112,15 @@ class _MapComponentState extends State<MapComponent> {
     super.dispose();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: PKTheme.primaryColor,
+            ),
           )
         : SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -124,13 +135,27 @@ class _MapComponentState extends State<MapComponent> {
                   mapType: MapType.normal,
                   onCameraMoveStarted: () {
                     setState(() {
+                      isMoving = true;
+                    });
+                    setState(() {
                       isLocationLoading = true;
                     });
                   },
-                  onCameraIdle: () {
+                  onCameraIdle: () async {
+                    setState(() {
+                      isMoving = false;
+                    });
+                    await Future.delayed(const Duration(milliseconds: 500));
+                    if (isMoving) {
+                      return;
+                    }
+                    LatLng newLatLng = await _controller.getLatLng(
+                        screenCoordinate); //LatLng of the center of the screen
+                    locDeets = await MapRepo.getLocDeetsForMapScreen(newLatLng);
                     setState(() {
                       isLocationLoading = false;
                     });
+                    //[ ]: Get LatLng from `screenCoordinate` and send it to MapRepo to get the details of the place.
                   },
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
@@ -173,9 +198,10 @@ class _MapComponentState extends State<MapComponent> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          'Select your location',
-                                          style: TextStyle(
+                                        Text(
+                                          locDeets['short'] ??
+                                              'Select your location',
+                                          style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
@@ -183,7 +209,8 @@ class _MapComponentState extends State<MapComponent> {
                                         ),
                                         const SizedBox(height: 5),
                                         Text(
-                                          'Move the map to pin your exact location',
+                                          locDeets['full'] ??
+                                              'Move the map to pin your exact location',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
@@ -282,9 +309,10 @@ class _MapComponentState extends State<MapComponent> {
                                 style: TextStyle(
                                   color: PKTheme.primaryColor,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 14,
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              SizedBox(width: 9),
                             ],
                           ),
                         ),

@@ -44,7 +44,7 @@ class OrderItemModel {
         name = cartItemModel.productName;
 
   static List<OrderItemModel> dummyList() {
-    final _variants = [
+    final variants = [
       VariantModel(
         id: '400',
         productId: '1',
@@ -155,7 +155,7 @@ class OrderItemModel {
         id: '1',
         productId: '1',
         variantId:
-            _variants.firstWhere((element) => element.productId == '1').id,
+            variants.firstWhere((element) => element.productId == '1').id,
         quantity: 1,
         price: 100,
         name: ProductRepo.products
@@ -166,7 +166,7 @@ class OrderItemModel {
         id: '2',
         productId: '2',
         variantId:
-            _variants.firstWhere((element) => element.productId == '2').id,
+            variants.firstWhere((element) => element.productId == '2').id,
         quantity: 2,
         price: 200,
         name: ProductRepo.products
@@ -177,7 +177,7 @@ class OrderItemModel {
         id: '3',
         productId: '3',
         variantId:
-            _variants.firstWhere((element) => element.productId == '3').id,
+            variants.firstWhere((element) => element.productId == '3').id,
         quantity: 3,
         price: 300,
         name: ProductRepo.products

@@ -4,6 +4,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRepo {
+  static final String _baseUrl = dotenv.env['BASE_API_URL']!;
+
+  
   static Future<http.Response> _sendRequest(String apiCall, Map body) async {
     final response = await http.post(
       Uri.parse(apiCall),
@@ -15,7 +18,6 @@ class AuthRepo {
     return response;
   }
 
-  static final String _baseUrl = dotenv.env['BASE_API_URL']!;
   static Future<List<dynamic>> sendOtp(String phone) async {
     var apiCall = '$_baseUrl/ms/customer/mobile/auth/login';
     final body = {"method": "otp", "phone": "91$phone"};

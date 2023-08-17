@@ -107,7 +107,11 @@ class _ProductPageState extends State<ProductPage> {
                     // const SizedBox(height: 20),
                     ImageCarousel(product: pdt),
                     const SizedBox(height: 20),
-                    ItemDetails(productId: pdt.id, variantId: selectedVariant),
+                    ItemDetails(
+                      productId: pdt.id,
+                      variantId: selectedVariant,
+                      quantity: quantity,
+                    ),
                     const SizedBox(height: 20),
                     SizeQty(
                       variants: variants,

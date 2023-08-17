@@ -1,33 +1,13 @@
 import 'package:pk_customer_app/models/models.dart';
 
 class UserRepo {
-  static final UserModel _user = UserModel(
-    id: '1',
-    phone: '1234567890',
-    addresses: [
-      AddressModel(
-        id: '1',
-        addressType: 'Home',
-        addressLine1: '123, ABC Street, XYZ City',
-        lat: '12.345678',
-        lon: '98.765432',
-        userId: '1',
-        pincode: '400701',
-      ),
-      AddressModel(
-        id: '2',
-        addressType: 'Office',
-        addressLine1: '123, DEF Street, YAZ City',
-        lat: '12.345678',
-        lon: '98.765432',
-        userId: '1',
-        pincode: '400701',
-      ),
-    ],
-    token: '1234',
-  );
+  static late UserModel _user;
 
   static UserModel get user => _user;
+
+  static set user(UserModel newUser) {
+    _user = newUser;
+  }
 
   static void addAddress(
     String address1,

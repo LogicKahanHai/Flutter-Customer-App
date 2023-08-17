@@ -122,7 +122,8 @@ class _AddressContainerState extends State<AddressContainer> {
                                 icon: const Icon(Icons.arrow_back_ios_new)))
                       ],
                     ),
-                    const Row(
+                    UserRepo.addressesLength == 0
+                        ? const Row(
                       children: [
                         SizedBox(width: 20),
                         Icon(
@@ -137,6 +138,22 @@ class _AddressContainerState extends State<AddressContainer> {
                         )
                       ],
                     )
+                        : Row(
+                      children: [
+                        const SizedBox(width: 20),
+                        Image.asset(
+                          'assets/icons/scooter.png',
+                          width: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          UserRepo.currentAddress!.addressLine1
+                              .toString(),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        )
+                      ],
+                    ),
                   ],
                 ),
                 TextButton(

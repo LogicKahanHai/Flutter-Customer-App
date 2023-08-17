@@ -16,14 +16,19 @@ class _SavedAddressesState extends State<SavedAddresses> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Saved Addresses'),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: const Text('Saved Addresses')),
         Container(
           width: double.maxFinite,
           color: Colors.white,
-          child: UserRepo.addresses == null
-              ? const Center(
-                  child: Text('No addresses found'),
-                )
+          child: UserRepo.addresses!.isEmpty
+              ? Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+                child: const Center(
+                    child: Text('No addresses found'),
+                  ),
+              )
               : ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
