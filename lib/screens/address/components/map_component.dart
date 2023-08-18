@@ -8,7 +8,8 @@ import 'package:pk_customer_app/repos/map_repo.dart';
 
 class MapComponent extends StatefulWidget {
   final LatLng? initialPosition;
-  const MapComponent({Key? key, this.initialPosition}) : super(key: key);
+  final String? placeId;
+  const MapComponent({Key? key, this.initialPosition, this.placeId}) : super(key: key);
 
   @override
   _MapComponentState createState() => _MapComponentState();
@@ -20,6 +21,7 @@ class _MapComponentState extends State<MapComponent> {
   bool isLoading = false;
   bool isLocationLoading = false;
   bool isMoving = false;
+  bool isFromSearch = false;
   late bool isLocationEnabled;
   late LocationPermission isLocationGranted;
   late ScreenCoordinate screenCoordinate;
@@ -80,6 +82,7 @@ class _MapComponentState extends State<MapComponent> {
   void initState() {
     setState(() {
       isLoading = true;
+      widget.initialPosition != null ? isFromSearch = true : isFromSearch = false;
     });
     initStuff().then((value) {
       if (value) {
@@ -106,6 +109,7 @@ class _MapComponentState extends State<MapComponent> {
         ? await _controller.getScreenCoordinate(
             LatLng(currentPosition!.latitude, currentPosition!.longitude))
         : await _controller.getScreenCoordinate(const LatLng(19.0760, 72.8777));
+
   }
 
   @override
@@ -132,7 +136,7 @@ class _MapComponentState extends State<MapComponent> {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: _center,
-                    zoom: 12.2,
+                    zoom: isFromSearch ? 18 : 12.2,
                   ),
                   mapType: MapType.normal,
                   onCameraMoveStarted: () {
@@ -153,7 +157,9 @@ class _MapComponentState extends State<MapComponent> {
                     }
                     LatLng newLatLng = await _controller.getLatLng(
                         screenCoordinate); //LatLng of the center of the screen
-                    locDeets = await MapRepo.getLocDeetsForMapScreen(newLatLng);
+                    //FIXME: This is not working. The Screen coordinate is somehow on the Top Left of the screen. Search Youtube and make it right.
+                    locDeets =
+                    await MapRepo.getLocDeetsForMapScreen(newLatLng);
                     setState(() {
                       isLocationLoading = false;
                     });

@@ -45,11 +45,11 @@ class _AddressSearchState extends State<AddressSearch> {
             onTap: () async {
               String? selection = await showSearch<String?>(context: context, delegate: SearchAddress());
               if(selection != null) {
-                MapRepo.getLocDeetsForPlaceId(selection).then((value) {
+                await MapRepo.getLocDeetsForPlaceId(selection).then((value) {
                   Navigator.push(
                       context,
                       RouteAnimations(
-                        nextPage: MapComponent(initialPosition: value),
+                        nextPage: AddressMapPage(initialPosition: LatLng(double.parse(value['lat']!), double.parse(value['lon']!)), placeId: selection),
                         animationDirection: AnimationDirection.leftToRight,
                       ).createRoute());
                 });
@@ -179,7 +179,6 @@ class SearchAddress extends SearchDelegate<String?> {
       return FutureBuilder<List<SuggestionClass>>(
         future: getSuggestions(query),
         builder: (context, snapshot) {
-          print('snapshot: ${snapshot.data}');
           if(snapshot.hasData) {
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -253,8 +252,8 @@ class SearchAddress extends SearchDelegate<String?> {
       for(var place in result) {
         suggestions.add(SuggestionClass(
           placeId: place['place_id'],
-          title: place['name'],
-          subtitle: place['formatted_address'],
+          title: place['structured_formatting']['main_text'],
+          subtitle: place['structured_formatting']['main_text'] + ', ' + place['structured_formatting']['secondary_text'],
         ));
       }
     } catch (_) {

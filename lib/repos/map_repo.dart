@@ -52,7 +52,12 @@ class MapRepo {
       locDeets['full'] =
           jsonDecode(response.body)['results'][0]['formatted_address'];
       return locDeets;
+    } else if (jsonDecode(response.body)['status'] == 'ZERO_RESULTS') {
+      locDeets['short'] = 'Unnamed Road';
+      locDeets['full'] = 'Unnamed Road';
+      return locDeets;
     } else {
+      print(jsonDecode(response.body)['status']);
       throw Exception('Failed to load location details');
     }
   }
@@ -67,29 +72,41 @@ class MapRepo {
 
     //FIXME: I am only getting 1 result. I need to get more results and display them in a list.
     final String url =
-        '$_baseUrl/place/findplacefromtext/json?fields=formatted_address%2Cname%2Cgeometry%2Cplace_id&input=${Uri.encodeComponent(query)}&inputtype=textquery&locationbias=circle%3A20000%40$lat%2C$lon&key=$_apiKey';
+        '$_baseUrl/place/autocomplete/json?input=${Uri.encodeComponent(query)}&location=$lat%2C$lon&radius=20000&strictbounds=true&key=$_apiKey';
 
     final response = await http.get(Uri.parse(url));
 
 
     if (jsonDecode(response.body)['status'] == 'OK') {
-      result = jsonDecode(response.body)['candidates'];
+      result = jsonDecode(response.body)['predictions'];
       return result;
     } else {
       throw Exception('Failed to load location details');
     }
   }
 
-  static Future<LatLng> getLocDeetsForPlaceId(String selection) {
+  static Future<Map<String, String>> getLocDeetsForPlaceId(String selection) {
     final String url =
-        '$_baseUrl/place/details/json?place_id=$selection&fields=geometry&key=$_apiKey';
+        '$_baseUrl/place/details/json?place_id=$selection&fields=formatted_address%2Cname%2Cgeometry&key=$_apiKey';
+
+    Map<String, String> locDeets = {
+      'lat': '',
+      'lon': '',
+      'short': '',
+      'full': '',
+    };
 
     return http.get(Uri.parse(url)).then((response) {
       if (jsonDecode(response.body)['status'] == 'OK') {
-        return LatLng(
-          jsonDecode(response.body)['result']['geometry']['location']['lat'],
-          jsonDecode(response.body)['result']['geometry']['location']['lng'],
-        );
+        print(jsonDecode(response.body)['result']);
+        return {
+          'lat': jsonDecode(response.body)['result']['geometry']['location']
+              ['lat'].toStringAsFixed(6),
+          'lon': jsonDecode(response.body)['result']['geometry']['location']
+              ['lng'].toStringAsFixed(6),
+          'short': jsonDecode(response.body)['result']['name'],
+          'full': jsonDecode(response.body)['result']['formatted_address'],
+        };
       } else {
         throw Exception('Failed to load location details');
       }

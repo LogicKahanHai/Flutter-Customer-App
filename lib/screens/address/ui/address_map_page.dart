@@ -1,10 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/screens/address/components/components_address.dart';
 
 class AddressMapPage extends StatefulWidget {
-  const AddressMapPage({Key? key}) : super(key: key);
+  final LatLng? initialPosition;
+  final String? placeId;
+  const AddressMapPage({Key? key, this.initialPosition, this.placeId}) : super(key: key);
 
   @override
   _AddressMapPageState createState() => _AddressMapPageState();
@@ -25,7 +28,10 @@ class _AddressMapPageState extends State<AddressMapPage> {
         ),
         centerTitle: true,
       ),
-      body: const MapComponent(),
+      body: MapComponent(
+        initialPosition: widget.initialPosition,
+        placeId: widget.placeId,
+      ),
     );
   }
 }
