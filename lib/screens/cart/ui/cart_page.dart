@@ -1,9 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
+import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/screens/address/ui/address_search_page.dart';
 import 'package:pk_customer_app/screens/cart/components/cart_components.dart';
 
@@ -47,14 +47,14 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        title: const Text('Checkout',
+        title: const Text(
+          'Checkout',
           style: TextStyle(fontSize: 22, color: Colors.black),
         ),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          
           icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
@@ -67,7 +67,9 @@ class _CartPageState extends State<CartPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  const AddressContainer(),
+                  AddressContainer(
+                    shouldRefresh: isUpdating,
+                  ),
                   const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -129,17 +131,23 @@ class _CartPageState extends State<CartPage> {
                   alignment: Alignment.bottomCenter,
                   child: Teaser(
                     onButtonPressed: () {
-                      Navigator.push(
-                        context,
-                        RouteAnimations(
-                          nextPage: const AddressSearchPage(),
-                          animationDirection: AnimationDirection.leftToRight,
-                        ).createRoute(),
-                      ).then((value) => refresh());
+                      if (UserRepo.addressesLength == 0) {
+                        Navigator.push(
+                          context,
+                          RouteAnimations(
+                            nextPage: const AddressSearchPage(),
+                            animationDirection: AnimationDirection.RTL,
+                          ).createRoute(),
+                        ).then((value) => refresh());
+                      }
                     },
                     value: CartRepo.grandTotal.toStringAsFixed(2),
-                    buttonTitle: 'Add Address',
-                    buttonStyle: PKTheme.hollowButtonWithBorder,
+                    buttonTitle: UserRepo.addressesLength >= 1
+                        ? 'Checkout'
+                        : 'Add Address',
+                    buttonStyle: UserRepo.addressesLength >= 1
+                        ? PKTheme.normalElevatedButton
+                        : PKTheme.hollowButtonWithBorder,
                     description: Text(
                       'Grand Total',
                       style: TextStyle(

@@ -51,6 +51,15 @@ class PKTheme {
     ),
   );
 
+  static ButtonStyle normalDisabledElevatedButton = ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: primaryColor.withOpacity(0.3),
+    shadowColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+    ),
+  );
+
   static final ThemeData themeData = ThemeData(
     primaryColor: primaryColor,
     primaryColorDark: primaryColor,

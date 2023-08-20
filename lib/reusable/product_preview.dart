@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
@@ -14,9 +13,12 @@ import 'package:pk_customer_app/screens/product/ui/product_page.dart';
 class Product extends StatefulWidget {
   final void Function() onChangedSetState;
   final void Function()? onAddToCart;
+  final void Function() refresh;
+
   const Product({
     Key? key,
     required this.onChangedSetState,
+    required this.refresh,
     this.onAddToCart,
     required this.id,
   }) : super(key: key);
@@ -83,11 +85,12 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            RouteAnimations(
-                    nextPage: ProductPage(_product),
-                    animationDirection: AnimationDirection.leftToRight)
-                .createRoute());
+                context,
+                RouteAnimations(
+                        nextPage: ProductPage(_product),
+                        animationDirection: AnimationDirection.RTL)
+                    .createRoute())
+            .then((value) => widget.refresh);
       },
       child: Container(
         padding: Platform.isIOS
@@ -201,6 +204,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                     child: DropdownButton(
                       isExpanded: true,
                       elevation: 1,
+                      underline: const SizedBox(),
                       items: _variants.map(
                         (variant) {
                           return DropdownMenuItem(

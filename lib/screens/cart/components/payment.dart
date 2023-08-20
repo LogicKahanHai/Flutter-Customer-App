@@ -16,7 +16,7 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
-  bool isGpaySelected = true;
+  bool isRazorpaySelected = true;
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +43,15 @@ class _PaymentState extends State<Payment> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    if (isGpaySelected) return;
+                    if (isRazorpaySelected) return;
                     setState(() {
-                      isGpaySelected = true;
-                      widget.updatePaymentMethod('gpay');
+                      isRazorpaySelected = true;
+                      widget.updatePaymentMethod('razorpay');
                     });
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: isGpaySelected
+                    decoration: isRazorpaySelected
                         ? BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
@@ -67,13 +67,15 @@ class _PaymentState extends State<Payment> {
                     child: Row(
                       children: [
                         Image.asset(
-                          'assets/icons/gpay.png',
+                          'assets/icons/razorpay.png',
                           height: 30,
                           width: 30,
+                          color:
+                              isRazorpaySelected ? null : Colors.grey.shade400,
                         ),
                         const SizedBox(width: 10),
                         const Text(
-                          'Google Pay',
+                          'Razorpay',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -89,15 +91,15 @@ class _PaymentState extends State<Payment> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    if (!isGpaySelected) return;
+                    if (!isRazorpaySelected) return;
                     setState(() {
-                      isGpaySelected = false;
+                      isRazorpaySelected = false;
                       widget.updatePaymentMethod('cod');
                     });
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: !isGpaySelected
+                    decoration: !isRazorpaySelected
                         ? BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.white,
@@ -116,6 +118,9 @@ class _PaymentState extends State<Payment> {
                           'assets/icons/cod.png',
                           height: 30,
                           width: 30,
+                          color: !isRazorpaySelected
+                              ? Colors.green
+                              : Colors.grey.shade400,
                         ),
                         const SizedBox(width: 10),
                         const Text(

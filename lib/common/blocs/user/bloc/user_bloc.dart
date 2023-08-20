@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:pk_customer_app/models/models.dart';
+import 'package:pk_customer_app/repos/repos.dart';
 
 part 'user_event.dart';
 part 'user_state.dart';
@@ -18,12 +19,26 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
     });
 
     on<UserLoginEvent>((event, emit) {
+      UserRepo(event.user);
       emit(UserAuthState(user: event.user));
       hydrate();
     });
 
     on<UserLogoutEvent>((event, emit) {
       emit(const UserAuthState(user: null));
+      hydrate();
+    });
+
+    on<UserAddAddressEvent>((event, emit) {
+      UserRepo.addAddress(
+        address1: event.address1,
+        addressType: event.addressType,
+        lat: event.lat,
+        lon: event.lon,
+        address2: event.address2,
+      );
+      print(UserRepo.user.toJson());
+      emit(UserAuthState(user: UserRepo.user));
       hydrate();
     });
   }

@@ -11,6 +11,8 @@ class MapRepo {
 
   static const _uuid = Uuid();
 
+  //TODO:(Later) the geo-encoding gives random results for some locations, fix it when the app is ready overall.
+
   static String _getRoute(List<dynamic> addressComponent) {
     for (Map<String, dynamic> part in addressComponent) {
       if (part['types'].contains("route")) {
@@ -37,6 +39,8 @@ class MapRepo {
     Map<String, String> locDeets = {
       'short': '',
       'full': '',
+      'lat': lat.toString(),
+      'lon': lon.toString(),
     };
 
     final String url =
@@ -69,13 +73,10 @@ class MapRepo {
 
     List<dynamic> result = [];
 
-
-    //FIXME: I am only getting 1 result. I need to get more results and display them in a list.
     final String url =
         '$_baseUrl/place/autocomplete/json?input=${Uri.encodeComponent(query)}&location=$lat%2C$lon&radius=20000&strictbounds=true&key=$_apiKey';
 
     final response = await http.get(Uri.parse(url));
-
 
     if (jsonDecode(response.body)['status'] == 'OK') {
       result = jsonDecode(response.body)['predictions'];
@@ -101,9 +102,11 @@ class MapRepo {
         print(jsonDecode(response.body)['result']);
         return {
           'lat': jsonDecode(response.body)['result']['geometry']['location']
-              ['lat'].toStringAsFixed(6),
+                  ['lat']
+              .toStringAsFixed(6),
           'lon': jsonDecode(response.body)['result']['geometry']['location']
-              ['lng'].toStringAsFixed(6),
+                  ['lng']
+              .toStringAsFixed(6),
           'short': jsonDecode(response.body)['result']['name'],
           'full': jsonDecode(response.body)['result']['formatted_address'],
         };
@@ -111,5 +114,5 @@ class MapRepo {
         throw Exception('Failed to load location details');
       }
     });
-    }
   }
+}

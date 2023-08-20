@@ -6,7 +6,7 @@ class AddressModel {
   String? city;
   String? state;
   String? country;
-  String pincode;
+  String? pincode;
   String? addressType;
   String userId;
   String lat;
@@ -19,7 +19,7 @@ class AddressModel {
     this.city,
     this.state,
     this.country,
-    required this.pincode,
+    this.pincode,
     this.addressType,
     required this.userId,
     required this.lat,
@@ -29,11 +29,11 @@ class AddressModel {
   AddressModel.fromJson(Map<String, dynamic> json)
       : addressLine1 = json['addressLine1'] as String,
         id = json['id'] as String,
-        pincode = json['pincode'] as String,
         userId = json['userId'] as String,
         addressType = json['addressType'] as String,
         lat = json['lat'] as String,
         lon = json['lon'] as String,
+        pincode = json['pincode'],
         addressLine2 = json['addressLine2'],
         city = json['city'],
         state = json['state'],

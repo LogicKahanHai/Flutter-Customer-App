@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       nextPage: OtpPage(
                         phone: state.phone,
                       ),
-                      animationDirection: AnimationDirection.leftToRight)
+                      animationDirection: AnimationDirection.RTL)
                   .createRoute(),
             )
                 .then((value) {
@@ -310,8 +310,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                 .validate()) {
                                               _innerAnimations.reverse();
                                               await _outerAnimations.reverse();
-                                              _loginBloc
-                                                  .add(
+                                              _loginBloc.add(
                                                   LoginOtpContinueEvent(
                                                       phone: _phoneController
                                                           .text));

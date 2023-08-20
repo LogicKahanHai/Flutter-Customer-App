@@ -21,3 +21,21 @@ class UserLoginEvent extends UserEvent {
 }
 
 class UserLogoutEvent extends UserEvent {}
+
+class UserAddAddressEvent extends UserEvent {
+  final String address1;
+  final String address2;
+  final String addressType;
+  final String lat;
+  final String lon;
+  const UserAddAddressEvent({
+    required this.address1,
+    required this.address2,
+    required this.addressType,
+    required this.lat,
+    required this.lon,
+  });
+
+  @override
+  List<Object> get props => [address1, address2, addressType, lat, lon];
+}

@@ -93,6 +93,7 @@ class _SizeQtyState extends State<SizeQty> {
                 child: DropdownButton(
                   isExpanded: true,
                   elevation: 1,
+                  underline: const SizedBox(),
                   items: _variants.map(
                     (variant) {
                       return DropdownMenuItem(

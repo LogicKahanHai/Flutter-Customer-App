@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
-
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
@@ -105,7 +104,7 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
           .pushAndRemoveUntil(
               RouteAnimations(
                       nextPage: const HomePage(),
-                      animationDirection: AnimationDirection.leftToRight)
+                      animationDirection: AnimationDirection.RTL)
                   .createRoute(),
               (route) => false)
           .then((value) {
@@ -122,7 +121,6 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
         listenWhen: (previous, current) => current is VerifyActionState,
         buildWhen: (previous, current) => current is! VerifyActionState,
         listener: (context, state) async {
-
           if (state is VerifyBackActionState) {
             Navigator.of(context).pop();
           } else if (state is VerifyCodeSentFailure) {

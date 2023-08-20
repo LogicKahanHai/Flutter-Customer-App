@@ -13,17 +13,17 @@ class UserRepo {
     _user = newUser;
   }
 
-  static void addAddress(
-    String address1,
-    String addressType,
-    String lat,
-    String lon,
-    String pincode,
+  static void addAddress({
+    required String address1,
+    required String addressType,
+    required String lat,
+    required String lon,
+    String? pincode,
     String? address2,
     String? city,
     String? state,
     String? country,
-  ) {
+  }) {
     //[ ]: Every new address can have a new phone number..
     _user.addresses.add(
       AddressModel(

@@ -7,7 +7,8 @@ import 'package:pk_customer_app/screens/address/components/components_address.da
 class AddressMapPage extends StatefulWidget {
   final LatLng? initialPosition;
   final String? placeId;
-  const AddressMapPage({Key? key, this.initialPosition, this.placeId}) : super(key: key);
+  final Map<String, String>? locDeets;
+  const AddressMapPage({Key? key, this.initialPosition, this.placeId, this.locDeets}) : super(key: key);
 
   @override
   _AddressMapPageState createState() => _AddressMapPageState();
@@ -31,6 +32,7 @@ class _AddressMapPageState extends State<AddressMapPage> {
       body: MapComponent(
         initialPosition: widget.initialPosition,
         placeId: widget.placeId,
+        searchLocDeets: widget.locDeets,
       ),
     );
   }

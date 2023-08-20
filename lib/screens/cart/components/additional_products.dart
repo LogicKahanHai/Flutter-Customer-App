@@ -2,7 +2,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/reusable/common_components.dart';
 
@@ -46,6 +45,7 @@ class _AdditionalProductsState extends State<AdditionalProducts> {
                   onChangedSetState: () {
                     setState(() {});
                   },
+                  refresh: widget.update,
                   onAddToCart: widget.update,
                 );
               },

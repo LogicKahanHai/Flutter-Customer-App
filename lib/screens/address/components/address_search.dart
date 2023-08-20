@@ -1,13 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/map_repo.dart';
-import 'package:pk_customer_app/screens/address/components/components_address.dart';
 import 'package:pk_customer_app/screens/address/ui/address_map_page.dart';
 import 'package:uuid/uuid.dart';
 
@@ -19,8 +16,6 @@ class AddressSearch extends StatefulWidget {
 }
 
 class _AddressSearchState extends State<AddressSearch> {
-
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,15 +38,22 @@ class _AddressSearchState extends State<AddressSearch> {
         children: [
           GestureDetector(
             onTap: () async {
-              String? selection = await showSearch<String?>(context: context, delegate: SearchAddress());
-              if(selection != null) {
+              String? selection = await showSearch<String?>(
+                  context: context, delegate: SearchAddress());
+              if (selection != null) {
                 await MapRepo.getLocDeetsForPlaceId(selection).then((value) {
                   Navigator.push(
-                      context,
-                      RouteAnimations(
-                        nextPage: AddressMapPage(initialPosition: LatLng(double.parse(value['lat']!), double.parse(value['lon']!)), placeId: selection),
-                        animationDirection: AnimationDirection.leftToRight,
-                      ).createRoute());
+                          context,
+                          RouteAnimations(
+                            nextPage: AddressMapPage(
+                                initialPosition: LatLng(
+                                    double.parse(value['lat']!),
+                                    double.parse(value['lon']!)),
+                                placeId: selection,
+                                locDeets: value),
+                            animationDirection: AnimationDirection.RTL,
+                          ).createRoute())
+                      .then((value) => Navigator.pop(context));
                 });
               }
             },
@@ -89,11 +91,12 @@ class _AddressSearchState extends State<AddressSearch> {
           TextButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  RouteAnimations(
-                    nextPage: const AddressMapPage(),
-                    animationDirection: AnimationDirection.leftToRight,
-                  ).createRoute());
+                      context,
+                      RouteAnimations(
+                        nextPage: const AddressMapPage(),
+                        animationDirection: AnimationDirection.RTL,
+                      ).createRoute())
+                  .then((value) => Navigator.pop(context));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -175,66 +178,75 @@ class SearchAddress extends SearchDelegate<String?> {
   @override
   Widget buildSuggestions(BuildContext context) {
     sessionToken ??= const Uuid().v4();
-    if(query.isNotEmpty && query.length >= 3) {
-      return FutureBuilder<List<SuggestionClass>>(
-        future: getSuggestions(query),
-        builder: (context, snapshot) {
-          if(snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.grey,
-                        width: 0.5,
-                      ),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 5,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      close(context, snapshot.data![index].placeId);
+    if (query.isNotEmpty && query.length >= 3) {
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            FutureBuilder<List<SuggestionClass>>(
+              future: getSuggestions(query),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          // border: Border(
+                          //   bottom: BorderSide(
+                          //     color: Colors.grey,
+                          //     width: 0.5,
+                          //   ),
+                          // ),
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Colors.grey,
+                          //     blurRadius: 5,
+                          //     offset: Offset(0, 5),
+                          //   ),
+                          // ],
+                        ),
+                        child: ListTile(
+                          onTap: () {
+                            close(context, snapshot.data![index].placeId);
+                          },
+                          title: Text(
+                            snapshot.data![index].title,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            snapshot.data![index].subtitle,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                          leading: const Icon(
+                            Icons.location_on,
+                            color: PKTheme.primaryColor,
+                            size: 30,
+                          ),
+                        ),
+                      );
                     },
-                    title: Text(
-                      snapshot.data![index].title,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
-                      snapshot.data![index].subtitle,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                    leading: const Icon(
-                      Icons.location_on,
-                      color: PKTheme.primaryColor,
-                      size: 30,
-                    ),
-                  ),
-                );
+                  );
+                }
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: PKTheme.primaryColor,
+                  strokeWidth: 3,
+                ));
               },
-            );
-          }
-          return const Center(child: CircularProgressIndicator(
-            color: PKTheme.primaryColor,
-            strokeWidth: 3,
-          ));
-        },
+            ),
+          ],
+        ),
       );
     }
     return Container();
@@ -244,28 +256,28 @@ class SearchAddress extends SearchDelegate<String?> {
     List<dynamic> result = [];
     try {
       result = await MapRepo.getLocDeetsForAddressSearch(query);
-    } catch(_) {
-    }
+    } catch (_) {}
 
     List<SuggestionClass> suggestions = [];
     try {
-      for(var place in result) {
+      for (var place in result) {
         suggestions.add(SuggestionClass(
           placeId: place['place_id'],
           title: place['structured_formatting']['main_text'],
-          subtitle: place['structured_formatting']['main_text'] + ', ' + place['structured_formatting']['secondary_text'],
+          subtitle: place['structured_formatting']['main_text'] +
+              ', ' +
+              place['structured_formatting']['secondary_text'],
         ));
       }
-    } catch (_) {
-    }
+    } catch (_) {}
     return suggestions;
   }
-
 }
 
 class SuggestionClass {
   final String placeId;
   final String title;
   final String subtitle;
-  SuggestionClass({required this.subtitle, required this.placeId, required this.title});
+  SuggestionClass(
+      {required this.subtitle, required this.placeId, required this.title});
 }

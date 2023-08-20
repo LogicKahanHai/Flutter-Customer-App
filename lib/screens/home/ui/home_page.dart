@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
-import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/screens/home/bloc/home_bloc.dart';
 import 'package:pk_customer_app/screens/home/ui/components/home_components.dart';
 
@@ -26,6 +26,12 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void refresh() {
+    setState(() {
+      isUpdating = !isUpdating;
+    });
+  }
+
   @override
   void initState() {
     initialiseStuff();
@@ -37,6 +43,8 @@ class _HomePageState extends State<HomePage>
     _animationController.dispose();
     super.dispose();
   }
+
+  bool isUpdating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +85,7 @@ class _HomePageState extends State<HomePage>
                     create: (context) => HomeBloc(),
                     child: Column(
                       children: [
-                        const AddressContainer()
+                        AddressContainer(shouldRefresh: isUpdating)
                             .animate(controller: _animationController)
                             .fade(
                               delay: 0.ms,
@@ -145,7 +153,7 @@ class _HomePageState extends State<HomePage>
                               end: 0.0,
                             ),
                         const SizedBox(height: 20),
-                        const HomeFavProducts()
+                        HomeFavProducts(refresh: refresh)
                             .animate(controller: _animationController)
                             .fade(
                               delay: 1000.ms,

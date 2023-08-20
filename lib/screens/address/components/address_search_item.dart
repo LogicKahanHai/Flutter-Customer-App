@@ -50,12 +50,13 @@ class AddressSearchItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              Text(
-                address.pincode,
-                style: const TextStyle(
-                  fontWeight: FontWeight.normal,
+              if (address.pincode != null)
+                Text(
+                  address.pincode!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-              ),
             ],
           ),
           const Spacer(),
