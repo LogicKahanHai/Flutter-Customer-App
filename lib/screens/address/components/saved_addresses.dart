@@ -17,18 +17,18 @@ class _SavedAddressesState extends State<SavedAddresses> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: const Text('Saved Addresses')),
         Container(
           width: double.maxFinite,
           color: Colors.white,
           child: UserRepo.addresses!.isEmpty
               ? Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-                child: const Center(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: const Center(
                     child: Text('No addresses found'),
                   ),
-              )
+                )
               : ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -36,7 +36,12 @@ class _SavedAddressesState extends State<SavedAddresses> {
                   itemBuilder: (context, index) {
                     AddressModel address = UserRepo.addresses![index];
 
-                    return AddressSearchItem(address: address);
+                    return AddressSearchItem(
+                      address: address,
+                      onTapRefresh: () {
+                        setState(() {});
+                      },
+                    );
                   },
                 ),
         )

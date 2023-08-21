@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void refresh() {
+    print('refreshing');
     setState(() {
       isUpdating = !isUpdating;
     });

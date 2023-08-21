@@ -39,3 +39,13 @@ class UserAddAddressEvent extends UserEvent {
   @override
   List<Object> get props => [address1, address2, addressType, lat, lon];
 }
+
+class UserRemoveAddressEvent extends UserEvent {
+  final String id;
+  const UserRemoveAddressEvent({
+    required this.id,
+  });
+
+  @override
+  List<Object> get props => [id];
+}

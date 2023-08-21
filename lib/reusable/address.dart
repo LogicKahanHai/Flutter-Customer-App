@@ -3,7 +3,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/repos/user_repo.dart';
+import 'package:pk_customer_app/screens/address/ui/address_search_page.dart';
 
 class AddressContainer extends StatefulWidget {
   final bool shouldRefresh;
@@ -76,7 +78,14 @@ class _AddressContainerState extends State<AddressContainer> {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              '${UserRepo.currentAddress!.addressType} - ${UserRepo.currentAddress!.addressLine1}',
+                              UserRepo.currentAddress!.addressType.toString(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              ' - ${UserRepo.currentAddress!.addressLine1}',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             )
@@ -86,7 +95,15 @@ class _AddressContainerState extends State<AddressContainer> {
                 ],
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                          context,
+                          RouteAnimations(
+                                  nextPage: const AddressSearchPage(),
+                                  animationDirection: AnimationDirection.RTL)
+                              .createRoute())
+                      .then((value) => setState(() {}));
+                },
                 child: const Text(
                   'ADD',
                   style: TextStyle(
@@ -152,7 +169,14 @@ class _AddressContainerState extends State<AddressContainer> {
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            UserRepo.currentAddress!.addressLine1.toString(),
+                            UserRepo.currentAddress!.addressType.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            ' - ${UserRepo.currentAddress!.addressLine1}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           )
@@ -161,7 +185,15 @@ class _AddressContainerState extends State<AddressContainer> {
               ],
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                        context,
+                        RouteAnimations(
+                                nextPage: const AddressSearchPage(),
+                                animationDirection: AnimationDirection.RTL)
+                            .createRoute())
+                    .then((value) => setState(() {}));
+              },
               child: const Text(
                 'ADD',
                 style: TextStyle(

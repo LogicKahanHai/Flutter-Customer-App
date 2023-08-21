@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/models/models.dart';
 
 class AddressSearchItem extends StatelessWidget {
   final AddressModel address;
-  const AddressSearchItem({Key? key, required this.address}) : super(key: key);
+  final void Function()? onTapRefresh;
+  const AddressSearchItem({Key? key, required this.address, this.onTapRefresh})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +23,10 @@ class AddressSearchItem extends StatelessWidget {
           Icon(
             address.addressType == 'Home'
                 ? Icons.home_outlined
-                : Icons.location_on_outlined,
+                : address.addressType == 'Work' ||
+                        address.addressType == 'Office'
+                    ? Icons.work_outlined
+                    : Icons.location_on_outlined,
             color: Colors.grey.shade700,
           ),
           const SizedBox(width: 10),
@@ -67,9 +74,15 @@ class AddressSearchItem extends StatelessWidget {
                   value: 'edit',
                   child: Text('Edit'),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
-                  child: Text('Delete'),
+                  child: const Text('Delete'),
+                  onTap: () async {
+                    BlocProvider.of<UserBloc>(context).add(
+                      UserRemoveAddressEvent(id: address.id),
+                    );
+                    onTapRefresh!();
+                  },
                 ),
               ];
             },

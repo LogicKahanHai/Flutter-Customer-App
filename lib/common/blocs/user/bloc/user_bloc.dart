@@ -37,7 +37,12 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
         lon: event.lon,
         address2: event.address2,
       );
-      print(UserRepo.user.toJson());
+      emit(UserAuthState(user: UserRepo.user));
+      hydrate();
+    });
+
+    on<UserRemoveAddressEvent>((event, emit) {
+      UserRepo.removeAddress(event.id);
       emit(UserAuthState(user: UserRepo.user));
       hydrate();
     });
