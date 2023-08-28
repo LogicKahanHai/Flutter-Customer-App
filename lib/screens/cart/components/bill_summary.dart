@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 
@@ -70,9 +72,9 @@ class _BillSummaryState extends State<BillSummary> {
                   ),
                   if (CartRepo.total < 1000 && CartRepo.total > 500)
                     Text(
-                      'order snacks worth ₹ ${1000 - CartRepo.total} more to get free delivery',
-                      style: const TextStyle(
-                        fontSize: 14,
+                      'order snacks worth ₹${1000 - CartRepo.total} more to get free delivery',
+                      style: TextStyle(
+                        fontSize: Platform.isIOS ? 14 : 13,
                         fontWeight: FontWeight.w500,
                         color: PKTheme.primaryColor,
                       ),

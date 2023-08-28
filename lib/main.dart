@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
 import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
@@ -17,6 +19,7 @@ Future<void> main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationDocumentsDirectory(),
   );
+  await dotenv.load(fileName: '.env');
   runApp(const AppRoot());
 }
 
@@ -54,6 +57,7 @@ class _AppRootState extends State<AppRoot> {
                 if (state.user == null) {
                   return const WelcomePage();
                 }
+                UserRepo(state.user!);
                 return const HomePage();
               }
               return const WelcomePage();
@@ -64,3 +68,5 @@ class _AppRootState extends State<AppRoot> {
     );
   }
 }
+
+//[ ]: Research about JustPay - PG for Flutter

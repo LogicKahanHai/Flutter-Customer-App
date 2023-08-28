@@ -43,7 +43,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Secrets
+*.env
 
 /lib/unused.txt
 /lib/screens/trial/
 /lib/common/aise hi/
+standby.txt

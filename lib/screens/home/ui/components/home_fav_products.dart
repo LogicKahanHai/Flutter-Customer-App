@@ -1,10 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:pk_customer_app/reusable/common_components.dart';
 
 import '../../../../common/blocs/export_blocs.dart';
@@ -12,7 +10,8 @@ import '../../../../models/models.dart';
 import '../../../../repos/repos.dart';
 
 class HomeFavProducts extends StatefulWidget {
-  const HomeFavProducts({Key? key}) : super(key: key);
+  final void Function() refresh;
+  const HomeFavProducts({Key? key, required this.refresh}) : super(key: key);
 
   @override
   _HomeFavProductsState createState() => _HomeFavProductsState();
@@ -72,6 +71,7 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
                         onChangedSetState: () {
                           setState(() {});
                         },
+                        refresh: widget.refresh,
                       );
                     },
                   );
@@ -93,7 +93,5 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
     );
   }
 }
-
-
 
 //DONE: Use single list for all variants and add product id for separation.

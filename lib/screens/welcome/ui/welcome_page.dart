@@ -60,7 +60,7 @@ class _WelcomePageState extends State<WelcomePage>
                 .push(
               RouteAnimations(
                       nextPage: const LoginPage(),
-                      animationDirection: AnimationDirection.leftToRight)
+                      animationDirection: AnimationDirection.RTL)
                   .createRoute(),
             )
                 .then((value) {
@@ -73,7 +73,7 @@ class _WelcomePageState extends State<WelcomePage>
                 .push(
               RouteAnimations(
                       nextPage: const LoginPage(),
-                      animationDirection: AnimationDirection.leftToRight)
+                      animationDirection: AnimationDirection.RTL)
                   .createRoute(),
             )
                 .then((value) {

@@ -27,9 +27,34 @@ class PKTheme {
         MaterialStateProperty.resolveWith((states) => Colors.transparent),
   );
 
+  static ButtonStyle hollowButtonWithoutBorder = ButtonStyle(
+    overlayColor: MaterialStateProperty.resolveWith(
+        (states) => const Color.fromRGBO(255, 107, 0, 0.42)),
+    backgroundColor:
+        MaterialStateProperty.resolveWith((states) => Colors.transparent),
+    foregroundColor:
+        MaterialStateProperty.resolveWith((states) => PKTheme.primaryColor),
+    shape: MaterialStateProperty.resolveWith(
+      (states) => RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+    ),
+    shadowColor:
+        MaterialStateProperty.resolveWith((states) => Colors.transparent),
+  );
+
   static ButtonStyle normalElevatedButton = ElevatedButton.styleFrom(
     foregroundColor: Colors.white,
     backgroundColor: primaryColor,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+    ),
+  );
+
+  static ButtonStyle normalDisabledElevatedButton = ElevatedButton.styleFrom(
+    foregroundColor: Colors.white,
+    backgroundColor: primaryColor.withOpacity(0.3),
+    shadowColor: Colors.transparent,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12.0),
     ),

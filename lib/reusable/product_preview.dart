@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
@@ -14,9 +13,12 @@ import 'package:pk_customer_app/screens/product/ui/product_page.dart';
 class Product extends StatefulWidget {
   final void Function() onChangedSetState;
   final void Function()? onAddToCart;
+  final void Function() refresh;
+
   const Product({
     Key? key,
     required this.onChangedSetState,
+    required this.refresh,
     this.onAddToCart,
     required this.id,
   }) : super(key: key);
@@ -83,11 +85,12 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            RouteAnimations(
-                    nextPage: ProductPage(_product),
-                    animationDirection: AnimationDirection.leftToRight)
-                .createRoute());
+                context,
+                RouteAnimations(
+                        nextPage: ProductPage(_product),
+                        animationDirection: AnimationDirection.RTL)
+                    .createRoute())
+            .then((value) => widget.refresh);
       },
       child: Container(
         padding: Platform.isIOS
@@ -162,7 +165,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                   Text(
                     '₹ ${ProductRepo.getVariantById(
                       _product.id,
-                      _product.selectedVariant,
+                      _dropdownValue,
                     ).salePrice.round()}',
                     style: const TextStyle(
                       fontSize: 16,
@@ -173,7 +176,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                   Text(
                     '₹ ${ProductRepo.getVariantById(
                       _product.id,
-                      _product.selectedVariant,
+                      _dropdownValue,
                     ).regPrice.round()}',
                     style: TextStyle(
                       fontSize: 16,
@@ -188,6 +191,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
+                    constraints: const BoxConstraints(maxWidth: 80),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
@@ -198,20 +202,23 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                     height: 40,
                     padding: const EdgeInsets.only(left: 5),
                     child: DropdownButton(
-                      underline: Container(
-                        height: 0,
-                        color: Colors.transparent,
-                      ),
+                      isExpanded: true,
                       elevation: 1,
+                      underline: const SizedBox(),
                       items: _variants.map(
                         (variant) {
                           return DropdownMenuItem(
-                            value: variant.key,
-                            child: Text(
-                              variant.value,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                            value: variant.variantName,
+                            child: Container(
+                              constraints:
+                                  const BoxConstraints(maxWidth: 100 - 31),
+                              child: Text(
+                                overflow: TextOverflow.ellipsis,
+                                variant.variantValue,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           );

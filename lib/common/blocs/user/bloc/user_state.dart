@@ -35,3 +35,7 @@ class UserAuthState extends UserState {
   factory UserAuthState.fromJson(String source) =>
       UserAuthState.fromMap(json.decode(source) as Map<String, dynamic>);
 }
+
+class UserLoadingState extends UserState {}
+
+class UserAddAddressSuccessState extends UserState {}

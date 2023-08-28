@@ -14,9 +14,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginLoadedState());
     });
     on<LoginOtpContinueEvent>((event, emit) async {
-      emit(LoginLoadingState());
-      await Future.delayed(const Duration(seconds: 1));
-      emit(LoginOtpSentState(phone: event.phone));
+      try {
+        emit(LoginLoadingState());
+        emit(LoginOtpSentState(phone: event.phone));
+      } catch (e) {
+        emit(LoginErrorState());
+        emit(LoginLoadedState());
+      }
+      
     });
   }
 }

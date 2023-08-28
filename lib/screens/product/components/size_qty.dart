@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 import 'package:flutter/material.dart';
-
 import 'package:pk_customer_app/models/models.dart';
 
 class SizeQty extends StatefulWidget {
@@ -80,6 +79,7 @@ class _SizeQtyState extends State<SizeQty> {
               ),
               const SizedBox(width: 10),
               Container(
+                constraints: const BoxConstraints(maxWidth: 100),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
@@ -90,20 +90,22 @@ class _SizeQtyState extends State<SizeQty> {
                 height: 40,
                 padding: const EdgeInsets.only(left: 5),
                 child: DropdownButton(
-                  underline: Container(
-                    height: 0,
-                    color: Colors.transparent,
-                  ),
+                  isExpanded: true,
                   elevation: 1,
+                  underline: const SizedBox(),
                   items: _variants.map(
                     (variant) {
                       return DropdownMenuItem(
-                        value: variant.key,
-                        child: Text(
-                          variant.value,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                        value: variant.variantName,
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 100),
+                          child: Text(
+                            variant.variantValue,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       );

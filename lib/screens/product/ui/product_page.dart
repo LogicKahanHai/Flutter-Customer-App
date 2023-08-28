@@ -5,11 +5,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
-
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
+import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/screens/cart/ui/cart_page.dart';
 
 import '../../../common/blocs/export_blocs.dart';
@@ -107,7 +106,11 @@ class _ProductPageState extends State<ProductPage> {
                     // const SizedBox(height: 20),
                     ImageCarousel(product: pdt),
                     const SizedBox(height: 20),
-                    ItemDetails(productId: pdt.id, variantId: selectedVariant),
+                    ItemDetails(
+                      productId: pdt.id,
+                      variantId: selectedVariant,
+                      quantity: quantity,
+                    ),
                     const SizedBox(height: 20),
                     SizeQty(
                       variants: variants,
@@ -160,7 +163,7 @@ class _ProductPageState extends State<ProductPage> {
                         context,
                         RouteAnimations(
                           nextPage: const CartPage(),
-                          animationDirection: AnimationDirection.leftToRight,
+                          animationDirection: AnimationDirection.RTL,
                         ).createRoute(),
                       ).then((value) => initStuff());
                     },

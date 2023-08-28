@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       nextPage: OtpPage(
                         phone: state.phone,
                       ),
-                      animationDirection: AnimationDirection.leftToRight)
+                      animationDirection: AnimationDirection.RTL)
                   .createRoute(),
             )
                 .then((value) {
@@ -78,6 +78,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               _outerAnimations.reset();
               initialiseStuff();
             });
+          }
+          if (state is LoginErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'OTP could not be sent. Please try again.',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: PKTheme.primaryColor,
+                duration: Duration(seconds: 2),
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -298,14 +310,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                 .validate()) {
                                               _innerAnimations.reverse();
                                               await _outerAnimations.reverse();
-                                              _loginBloc
-                                                  .add(
+                                              _loginBloc.add(
                                                   LoginOtpContinueEvent(
                                                       phone: _phoneController
                                                           .text));
                                             }
                                           },
-                                          child: const Text('Continue'),
+                                          child: const Text(
+                                            'Continue',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
                                       )
                                           .animate(

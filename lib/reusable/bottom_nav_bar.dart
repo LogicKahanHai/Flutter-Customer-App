@@ -22,7 +22,7 @@ Widget bottomNavBar({
                 context,
                 RouteAnimations(
                   nextPage: const HomePage(),
-                  animationDirection: AnimationDirection.rightToLeft,
+                  animationDirection: AnimationDirection.RTL,
                 ).createRoute());
           }
           break;

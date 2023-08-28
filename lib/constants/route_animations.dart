@@ -1,19 +1,23 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
 
-enum AnimationDirection { leftToRight, rightToLeft, topToBottom, bottomToTop }
+enum AnimationDirection { RTL, LTR, TTB, BTT }
 
 class RouteAnimations {
   final Widget nextPage;
   final AnimationDirection animationDirection;
 
   final Map<AnimationDirection, Offset> _offsets = {
-    AnimationDirection.leftToRight: const Offset(1.0, 0.0),
-    AnimationDirection.rightToLeft: const Offset(-1.0, 0.0),
-    AnimationDirection.topToBottom: const Offset(0.0, 1.0),
-    AnimationDirection.bottomToTop: const Offset(0.0, -1.0),
+    AnimationDirection.RTL: const Offset(1.0, 0.0),
+    AnimationDirection.LTR: const Offset(-1.0, 0.0),
+    AnimationDirection.TTB: const Offset(0.0, -1.0),
+    AnimationDirection.BTT: const Offset(0.0, 1.0),
   };
 
-  RouteAnimations({required this.nextPage, required this.animationDirection});
+  RouteAnimations(
+      {required this.nextPage,
+      this.animationDirection = AnimationDirection.RTL});
 
   Route createRoute() {
     return PageRouteBuilder(

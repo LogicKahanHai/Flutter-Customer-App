@@ -8,10 +8,12 @@ import 'package:pk_customer_app/reusable/rating_stars.dart';
 class ItemDetails extends StatefulWidget {
   final String productId;
   final String variantId;
+  final int quantity;
   const ItemDetails({
     Key? key,
     required this.productId,
     required this.variantId,
+    required this.quantity,
   }) : super(key: key);
 
   @override
@@ -91,7 +93,7 @@ class _ItemDetailsState extends State<ItemDetails> {
           Row(
             children: [
               Text(
-                '₹ ${selectedVariant.salePrice.round()}',
+                '₹ ${selectedVariant.salePrice.round() * widget.quantity}',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -99,7 +101,7 @@ class _ItemDetailsState extends State<ItemDetails> {
               ),
               const SizedBox(width: 10),
               Text(
-                '₹ ${selectedVariant.regPrice.round()}',
+                '₹ ${selectedVariant.regPrice.round() * widget.quantity}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -109,7 +111,7 @@ class _ItemDetailsState extends State<ItemDetails> {
               ),
               const SizedBox(width: 10),
               Text(
-                '${ProductRepo.getDiscount(widget.productId, selectedVariant.id)}% OFF',
+                '${ProductRepo.getDiscount(widget.productId, selectedVariant.id, widget.quantity)}% OFF',
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

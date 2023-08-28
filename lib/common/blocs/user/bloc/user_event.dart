@@ -21,3 +21,59 @@ class UserLoginEvent extends UserEvent {
 }
 
 class UserLogoutEvent extends UserEvent {}
+
+class UserAddAddressEvent extends UserEvent {
+  final String placeId;
+  final String address1;
+  final String address2;
+  final String addressType;
+  final double lat;
+  final double lng;
+  final String phone;
+  const UserAddAddressEvent({
+    required this.placeId,
+    required this.address1,
+    required this.address2,
+    required this.addressType,
+    required this.lat,
+    required this.lng,
+    required this.phone,
+  });
+
+  @override
+  List<Object> get props => [address1, address2, addressType, lat, lng];
+}
+
+class UserRemoveAddressEvent extends UserEvent {
+  final String id;
+  const UserRemoveAddressEvent({
+    required this.id,
+  });
+
+  @override
+  List<Object> get props => [id];
+}
+
+class UserUpdateAddressEvent extends UserEvent {
+  final String id;
+  final String placeId;
+  final String address1;
+  final String address2;
+  final String addressType;
+  final double lat;
+  final double lng;
+  final String phone;
+  const UserUpdateAddressEvent({
+    required this.id,
+    required this.placeId,
+    required this.address1,
+    required this.address2,
+    required this.addressType,
+    required this.lat,
+    required this.lng,
+    required this.phone,
+  });
+
+  @override
+  List<Object> get props => [address1, address2, addressType, lat, lng];
+}
