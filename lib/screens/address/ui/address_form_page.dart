@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/models/models.dart';
 
 class AddressFormPage extends StatefulWidget {
   final String shortAddress;
   final String longAddress;
+  final AddressModel? toBeUpdatedAddress;
   const AddressFormPage(
-      {super.key, required this.shortAddress, required this.longAddress});
+      {super.key,
+      required this.shortAddress,
+      required this.longAddress,
+      this.toBeUpdatedAddress});
 
   @override
   State<AddressFormPage> createState() => _AddressFormPageState();
 }
 
 class _AddressFormPageState extends State<AddressFormPage> {
-  final _houseController = TextEditingController();
-  final _apartmentController = TextEditingController();
-  final _saveAsController = TextEditingController();
+  late final TextEditingController _houseController;
+  late final TextEditingController _apartmentController;
+  late final TextEditingController _saveAsController;
+
+  @override
+  void initState() {
+    _houseController =
+        TextEditingController(text: widget.toBeUpdatedAddress?.line1 ?? '');
+    _apartmentController =
+        TextEditingController(text: widget.toBeUpdatedAddress?.line2 ?? '');
+    _saveAsController = TextEditingController(
+        text: widget.toBeUpdatedAddress?.addressName ?? '');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

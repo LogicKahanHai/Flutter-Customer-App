@@ -2,14 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/screens/address/components/components_address.dart';
 
 class AddressMapPage extends StatefulWidget {
   final LatLng? initialPosition;
   final String? placeId;
   final Map<String, dynamic>? locDeets;
+  final AddressModel? toBeUpdatedAddress;
   const AddressMapPage(
-      {Key? key, this.initialPosition, this.placeId, this.locDeets})
+      {Key? key,
+      this.initialPosition,
+      this.placeId,
+      this.locDeets,
+      this.toBeUpdatedAddress})
       : super(key: key);
 
   @override
@@ -35,6 +41,7 @@ class _AddressMapPageState extends State<AddressMapPage> {
         initialPosition: widget.initialPosition,
         placeId: widget.placeId,
         searchLocDeets: widget.locDeets,
+        toBeUpdatedAddress: widget.toBeUpdatedAddress,
       ),
     );
   }

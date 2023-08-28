@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/screens/address/ui/address_form_page.dart';
 
@@ -14,8 +15,13 @@ class MapComponent extends StatefulWidget {
   final LatLng? initialPosition;
   final String? placeId;
   final Map<String, dynamic>? searchLocDeets;
+  final AddressModel? toBeUpdatedAddress;
   const MapComponent(
-      {Key? key, this.initialPosition, this.placeId, this.searchLocDeets})
+      {Key? key,
+      this.initialPosition,
+      this.placeId,
+      this.searchLocDeets,
+      this.toBeUpdatedAddress})
       : super(key: key);
 
   @override
@@ -53,6 +59,7 @@ class _MapComponentState extends State<MapComponent> {
   }
 
   Future<bool> initStuff() async {
+    isEdit = widget.toBeUpdatedAddress != null;
     isLocationEnabled = await Geolocator.isLocationServiceEnabled();
     if (!isLocationEnabled) {
       await showErrorDialog(
@@ -93,15 +100,27 @@ class _MapComponentState extends State<MapComponent> {
     });
     initStuff().then((value) {
       if (value) {
-        _center = widget.initialPosition != null
-            ? widget.initialPosition!
-            : currentPosition != null
-                ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
-                : const LatLng(19.0819885, 72.5693366);
-        locDeets = widget.searchLocDeets != null ? widget.searchLocDeets! : {};
-        setState(() {
-          isLoading = false;
-        });
+        if (isEdit) {
+          _center = LatLng(
+              widget.toBeUpdatedAddress!.lat, widget.toBeUpdatedAddress!.lng);
+          locDeets = {};
+
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          _center = widget.initialPosition != null
+              ? widget.initialPosition!
+              : currentPosition != null
+                  ? LatLng(
+                      currentPosition!.latitude, currentPosition!.longitude)
+                  : const LatLng(19.0819885, 72.5693366);
+          locDeets =
+              widget.searchLocDeets != null ? widget.searchLocDeets! : {};
+          setState(() {
+            isLoading = false;
+          });
+        }
       } else {
         Navigator.pop(context);
       }
@@ -129,6 +148,8 @@ class _MapComponentState extends State<MapComponent> {
   late ScrollController scrollController;
 
   final userBloc = UserBloc();
+
+  late bool isEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -367,12 +388,32 @@ class _MapComponentState extends State<MapComponent> {
                                                 ? locDeets['full']!
                                                 : 'Unnamed Road'
                                             : 'Move the map to select a location',
+                                        toBeUpdatedAddress:
+                                            widget.toBeUpdatedAddress,
                                       ),
                                       animationDirection:
                                           AnimationDirection.BTT,
                                     ).createRoute(),
                                   ).then((value) async {
                                     if (value != null) {
+                                      if (isEdit) {
+                                        print('edit');
+                                        try {
+                                          userBloc.add(UserUpdateAddressEvent(
+                                            id: widget.toBeUpdatedAddress!.id,
+                                            placeId: locDeets['placeId']!,
+                                            address1: value['house'],
+                                            address2: value['apartment'],
+                                            addressType: value['saveAs'],
+                                            lat: locDeets['lat']!,
+                                            lng: locDeets['lon']!,
+                                            phone: UserRepo.user.phone,
+                                          ));
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                        return;
+                                      }
                                       userBloc.add(UserAddAddressEvent(
                                         placeId: locDeets['placeId']!,
                                         address1: value['house'],

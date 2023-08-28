@@ -60,7 +60,7 @@ class _SavedAddressesState extends State<SavedAddresses> {
 
                               return AddressSearchItem(
                                 address: address,
-                                onTapRefresh: () {
+                                onDelete: () {
                                   userBloc.add(
                                     UserRemoveAddressEvent(id: address.id),
                                   );

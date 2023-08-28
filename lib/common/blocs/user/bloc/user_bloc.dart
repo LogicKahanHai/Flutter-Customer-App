@@ -55,6 +55,28 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
       emit(UserAuthState(user: UserRepo.user));
       hydrate();
     });
+
+    on<UserUpdateAddressEvent>((event, emit) async {
+      emit(UserLoadingState());
+      final response = await UserRepo.updateAddress(
+        id: event.id,
+        placeId: event.placeId,
+        line1: event.address1,
+        addressName: event.addressType,
+        lat: event.lat,
+        lng: event.lng,
+        line2: event.address2,
+        phone: event.phone,
+      );
+      if (response) {
+        emit(UserAuthState(user: UserRepo.user));
+        hydrate();
+        return;
+      }
+      print('failed to update address');
+      emit(UserAuthState(user: UserRepo.user));
+      hydrate();
+    });
   }
 
   @override

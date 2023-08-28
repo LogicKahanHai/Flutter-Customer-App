@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
-enum RequestType { get, post, delete }
+enum RequestType { get, post, delete, put }
 
 class UserRepo {
   static late UserModel _user;
@@ -44,6 +44,15 @@ class UserRepo {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${_user.token}',
           },
+        );
+      case RequestType.put:
+        return await http.put(
+          Uri.parse(apiCall),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${_user.token}',
+          },
+          body: json.encode(body),
         );
     }
   }
@@ -152,6 +161,7 @@ class UserRepo {
   }
 
   static void setAddresses(List<AddressModel> addresses) {
+    _user.addresses.clear();
     _user.addresses = addresses;
   }
 
@@ -179,5 +189,37 @@ class UserRepo {
       return [true, jsonDecode(response.body)['data']];
     }
     return [false, jsonDecode(response.body)['error']];
+  }
+
+  static Future<bool> updateAddress({
+    required String id,
+    required placeId,
+    required String line1,
+    required String addressName,
+    required double lat,
+    required double lng,
+    required String line2,
+    required String phone,
+  }) async {
+    const String apiCall = '$_baseUrl/ms/customer/mobile/address/updateAddress';
+    final body = {
+      "id": id,
+      "lat": lat,
+      "lng": lng,
+      "place_id": placeId,
+      "line_1": line1,
+      "line_2": line2,
+      "phone": phone,
+      "tag": addressName,
+    };
+    final response = await _sendRequest(apiCall, body, RequestType.put);
+    if (jsonDecode(response.body)['statusCode'] == 200 &&
+        jsonDecode(response.body)['data']['matchedCount'] == 1) {
+      await getAndSetAddresses();
+      return true;
+    } else {
+      print(jsonDecode(response.body));
+      return false;
+    }
   }
 }

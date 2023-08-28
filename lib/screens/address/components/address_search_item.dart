@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/models/models.dart';
+
+import '../ui/address_map_page.dart';
 
 class AddressSearchItem extends StatefulWidget {
   final AddressModel address;
-  final void Function() onTapRefresh;
+  final void Function() onDelete;
   const AddressSearchItem(
-      {Key? key, required this.address, required this.onTapRefresh})
+      {Key? key, required this.address, required this.onDelete})
       : super(key: key);
 
   @override
@@ -77,17 +80,32 @@ class _AddressSearchItemState extends State<AddressSearchItem> {
           ),
           const Spacer(),
           PopupMenuButton(
+            icon: const Icon(Icons.more_vert),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            offset: const Offset(-20, 10),
             itemBuilder: (context) {
               return [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'edit',
-                  child: Text('Edit'),
+                  child: const Text('Edit'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      RouteAnimations(
+                        nextPage:
+                            AddressMapPage(toBeUpdatedAddress: widget.address),
+                        animationDirection: AnimationDirection.RTL,
+                      ).createRoute(),
+                    ).then((value) => Navigator.pop(context, true));
+                  },
                 ),
                 PopupMenuItem(
                   value: 'delete',
                   child: const Text('Delete'),
                   onTap: () {
-                    widget.onTapRefresh();
+                    widget.onDelete();
                   },
                 ),
               ];
