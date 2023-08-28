@@ -4,15 +4,15 @@ class VariantModel {
   String productId;
   double regPrice;
   double salePrice;
-  String key;
-  String value;
+  String variantName;
+  String variantValue;
   VariantModel({
     required this.id,
     required this.productId,
     required this.regPrice,
     required this.salePrice,
-    required this.key,
-    required this.value,
+    required this.variantName,
+    required this.variantValue,
   });
 
   @override
@@ -23,8 +23,8 @@ class VariantModel {
         other.productId == productId &&
         other.regPrice == regPrice &&
         other.salePrice == salePrice &&
-        other.key == key &&
-        other.value == value;
+        other.variantName == variantName &&
+        other.variantValue == variantValue;
   }
 
   @override
@@ -33,24 +33,26 @@ class VariantModel {
         productId.hashCode ^
         regPrice.hashCode ^
         salePrice.hashCode ^
-        key.hashCode ^
-        value.hashCode;
+        variantName.hashCode ^
+        variantValue.hashCode;
   }
 
   VariantModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String,
+      : id = json['productVariantId'] as String,
         productId = json['productId'] as String,
-        regPrice = json['regPrice'] as double,
+        regPrice = json['price'] as double,
         salePrice = json['salePrice'] as double,
-        key = json['key'] as String,
-        value = json['value'] as String;
+        variantName = json['name'] as String,
+        variantValue = json['weight'] as num < 1000
+            ? '${json['weight']} gm'
+            : '${json['weight'] / 1000} kg';
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        'productVariantId': id,
         'productId': productId,
-        'regPrice': regPrice,
+        'price': regPrice,
         'salePrice': salePrice,
-        'key': key,
-        'value': value,
+        'name': variantName,
+        'weight': variantValue,
       };
 }

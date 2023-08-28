@@ -55,7 +55,7 @@ class CartItemModel {
         variantName = ProductRepo.getVariantById(
           product.id,
           product.selectedVariant,
-        ).value,
+        ).variantValue,
         regPrice = ProductRepo.getVariantById(
           product.id,
           product.selectedVariant,

@@ -208,13 +208,13 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                       items: _variants.map(
                         (variant) {
                           return DropdownMenuItem(
-                            value: variant.key,
+                            value: variant.variantName,
                             child: Container(
                               constraints:
                                   const BoxConstraints(maxWidth: 100 - 31),
                               child: Text(
                                 overflow: TextOverflow.ellipsis,
-                                variant.value,
+                                variant.variantValue,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

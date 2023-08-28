@@ -47,10 +47,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
-	<!-- Permission for Location While in Use -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need location when in use</string>
-
+	<string>Need location when in use</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Need Location Permission</string>
 </dict>
 </plist>

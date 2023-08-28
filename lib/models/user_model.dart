@@ -19,7 +19,8 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic> map)
       : phone = map['phone'] as String,
         addresses = (map['addresses'] as List<dynamic>)
-            .map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
+            .map((e) => AddressModel.fromJson(
+                e as Map<String, dynamic>, map['id'] as String))
             .toList(),
         token = map['token'] as String,
         currentAddressIndex = map['currentAddressIndex'] as int,
@@ -37,5 +38,3 @@ class UserModel {
       : addresses = [],
         currentAddressIndex = 0;
 }
-
-//[ ]: phone and addresses and cust id

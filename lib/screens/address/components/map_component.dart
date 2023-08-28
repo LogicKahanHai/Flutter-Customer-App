@@ -7,14 +7,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-import 'package:pk_customer_app/repos/map_repo.dart';
+import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/screens/address/ui/address_form_page.dart';
 
 class MapComponent extends StatefulWidget {
   final LatLng? initialPosition;
   final String? placeId;
-  final Map<String, String>? searchLocDeets;
-  MapComponent(
+  final Map<String, dynamic>? searchLocDeets;
+  const MapComponent(
       {Key? key, this.initialPosition, this.placeId, this.searchLocDeets})
       : super(key: key);
 
@@ -24,7 +24,7 @@ class MapComponent extends StatefulWidget {
 
 class _MapComponentState extends State<MapComponent> {
   late GoogleMapController _controller;
-  Map<String, String> locDeets = {};
+  Map<String, dynamic> locDeets = {};
   bool isLoading = false;
   bool isLocationLoading = false;
   bool isMoving = false;
@@ -61,15 +61,10 @@ class _MapComponentState extends State<MapComponent> {
       );
       return false;
     }
-    isLocationGranted = await Geolocator.checkPermission();
-    if (isLocationGranted == LocationPermission.denied) {
-      await showErrorDialog(
-        'Location Permission Denied',
-        'Please grant location permission from settings to continue',
-      );
-      return false;
-    }
-    if (isLocationGranted == LocationPermission.deniedForever) {
+    List<dynamic> loc = await GeoRepo.getCurrentLatLong();
+    isLocationGranted = loc[0];
+    if (isLocationGranted == LocationPermission.deniedForever ||
+        isLocationGranted == LocationPermission.denied) {
       await showErrorDialog(
         'Location Permission Denied',
         'Please grant location permission from settings to continue',
@@ -77,13 +72,12 @@ class _MapComponentState extends State<MapComponent> {
       return false;
     }
     try {
-      currentPosition = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
+      currentPosition = loc[1];
       return true;
     } catch (e) {
       await showErrorDialog(
         'Location Error',
-        e.toString(),
+        'Please try again',
       );
       return false;
     }
@@ -103,7 +97,7 @@ class _MapComponentState extends State<MapComponent> {
             ? widget.initialPosition!
             : currentPosition != null
                 ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
-                : const LatLng(19.0760, 72.8777);
+                : const LatLng(19.0819885, 72.5693366);
         locDeets = widget.searchLocDeets != null ? widget.searchLocDeets! : {};
         setState(() {
           isLoading = false;
@@ -122,7 +116,8 @@ class _MapComponentState extends State<MapComponent> {
     screenCoordinate = currentPosition != null
         ? await _controller.getScreenCoordinate(
             LatLng(currentPosition!.latitude, currentPosition!.longitude))
-        : await _controller.getScreenCoordinate(const LatLng(19.0760, 72.8777));
+        : await _controller
+            .getScreenCoordinate(const LatLng(19.0819885, 72.5693366));
   }
 
   @override
@@ -132,6 +127,8 @@ class _MapComponentState extends State<MapComponent> {
   }
 
   late ScrollController scrollController;
+
+  final userBloc = UserBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +146,7 @@ class _MapComponentState extends State<MapComponent> {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: _center,
-                    zoom: isFromSearch ? 18 : 12.2,
+                    zoom: 18,
                   ),
                   mapType: MapType.normal,
                   onCameraMoveStarted: () {
@@ -291,8 +288,13 @@ class _MapComponentState extends State<MapComponent> {
                                 const SizedBox(width: 20),
                                 Expanded(
                                   child: isLocationLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator(),
+                                      ? const SizedBox(
+                                          height: 60,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              color: PKTheme.primaryColor,
+                                            ),
+                                          ),
                                         )
                                       : Column(
                                           crossAxisAlignment:
@@ -329,46 +331,66 @@ class _MapComponentState extends State<MapComponent> {
                               ],
                             ),
                             const SizedBox(height: 30),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 50),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  RouteAnimations(
-                                    nextPage: AddressFormPage(
-                                      shortAddress: locDeets['short'] != null
-                                          ? locDeets['short']! != ''
-                                              ? locDeets['short']!
-                                              : 'Unnamed Road'
-                                          : 'Select a location',
-                                      longAddress: locDeets['full'] != null
-                                          ? locDeets['full']! != ''
-                                              ? locDeets['full']!
-                                              : 'Unnamed Road'
-                                          : 'Move the map to select a location',
+                            BlocListener(
+                              bloc: userBloc,
+                              listener: (context, state) async {
+                                if (state is UserAuthState) {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context, true);
+                                } else if (state is UserLoadingState) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const Center(
+                                      child: CircularProgressIndicator(
+                                        color: PKTheme.primaryColor,
+                                      ),
                                     ),
-                                    animationDirection: AnimationDirection.BTT,
-                                  ).createRoute(),
-                                ).then((value) async {
-                                  if (value != null) {
-                                    BlocProvider.of<UserBloc>(context)
-                                        .add(UserAddAddressEvent(
-                                      address1: value['house'],
-                                      address2: value['apartment'],
-                                      addressType: value['saveAs'],
-                                      lat: locDeets['lat']!,
-                                      lon: locDeets['lon']!,
-                                    ));
-                                    Navigator.pop(context);
-                                  }
-                                });
+                                  );
+                                }
                               },
-                              child: const Text(
-                                'Confirm Location',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 50),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    RouteAnimations(
+                                      nextPage: AddressFormPage(
+                                        shortAddress: locDeets['short'] != null
+                                            ? locDeets['short']! != ''
+                                                ? locDeets['short']!
+                                                : 'Unnamed Road'
+                                            : 'Select a location',
+                                        longAddress: locDeets['full'] != null
+                                            ? locDeets['full']! != ''
+                                                ? locDeets['full']!
+                                                : 'Unnamed Road'
+                                            : 'Move the map to select a location',
+                                      ),
+                                      animationDirection:
+                                          AnimationDirection.BTT,
+                                    ).createRoute(),
+                                  ).then((value) async {
+                                    if (value != null) {
+                                      userBloc.add(UserAddAddressEvent(
+                                        placeId: locDeets['placeId']!,
+                                        address1: value['house'],
+                                        address2: value['apartment'],
+                                        addressType: value['saveAs'],
+                                        lat: locDeets['lat']!,
+                                        lng: locDeets['lon']!,
+                                        phone: UserRepo.user.phone,
+                                      ));
+                                    }
+                                  });
+                                },
+                                child: const Text(
+                                  'Confirm Location',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ],

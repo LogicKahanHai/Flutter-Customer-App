@@ -1,17 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:uuid/uuid.dart';
+import 'package:pk_customer_app/constants/repo_constants.dart';
 
 class MapRepo {
-  static const String _baseUrl = 'https://maps.googleapis.com/maps/api';
-  static final String _apiKey = dotenv.env['GOOGLE_MAPS_API']!;
-
-  static const _uuid = Uuid();
-
-  //TODO:(Later) the geo-encoding gives random results for some locations, fix it when the app is ready overall.
+  static const String _baseUrl = RepoConstants.googleBaseUrl;
+  static const String _apiKey = RepoConstants.googleApiKey;
 
   static String _getRoute(List<dynamic> addressComponent) {
     for (Map<String, dynamic> part in addressComponent) {
@@ -31,16 +26,17 @@ class MapRepo {
     return '';
   }
 
-  static Future<Map<String, String>> getLocDeetsForMapScreen(
+  static Future<Map<String, dynamic>> getLocDeetsForMapScreen(
       LatLng latLng) async {
     double lat = double.parse(latLng.latitude.toStringAsFixed(6));
     double lon = double.parse(latLng.longitude.toStringAsFixed(6));
 
-    Map<String, String> locDeets = {
+    Map<String, dynamic> locDeets = {
       'short': '',
       'full': '',
-      'lat': lat.toString(),
-      'lon': lon.toString(),
+      'lat': lat,
+      'lon': lon,
+      'placeId': '',
     };
 
     final String url =
@@ -55,13 +51,13 @@ class MapRepo {
               jsonDecode(response.body)['results'][0]['address_components']);
       locDeets['full'] =
           jsonDecode(response.body)['results'][0]['formatted_address'];
+      locDeets['placeId'] = jsonDecode(response.body)['results'][0]['place_id'];
       return locDeets;
     } else if (jsonDecode(response.body)['status'] == 'ZERO_RESULTS') {
       locDeets['short'] = 'Unnamed Road';
       locDeets['full'] = 'Unnamed Road';
       return locDeets;
     } else {
-      print(jsonDecode(response.body)['status']);
       throw Exception('Failed to load location details');
     }
   }
@@ -86,29 +82,22 @@ class MapRepo {
     }
   }
 
-  static Future<Map<String, String>> getLocDeetsForPlaceId(String selection) {
+  static Future<Map<String, dynamic>> getLocDeetsForPlaceId(String selection) {
     final String url =
         '$_baseUrl/place/details/json?place_id=$selection&fields=formatted_address%2Cname%2Cgeometry&key=$_apiKey';
 
-    Map<String, String> locDeets = {
-      'lat': '',
-      'lon': '',
-      'short': '',
-      'full': '',
-    };
-
     return http.get(Uri.parse(url)).then((response) {
       if (jsonDecode(response.body)['status'] == 'OK') {
-        print(jsonDecode(response.body)['result']);
         return {
-          'lat': jsonDecode(response.body)['result']['geometry']['location']
-                  ['lat']
-              .toStringAsFixed(6),
-          'lon': jsonDecode(response.body)['result']['geometry']['location']
-                  ['lng']
-              .toStringAsFixed(6),
+          'lat': double.parse(jsonDecode(response.body)['result']['geometry']
+                  ['location']['lat']
+              .toStringAsFixed(6)),
+          'lon': double.parse(jsonDecode(response.body)['result']['geometry']
+                  ['location']['lng']
+              .toStringAsFixed(6)),
           'short': jsonDecode(response.body)['result']['name'],
           'full': jsonDecode(response.body)['result']['formatted_address'],
+          'placeId': selection,
         };
       } else {
         throw Exception('Failed to load location details');

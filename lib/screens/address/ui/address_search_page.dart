@@ -31,12 +31,16 @@ class _AddressSearchPageState extends State<AddressSearchPage> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            AddressSearch(),
-            SizedBox(height: 20),
-            SavedAddresses(),
+            const AddressSearch(),
+            const SizedBox(height: 20),
+            SavedAddresses(
+              refresh: () {
+                setState(() {});
+              },
+            ),
           ],
         ),
       ),

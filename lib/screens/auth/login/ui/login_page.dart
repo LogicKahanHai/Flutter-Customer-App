@@ -316,7 +316,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                           .text));
                                             }
                                           },
-                                          child: const Text('Continue'),
+                                          child: const Text(
+                                            'Continue',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
                                       )
                                           .animate(

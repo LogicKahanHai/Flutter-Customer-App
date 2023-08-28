@@ -1,13 +1,6 @@
 import 'package:pk_customer_app/models/models.dart';
 
 class ProductRepo {
-  ProductRepo() {
-    lol();
-  }
-  void lol() {
-    getProducts();
-  }
-
   static late List<ProductModel> _products;
   static late List<VariantModel> _variants;
   static late List<ReviewModel> _reviews;
@@ -35,6 +28,7 @@ class ProductRepo {
         image: 'assets/images/products/chakli.png',
         selectedVariant: '',
         rating: 4.6,
+        gallery: [],
       ),
       ProductModel(
         id: '2',
@@ -43,6 +37,7 @@ class ProductRepo {
         image: 'assets/images/products/modak.png',
         selectedVariant: '',
         rating: 4.8,
+        gallery: [],
       ),
       ProductModel(
         id: '3',
@@ -51,6 +46,7 @@ class ProductRepo {
         image: 'assets/images/products/chivda.png',
         selectedVariant: '',
         rating: 4.9,
+        gallery: [],
       ),
       ProductModel(
         id: '4',
@@ -59,6 +55,7 @@ class ProductRepo {
         image: 'assets/images/products/puran.png',
         selectedVariant: '',
         rating: 3.7,
+        gallery: [],
       ),
     ];
 
@@ -68,104 +65,104 @@ class ProductRepo {
         productId: '1',
         regPrice: 150,
         salePrice: 100,
-        key: '400',
-        value: '400 g',
+        variantName: '400',
+        variantValue: '400 g',
       ),
       VariantModel(
         id: '500',
         productId: '1',
         regPrice: 250,
         salePrice: 200,
-        key: '500',
-        value: '500 g',
+        variantName: '500',
+        variantValue: '500 g',
       ),
       VariantModel(
         id: '600',
         productId: '1',
         regPrice: 350,
         salePrice: 300,
-        key: '600',
-        value: '600 g',
+        variantName: '600',
+        variantValue: '600 g',
       ),
       VariantModel(
         id: '700',
         productId: '1',
         regPrice: 450,
         salePrice: 400,
-        key: '700',
-        value: '700 g',
+        variantName: '700',
+        variantValue: '700 g',
       ),
       VariantModel(
         id: '5',
         productId: '4',
         regPrice: 150,
         salePrice: 100,
-        key: '5',
-        value: '5 pieces',
+        variantName: '5',
+        variantValue: '5 pieces',
       ),
       VariantModel(
         id: '10',
         productId: '4',
         regPrice: 250,
         salePrice: 200,
-        key: '10',
-        value: '10 pieces',
+        variantName: '10',
+        variantValue: '10 pieces',
       ),
       VariantModel(
         id: '15',
         productId: '4',
         regPrice: 350,
         salePrice: 300,
-        key: '15',
-        value: '15 pieces',
+        variantName: '15',
+        variantValue: '15 pieces',
       ),
       VariantModel(
         id: '20',
         productId: '4',
         regPrice: 450,
         salePrice: 400,
-        key: '20',
-        value: '20 pieces',
+        variantName: '20',
+        variantValue: '20 pieces',
       ),
       VariantModel(
         id: '400',
         productId: '2',
         regPrice: 150,
         salePrice: 100,
-        key: '400',
-        value: '400 g',
+        variantName: '400',
+        variantValue: '400 g',
       ),
       VariantModel(
         id: '500',
         productId: '2',
         regPrice: 250,
         salePrice: 200,
-        key: '500',
-        value: '500 g',
+        variantName: '500',
+        variantValue: '500 g',
       ),
       VariantModel(
         id: '600',
         productId: '2',
         regPrice: 350,
         salePrice: 300,
-        key: '600',
-        value: '600 g',
+        variantName: '600',
+        variantValue: '600 g',
       ),
       VariantModel(
         id: '400',
         productId: '3',
         regPrice: 150,
         salePrice: 100,
-        key: '400',
-        value: '400 g',
+        variantName: '400',
+        variantValue: '400 g',
       ),
       VariantModel(
         id: '500',
         productId: '3',
         regPrice: 250,
         salePrice: 200,
-        key: '500',
-        value: '500 g',
+        variantName: '500',
+        variantValue: '500 g',
       ),
     ];
 
@@ -217,7 +214,6 @@ class ProductRepo {
     try {
       return _products.length;
     } catch (e) {
-      ProductRepo().getProducts();
       return _products.length;
     }
   }

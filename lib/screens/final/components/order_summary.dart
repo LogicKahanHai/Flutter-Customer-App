@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-
 import 'package:pk_customer_app/models/order_item_model.dart';
 import 'package:pk_customer_app/repos/product_repo.dart';
 
@@ -63,7 +62,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                                   widget.orderItems[index].variantId &&
                               element.productId ==
                                   widget.orderItems[index].productId)
-                          .value,
+                          .variantValue,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 10),

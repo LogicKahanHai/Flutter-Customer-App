@@ -46,14 +46,13 @@ class _AddressSearchState extends State<AddressSearch> {
                           context,
                           RouteAnimations(
                             nextPage: AddressMapPage(
-                                initialPosition: LatLng(
-                                    double.parse(value['lat']!),
-                                    double.parse(value['lon']!)),
+                                initialPosition:
+                                    LatLng(value['lat']!, value['lon']!),
                                 placeId: selection,
                                 locDeets: value),
                             animationDirection: AnimationDirection.RTL,
                           ).createRoute())
-                      .then((value) => Navigator.pop(context));
+                      .then((value) => Navigator.pop(context, true));
                 });
               }
             },
@@ -96,7 +95,7 @@ class _AddressSearchState extends State<AddressSearch> {
                         nextPage: const AddressMapPage(),
                         animationDirection: AnimationDirection.RTL,
                       ).createRoute())
-                  .then((value) => Navigator.pop(context));
+                  .then((value) => Navigator.pop(context, true));
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),

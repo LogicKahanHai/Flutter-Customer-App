@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 import 'package:flutter/material.dart';
-
 import 'package:pk_customer_app/models/models.dart';
 
 class SizeQty extends StatefulWidget {
@@ -97,11 +96,11 @@ class _SizeQtyState extends State<SizeQty> {
                   items: _variants.map(
                     (variant) {
                       return DropdownMenuItem(
-                        value: variant.key,
+                        value: variant.variantName,
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 100),
                           child: Text(
-                            variant.value,
+                            variant.variantValue,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 16,

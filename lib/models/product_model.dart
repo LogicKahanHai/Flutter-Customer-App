@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-
 import 'package:pk_customer_app/models/models.dart';
 
 class ProductModel {
@@ -8,13 +7,15 @@ class ProductModel {
   final String name;
   final String description;
   final String image;
+  final List<String> gallery;
   final String selectedVariant;
-  final double rating;
+  final double? rating;
   ProductModel({
     required this.id,
     required this.name,
     required this.description,
     required this.image,
+    required this.gallery,
     required this.selectedVariant,
     required this.rating,
   });
@@ -46,6 +47,7 @@ class ProductModel {
     String? name,
     String? description,
     String? image,
+    List<String>? gallery,
     List<VariantModel>? variants,
     String? selectedVariant,
     double? rating,
@@ -55,25 +57,29 @@ class ProductModel {
       name: name ?? this.name,
       description: description ?? this.description,
       image: image ?? this.image,
+      gallery: gallery ?? this.gallery,
       selectedVariant: selectedVariant ?? this.selectedVariant,
       rating: rating ?? this.rating,
     );
   }
 
   ProductModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String,
+      : id = json['_id'] as String,
         name = json['name'] as String,
         description = json['description'] as String,
-        image = json['image'] as String,
-        selectedVariant = json['selectedVariant'] as String,
-        rating = (json['rating'] as num).toDouble();
+        image = json['featuredImg'] as String,
+        gallery = (json['gallery'] as List<dynamic>).cast<String>(),
+        selectedVariant =
+            json['productVariantId'][0]["productVariantId"] as String,
+        rating = double.tryParse(json['rating'] as String);
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        'productId': id,
         'name': name,
         'description': description,
-        'image': image,
-        'selectedVariant': selectedVariant,
+        'featuredImg': image,
+        'gallery': gallery,
+        'productVariantId': selectedVariant,
         'rating': rating,
       };
 }

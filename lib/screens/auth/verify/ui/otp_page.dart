@@ -366,8 +366,8 @@ class _OtpPageState extends State<OtpPage> with TickerProviderStateMixin {
                                       'Continue',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.w700,
+                                        fontSize: 22.0,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   )

@@ -29,20 +29,29 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
       hydrate();
     });
 
-    on<UserAddAddressEvent>((event, emit) {
-      UserRepo.addAddress(
-        address1: event.address1,
-        addressType: event.addressType,
+    on<UserAddAddressEvent>((event, emit) async {
+      emit(UserLoadingState());
+      await UserRepo.addAddress(
+        placeId: event.placeId,
+        line1: event.address1,
+        addressName: event.addressType,
         lat: event.lat,
-        lon: event.lon,
-        address2: event.address2,
+        lng: event.lng,
+        line2: event.address2,
+        phone: event.phone,
       );
       emit(UserAuthState(user: UserRepo.user));
       hydrate();
     });
 
-    on<UserRemoveAddressEvent>((event, emit) {
-      UserRepo.removeAddress(event.id);
+    on<UserRemoveAddressEvent>((event, emit) async {
+      emit(UserLoadingState());
+      final response = await UserRepo.removeAddress(event.id);
+      if (response) {
+        emit(UserAuthState(user: UserRepo.user));
+        hydrate();
+        return;
+      }
       emit(UserAuthState(user: UserRepo.user));
       hydrate();
     });

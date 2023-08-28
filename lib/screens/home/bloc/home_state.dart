@@ -1,5 +1,7 @@
 part of 'home_bloc.dart';
 
+enum HomeLoadedFailureType { locDenied, locDeniedForever, other }
+
 @immutable
 abstract class HomeState {}
 
@@ -9,9 +11,17 @@ class HomeInitial extends HomeState {}
 
 class HomeLoading extends HomeState {}
 
-class HomeLoadedSuccess extends HomeState {}
+class HomeLoadedSuccess extends HomeState {
+  final String? address;
 
-class HomeLoadedFailure extends HomeState {}
+  HomeLoadedSuccess({this.address});
+}
+
+class HomeLoadedFailure extends HomeState {
+  final HomeLoadedFailureType type;
+
+  HomeLoadedFailure(this.type);
+}
 
 class HomeAddToCartSuccess extends HomeActionState {}
 

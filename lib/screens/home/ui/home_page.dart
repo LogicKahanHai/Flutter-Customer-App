@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/reusable/common_components.dart';
@@ -27,7 +28,6 @@ class _HomePageState extends State<HomePage>
   }
 
   void refresh() {
-    print('refreshing');
     setState(() {
       isUpdating = !isUpdating;
     });
@@ -70,14 +70,143 @@ class _HomePageState extends State<HomePage>
           case HomeLoading:
             return Scaffold(
               backgroundColor: Colors.grey.shade200,
-              body: const Center(
-                child: CircularProgressIndicator(
-                  color: PKTheme.primaryColor,
-                  strokeWidth: 3,
+              body: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: PKTheme.primaryColor,
+                        strokeWidth: 3,
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Tasty Home made food is just a click away...',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          case HomeLoadedFailure:
+            final failureState = state as HomeLoadedFailure;
+            return Scaffold(
+              backgroundColor: Colors.grey.shade200,
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (failureState.type == HomeLoadedFailureType.other)
+                        const Icon(
+                          Icons.error_outline,
+                          color: PKTheme.primaryColor,
+                          size: 80,
+                        )
+                      else
+                        const Icon(
+                          Icons.location_off,
+                          color: PKTheme.primaryColor,
+                          size: 80,
+                        ),
+                      const SizedBox(height: 20),
+                      if (failureState.type == HomeLoadedFailureType.other)
+                        const Text(
+                          'Aw Snap!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'We need that ',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const TextSpan(
+                                text: 'Location Permission',
+                                style: TextStyle(
+                                  color: PKTheme.primaryColor,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' to serve you better.',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 20),
+                      Text(
+                        failureState.type == HomeLoadedFailureType.locDenied
+                            ? 'Location permission denied'
+                            : failureState.type ==
+                                    HomeLoadedFailureType.locDeniedForever
+                                ? 'Please enable Location Permission from Settings'
+                                : 'Something went wrong',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () async {
+                          _animationController.reset();
+                          if (failureState.type ==
+                              HomeLoadedFailureType.locDeniedForever) {
+                            final settingsOpened = await openAppSettings();
+                            if (settingsOpened) {
+                              _homeBloc.add(HomeInitialEvent());
+                            }
+                          } else {
+                            _homeBloc.add(HomeInitialEvent());
+                          }
+                        },
+                        child: Text(
+                          failureState.type ==
+                                  HomeLoadedFailureType.locDeniedForever
+                              ? 'Open Settings'
+                              : 'Retry',
+                          style: const TextStyle(
+                            color: PKTheme.primaryColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
           case HomeLoadedSuccess:
+            final successState = state as HomeLoadedSuccess;
             return Scaffold(
               body: Center(
                 child: SingleChildScrollView(
@@ -86,7 +215,10 @@ class _HomePageState extends State<HomePage>
                     create: (context) => HomeBloc(),
                     child: Column(
                       children: [
-                        AddressContainer(shouldRefresh: isUpdating)
+                        AddressContainer(
+                          shouldRefresh: isUpdating,
+                          tempAddress: successState.address,
+                        )
                             .animate(controller: _animationController)
                             .fade(
                               delay: 0.ms,

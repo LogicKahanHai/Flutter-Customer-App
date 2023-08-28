@@ -7,8 +7,10 @@ import 'package:pk_customer_app/screens/address/components/components_address.da
 class AddressMapPage extends StatefulWidget {
   final LatLng? initialPosition;
   final String? placeId;
-  final Map<String, String>? locDeets;
-  const AddressMapPage({Key? key, this.initialPosition, this.placeId, this.locDeets}) : super(key: key);
+  final Map<String, dynamic>? locDeets;
+  const AddressMapPage(
+      {Key? key, this.initialPosition, this.placeId, this.locDeets})
+      : super(key: key);
 
   @override
   _AddressMapPageState createState() => _AddressMapPageState();
