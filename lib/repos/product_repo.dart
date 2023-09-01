@@ -1,213 +1,115 @@
+import 'dart:convert';
+
+import 'package:pk_customer_app/common/blocs/export_blocs.dart';
+import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
 class ProductRepo {
   static late List<ProductModel> _products;
   static late List<VariantModel> _variants;
-  static late List<ReviewModel> _reviews;
+  static late List<CategoryModel> _categories;
+
+  static const String _baseUrl = RepoConstants.baseUrl;
 
   static List<ProductModel> get products => _products;
 
   static List<VariantModel> get variants => _variants;
 
-  static List<ReviewModel> get reviews => _reviews;
+  static List<CategoryModel> get categories => _categories;
 
-  set setProducts(List<ProductModel> products) {
+  static set _setProducts(List<ProductModel> products) {
+    try {
+      _products.clear();
+    } catch (e) {
+      _products = [];
+    }
     _products.addAll(products);
   }
 
-  set setVariants(List<VariantModel> variants) {
+  static set _setVariants(List<VariantModel> variants) {
+    try {
+      _variants.clear();
+    } catch (e) {
+      _variants = [];
+    }
     _variants.addAll(variants);
   }
 
-  void getProducts() {
-    _products = [
-      ProductModel(
-        id: '1',
-        name: 'Chakli',
-        description: 'description',
-        image: 'assets/images/products/chakli.png',
-        selectedVariant: '',
-        rating: 4.6,
-        gallery: [],
-      ),
-      ProductModel(
-        id: '2',
-        name: 'Modak',
-        description: 'description',
-        image: 'assets/images/products/modak.png',
-        selectedVariant: '',
-        rating: 4.8,
-        gallery: [],
-      ),
-      ProductModel(
-        id: '3',
-        name: 'Chivda',
-        description: 'description',
-        image: 'assets/images/products/chivda.png',
-        selectedVariant: '',
-        rating: 4.9,
-        gallery: [],
-      ),
-      ProductModel(
-        id: '4',
-        name: 'Puranpoli',
-        description: 'description',
-        image: 'assets/images/products/puran.png',
-        selectedVariant: '',
-        rating: 3.7,
-        gallery: [],
-      ),
-    ];
+  static set _setCategories(List<CategoryModel> categories) {
+    try {
+      _categories.clear();
+    } catch (e) {
+      _categories = [];
+    }
+    _categories.addAll(categories);
+  }
 
-    _variants = [
-      VariantModel(
-        id: '400',
-        productId: '1',
-        regPrice: 150,
-        salePrice: 100,
-        variantName: '400',
-        variantValue: '400 g',
-      ),
-      VariantModel(
-        id: '500',
-        productId: '1',
-        regPrice: 250,
-        salePrice: 200,
-        variantName: '500',
-        variantValue: '500 g',
-      ),
-      VariantModel(
-        id: '600',
-        productId: '1',
-        regPrice: 350,
-        salePrice: 300,
-        variantName: '600',
-        variantValue: '600 g',
-      ),
-      VariantModel(
-        id: '700',
-        productId: '1',
-        regPrice: 450,
-        salePrice: 400,
-        variantName: '700',
-        variantValue: '700 g',
-      ),
-      VariantModel(
-        id: '5',
-        productId: '4',
-        regPrice: 150,
-        salePrice: 100,
-        variantName: '5',
-        variantValue: '5 pieces',
-      ),
-      VariantModel(
-        id: '10',
-        productId: '4',
-        regPrice: 250,
-        salePrice: 200,
-        variantName: '10',
-        variantValue: '10 pieces',
-      ),
-      VariantModel(
-        id: '15',
-        productId: '4',
-        regPrice: 350,
-        salePrice: 300,
-        variantName: '15',
-        variantValue: '15 pieces',
-      ),
-      VariantModel(
-        id: '20',
-        productId: '4',
-        regPrice: 450,
-        salePrice: 400,
-        variantName: '20',
-        variantValue: '20 pieces',
-      ),
-      VariantModel(
-        id: '400',
-        productId: '2',
-        regPrice: 150,
-        salePrice: 100,
-        variantName: '400',
-        variantValue: '400 g',
-      ),
-      VariantModel(
-        id: '500',
-        productId: '2',
-        regPrice: 250,
-        salePrice: 200,
-        variantName: '500',
-        variantValue: '500 g',
-      ),
-      VariantModel(
-        id: '600',
-        productId: '2',
-        regPrice: 350,
-        salePrice: 300,
-        variantName: '600',
-        variantValue: '600 g',
-      ),
-      VariantModel(
-        id: '400',
-        productId: '3',
-        regPrice: 150,
-        salePrice: 100,
-        variantName: '400',
-        variantValue: '400 g',
-      ),
-      VariantModel(
-        id: '500',
-        productId: '3',
-        regPrice: 250,
-        salePrice: 200,
-        variantName: '500',
-        variantValue: '500 g',
-      ),
-    ];
+  static Future<List<dynamic>> getProductsVariantsAndCategories() async {
+    const String categoryApiCall =
+        '$_baseUrl/ms/customer/mobile/category/getCategory';
+    const String productApiCall =
+        '$_baseUrl/ms/customer/mobile/product/getProduct';
+    const String variantApiCall =
+        '$_baseUrl/ms/customer/mobile/productVariant/getProductVariant';
 
-    _reviews = [
-      ReviewModel(
-        productId: 'xyz',
-        name: 'Sakshi',
-        title: 'Amazing taste',
-        rating: 4.5,
-        image: 'https://placehold.co/150',
-      ),
-      ReviewModel(
-        productId: 'xyz',
-        name: 'Sakshi',
-        title: 'Woww!!',
-        review:
-            'I ordered chakli and it tasted just like my dadi’s. Can’t get over it. You must try it!',
-        rating: 4.5,
-        image: 'https://placehold.co/150',
-      ),
-      ReviewModel(
-        productId: 'xyz',
-        name: 'Naveen',
-        title: 'Amazing taste',
-        review:
-            'I ordered chakli and it tasted just like my dadi’s. I\'m a hosteller',
-        rating: 4.5,
-      ),
-      ReviewModel(
-        productId: 'xyz',
-        name: 'Uma',
-        title: 'Amazing taste',
-        review:
-            'Do quis cupidatat duis cupidatat laborum ex dolor consequat quis voluptate ex.',
-        rating: 4.5,
-        image: 'https://placehold.co/150',
-      ),
-      ReviewModel(
-        productId: 'xyz',
-        name: 'Ankita',
-        rating: 4.5,
-        review: 'Wow! Loved it.',
-        image: 'https://placehold.co/150',
-      ),
-    ];
+    final categoryResponse = await RepoConstants.sendRequest(
+        categoryApiCall, null, null, RequestType.get);
+    if (jsonDecode(categoryResponse.body)['statusCode'] != 200) {
+      return [false, HomeLoadedFailureType.categories];
+    }
+    final List<dynamic> categoriesJson =
+        jsonDecode(categoryResponse.body)['data'];
+    List<CategoryModel> categories = [];
+    for (var category in categoriesJson) {
+      categories.add(CategoryModel.fromJson(category));
+    }
+    _setCategories = categories;
+    final productResponse = await RepoConstants.sendRequest(
+        productApiCall, null, null, RequestType.get);
+    if (jsonDecode(productResponse.body)['statusCode'] != 200) {
+      return [false, HomeLoadedFailureType.products];
+    }
+    final List<dynamic> productsJson = jsonDecode(productResponse.body)['data'];
+    List<ProductModel> products = [];
+    for (var product in productsJson) {
+      products.add(ProductModel.fromJson(product));
+    }
+    _setProducts = products;
+    final variantResponse = await RepoConstants.sendRequest(
+        variantApiCall, null, null, RequestType.get);
+    if (jsonDecode(variantResponse.body)['statusCode'] != 200) {
+      return [false, HomeLoadedFailureType.variants];
+    }
+    final List<dynamic> variantsJson = jsonDecode(variantResponse.body)['data'];
+    List<VariantModel> variants = [];
+    for (var variant in variantsJson) {
+      try {
+        variants.add(VariantModel.fromJson(variant));
+      } catch (e) {
+        print(e);
+      }
+    }
+    _setVariants = variants;
+    Set<ProductModel> finalProducts = {};
+    for (var product in products) {
+      for (var variant in variants) {
+        if (variant.productId == product.productId) {
+          final newProduct = product.copyWith(
+            selectedVariant: variant.productVariantId,
+          );
+          final index = finalProducts.toList().indexWhere(
+                (element) => element.productId == newProduct.productId,
+              );
+          if (index == -1) {
+            finalProducts.add(newProduct);
+          } else {
+            continue;
+          }
+        }
+      }
+    }
+    _setProducts = finalProducts.toList();
+    return [true, null];
   }
 
   static int get productCount {
@@ -218,25 +120,27 @@ class ProductRepo {
     }
   }
 
-  static ProductModel getProductById(String id) {
-    return _products.firstWhere((element) => element.id == id);
+  static ProductModel getProductById(int productId) {
+    return _products.firstWhere((element) => element.productId == productId);
   }
 
-  static VariantModel getVariantById(String id, String variantId) {
+  static VariantModel getVariantById(int productId, int variantId) {
     try {
-      return _variants.firstWhere(
-          (element) => element.productId == id && element.id == variantId);
+      return _variants.firstWhere((element) =>
+          element.productId == productId &&
+          element.productVariantId == variantId);
     } catch (e) {
       return _variants.firstWhere(
-        (element) => element.productId == id,
+        (element) => element.productId == productId,
       );
     }
   }
 
-  static int getDiscount(String id, String variantId, int quantity) {
+  static int getDiscount(int productId, int variantId, int quantity) {
     try {
-      final variant = _variants.firstWhere(
-          (element) => element.productId == id && element.id == variantId);
+      final variant = _variants.firstWhere((element) =>
+          element.productId == productId &&
+          element.productVariantId == variantId);
       return (((variant.regPrice * quantity) - (variant.salePrice * quantity)) /
               (variant.regPrice * quantity) *
               100)
@@ -246,10 +150,10 @@ class ProductRepo {
     }
   }
 
-  static bool updateSelectedVariant(String id, String variantId) {
+  static bool updateSelectedVariant(int productId, int variantId) {
     try {
       _products = _products.map((e) {
-        if (e.id == id) {
+        if (e.productId == productId) {
           return e.copyWith(selectedVariant: variantId);
         } else {
           return e;
@@ -260,29 +164,4 @@ class ProductRepo {
       return false;
     }
   }
-
-  // static void addToCart(String id) {
-  //   final index = _products.indexWhere((element) => element.id == id);
-  //   _products[index].isInCart = true;
-  // }
-
-  // static void removeFromCart(String id) {
-  //   final index = _products.indexWhere((element) => element.id == id);
-  //   _products[index].isInCart = false;
-  // }
-
-  // static void updateProducts() {
-  //   print('Updating Products');
-  //   final List<ProductModel> cartList = cartState.products;
-  //   _products.forEach((element) {
-  //     if (cartList.contains(element)) {
-  //       element.isInCart = true;
-  //     } else {
-  //       element.isInCart = false;
-  //     }
-  //   });
-  //   for (var element in _products) {
-  //     print(element.isInCart);
-  //   }
-  // }
 }

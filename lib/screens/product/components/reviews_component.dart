@@ -1,13 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: library_private_types_in_public_api
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/models/models.dart';
-import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/reusable/rating_stars.dart';
 
 class ReviewsComponent extends StatefulWidget {
@@ -37,14 +34,79 @@ class _ReviewsComponentState extends State<ReviewsComponent> {
 
   @override
   void initState() {
-    _reviews = ProductRepo.reviews
-        .where((review) => review.productId == widget.productId)
-        .toList();
+    _reviews = [];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_reviews.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 15,
+        ),
+        width: double.infinity,
+        color: Colors.white,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Customer Reviews',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const RatingStars(
+                          rating: 4.2,
+                          color: Colors.green,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          '4.2',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        SizedBox(
+                          height: 20,
+                          child: VerticalDivider(
+                            color: Colors.grey.shade400,
+                            thickness: 2,
+                            width: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          '0 ratings',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const Spacer()
+              ],
+            ),
+          ],
+        ),
+      );
+    }
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: 10,

@@ -38,10 +38,12 @@ class _AddressContainerState extends State<AddressContainer> {
       child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Text(
@@ -52,18 +54,9 @@ class _AddressContainerState extends State<AddressContainer> {
                         color: Colors.grey.shade600,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: RotatedBox(
-                        quarterTurns: 3,
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_back_ios_new),
-                        ),
-                      ),
-                    )
                   ],
                 ),
+                const SizedBox(height: 10),
                 tempAddress == null
                     ? UserRepo.addressesLength == 0
                         ? const Row(
@@ -90,7 +83,7 @@ class _AddressContainerState extends State<AddressContainer> {
                               ),
                               const SizedBox(width: 10),
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.6,
+                                width: MediaQuery.of(context).size.width * 0.5,
                                 child: RichText(
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
@@ -139,9 +132,10 @@ class _AddressContainerState extends State<AddressContainer> {
                           ),
                           const SizedBox(width: 10),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.6,
+                            width: MediaQuery.of(context).size.width * 0.5,
                             child: RichText(
                               overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                               text: TextSpan(
                                 children: [
                                   TextSpan(
@@ -195,9 +189,9 @@ class _AddressContainerState extends State<AddressContainer> {
                   }
                 });
               },
-              child: const Text(
-                'ADD',
-                style: TextStyle(
+              child: Text(
+                UserRepo.addressesLength == 0 ? 'ADD' : 'CHANGE',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 17,
                 ),

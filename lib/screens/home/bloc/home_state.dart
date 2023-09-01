@@ -1,6 +1,14 @@
 part of 'home_bloc.dart';
 
-enum HomeLoadedFailureType { locDenied, locDeniedForever, other }
+enum HomeLoadedFailureType {
+  locDenied,
+  locDeniedForever,
+  products,
+  categories,
+  variants,
+  banners,
+  other
+}
 
 @immutable
 abstract class HomeState {}

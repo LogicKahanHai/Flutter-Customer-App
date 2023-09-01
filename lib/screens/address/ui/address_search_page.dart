@@ -26,7 +26,7 @@ class _AddressSearchPageState extends State<AddressSearchPage> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           },
           icon: const Icon(Icons.arrow_back),
         ),

@@ -43,15 +43,10 @@ class OrderModel {
             .toList();
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        '_id': id,
         'userId': userId,
         'addressId': addressId,
-        'paymentMethod': paymentMethod,
-        'orderDate': orderDate.toIso8601String(),
-        'totalAmount': totalAmount,
-        'discount': discount,
-        'shipping': shipping,
-        'tax': tax,
+        'paymentMethodId': paymentMethod,
         'subTotal': subTotal,
         'orderItems': orderItems.map((e) => e.toJson()).toList(),
       };

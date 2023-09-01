@@ -1,18 +1,22 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class VariantModel {
   String id;
-  String productId;
-  double regPrice;
-  double salePrice;
+  int productId;
+  int productVariantId;
+  num regPrice;
+  num salePrice;
   String variantName;
   String variantValue;
+  String variantSKU;
   VariantModel({
     required this.id,
     required this.productId,
+    required this.productVariantId,
     required this.regPrice,
     required this.salePrice,
     required this.variantName,
     required this.variantValue,
+    required this.variantSKU,
   });
 
   @override
@@ -38,21 +42,22 @@ class VariantModel {
   }
 
   VariantModel.fromJson(Map<String, dynamic> json)
-      : id = json['productVariantId'] as String,
-        productId = json['productId'] as String,
-        regPrice = json['price'] as double,
-        salePrice = json['salePrice'] as double,
+      : id = json['_id'] as String,
+        productId = json['productId'] as int,
+        productVariantId = json['productVariantId'] as int,
+        regPrice = json['price'] as num,
+        salePrice = json['salePrice'] as num,
         variantName = json['name'] as String,
-        variantValue = json['weight'] as num < 1000
-            ? '${json['weight']} gm'
-            : '${json['weight'] / 1000} kg';
+        variantSKU = json['sku'] as String,
+        variantValue = json['name'] as String;
 
   Map<String, dynamic> toJson() => {
-        'productVariantId': id,
+        '_id': id,
         'productId': productId,
+        'productVariantId': productVariantId,
         'price': regPrice,
         'salePrice': salePrice,
         'name': variantName,
-        'weight': variantValue,
+        'sku': variantSKU,
       };
 }

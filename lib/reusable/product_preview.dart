@@ -26,7 +26,7 @@ class Product extends StatefulWidget {
   //[x]: Add a constructor to accept the product details
   //[x]: Add the ADD button functionality
   //[x] Might want to move this widget to a more accessible place for reusability
-  final String id;
+  final int id;
 
   @override
   State<Product> createState() => _ProductState();
@@ -37,7 +37,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
   bool isATCLoading = false;
   bool isAdded = false;
 
-  late String _dropdownValue;
+  late int _dropdownValue;
   late ProductModel _product;
   late List<VariantModel> _variants;
 
@@ -45,10 +45,6 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
   void initState() {
     _product = ProductRepo.getProductById(widget.id);
     getVariants();
-    if (_product.selectedVariant == '') {
-      ProductRepo.updateSelectedVariant(_product.id, _variants[0].id);
-      _product = ProductRepo.getProductById(_product.id);
-    }
     _dropdownValue = _product.selectedVariant;
     controller = AnimationController(
       vsync: this,
@@ -67,11 +63,11 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
 
   void getVariants() {
     _variants = ProductRepo.variants
-        .where((variant) => variant.productId == _product.id)
+        .where((variant) => variant.productId == _product.productId)
         .toList();
   }
 
-  void _onChanged(String? value) {
+  void _onChanged(int? value) {
     if (value == null) return;
     setState(() {
       _dropdownValue = value;
@@ -118,15 +114,27 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
               Container(
                 width: 160,
                 height: 160,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                  ),
+                ),
+                child: ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(10),
                     bottomLeft: Radius.circular(10),
                   ),
-                  image: DecorationImage(
-                    image: AssetImage(_product.image),
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.network(_product.image, fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: PKTheme.primaryColor,
+                        strokeWidth: 2,
+                      ),
+                    );
+                  }),
                 ),
               ),
               const SizedBox(height: 10),
@@ -164,7 +172,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                 children: [
                   Text(
                     '₹ ${ProductRepo.getVariantById(
-                      _product.id,
+                      _product.productId,
                       _dropdownValue,
                     ).salePrice.round()}',
                     style: const TextStyle(
@@ -175,7 +183,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                   const SizedBox(width: 10),
                   Text(
                     '₹ ${ProductRepo.getVariantById(
-                      _product.id,
+                      _product.productId,
                       _dropdownValue,
                     ).regPrice.round()}',
                     style: TextStyle(
@@ -208,13 +216,13 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                       items: _variants.map(
                         (variant) {
                           return DropdownMenuItem(
-                            value: variant.variantName,
+                            value: variant.productVariantId,
                             child: Container(
                               constraints:
                                   const BoxConstraints(maxWidth: 100 - 31),
                               child: Text(
                                 overflow: TextOverflow.ellipsis,
-                                variant.variantValue,
+                                variant.variantName,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -248,7 +256,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                       controller.forward();
                       BlocProvider.of<CartBloc>(context).add(
                         CartAddProductEvent(
-                          productId: _product.id,
+                          productId: _product.productId,
                           variantId: _dropdownValue,
                         ),
                       );

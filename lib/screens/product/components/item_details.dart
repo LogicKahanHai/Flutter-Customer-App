@@ -1,13 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/product_repo.dart';
 import 'package:pk_customer_app/reusable/rating_stars.dart';
 
 class ItemDetails extends StatefulWidget {
-  final String productId;
-  final String variantId;
+  final int productId;
+  final int variantId;
   final int quantity;
   const ItemDetails({
     Key? key,
@@ -33,7 +32,6 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   @override
   Widget build(BuildContext context) {
-    
     selectedVariant = ProductRepo.getVariantById(
       widget.productId,
       widget.variantId,
@@ -111,7 +109,7 @@ class _ItemDetailsState extends State<ItemDetails> {
               ),
               const SizedBox(width: 10),
               Text(
-                '${ProductRepo.getDiscount(widget.productId, selectedVariant.id, widget.quantity)}% OFF',
+                '${ProductRepo.getDiscount(widget.productId, selectedVariant.productVariantId, widget.quantity)}% OFF',
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

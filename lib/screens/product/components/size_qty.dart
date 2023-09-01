@@ -4,7 +4,7 @@ import 'package:pk_customer_app/models/models.dart';
 
 class SizeQty extends StatefulWidget {
   final List<VariantModel> variants;
-  final void Function(String?) onSizeChanged;
+  final void Function(int?) onSizeChanged;
   final void Function(dynamic) onQuantChanged;
   const SizeQty({
     Key? key,
@@ -18,19 +18,19 @@ class SizeQty extends StatefulWidget {
 }
 
 class _SizeQtyState extends State<SizeQty> {
-  late String _dropdownValue;
+  late int _dropdownValue;
   late List<VariantModel> _variants;
   late int _quant;
 
   @override
   void initState() {
     _variants = widget.variants;
-    _dropdownValue = _variants[0].id;
+    _dropdownValue = _variants[0].productVariantId;
     _quant = 1;
     super.initState();
   }
 
-  void _onSizeChanged(String? newVar) {
+  void _onSizeChanged(int? newVar) {
     setState(() {
       _dropdownValue = newVar!;
     });
@@ -96,11 +96,11 @@ class _SizeQtyState extends State<SizeQty> {
                   items: _variants.map(
                     (variant) {
                       return DropdownMenuItem(
-                        value: variant.variantName,
+                        value: variant.productVariantId,
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 100),
                           child: Text(
-                            variant.variantValue,
+                            variant.variantName,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 16,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/repos/product_repo.dart';
 
 class HomeCategoryList extends StatefulWidget {
   const HomeCategoryList({super.key});
@@ -11,25 +13,62 @@ class _HomeCategoryListState extends State<HomeCategoryList> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       color: Colors.white,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Snacks By Category: ',
+            'Most Loved Snacks: ',
             style: TextStyle(
-              fontWeight: FontWeight.bold,
               fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: GetCategories.categories,
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 140,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: ProductRepo.productCount,
+              itemBuilder: (context, index) {
+                final category = ProductRepo.categories[index];
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    children: [
+                      Image.network(
+                        category.featuredImg,
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const SizedBox(
+                            width: 90,
+                            height: 90,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: PKTheme.primaryColor,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        category.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           )
         ],

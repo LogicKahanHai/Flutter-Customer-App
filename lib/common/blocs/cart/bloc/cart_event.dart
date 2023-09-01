@@ -11,8 +11,8 @@ abstract class CartEvent extends Equatable {
 class CartInitEvent extends CartEvent {}
 
 class CartAddProductEvent extends CartEvent {
-  final String productId;
-  final String variantId;
+  final int productId;
+  final int variantId;
   final int quantity;
   const CartAddProductEvent({
     required this.productId,
@@ -32,4 +32,16 @@ class CartRemoveProductEvent extends CartEvent {
 
   @override
   List<Object> get props => [cartItemId];
+}
+
+class CartCreateOrderEvent extends CartEvent {
+  final String addressId;
+  final String paymentMethod;
+  const CartCreateOrderEvent({
+    required this.addressId,
+    required this.paymentMethod,
+  });
+
+  @override
+  List<Object> get props => [addressId, paymentMethod];
 }

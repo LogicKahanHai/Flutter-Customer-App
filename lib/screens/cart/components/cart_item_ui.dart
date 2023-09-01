@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 
@@ -43,15 +43,27 @@ class _CartItemUiState extends State<CartItemUi> {
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+              ),
+            ),
+            child: ClipRRect(
               borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(10),
                 bottomLeft: Radius.circular(10),
               ),
-              image: DecorationImage(
-                image: AssetImage(cartItem.image),
-                fit: BoxFit.cover,
-              ),
+              child: Image.network(cartItem.image, fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: PKTheme.primaryColor,
+                    strokeWidth: 2,
+                  ),
+                );
+              }),
             ),
           ),
           const SizedBox(width: 10),

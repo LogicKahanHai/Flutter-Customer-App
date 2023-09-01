@@ -31,13 +31,13 @@ class _ProductPageState extends State<ProductPage> {
 
   void initStuff() {
     variants = ProductRepo.variants
-        .where((variant) => variant.productId == widget.product.id)
+        .where((variant) => variant.productId == widget.product.productId)
         .toList();
     selectedVariant = widget.product.selectedVariant;
     setState(() {});
   }
 
-  void refresh(String newVariant) {
+  void refresh(int newVariant) {
     setState(() {
       selectedVariant = newVariant;
     });
@@ -50,12 +50,11 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   final int _currentIndex = 0;
-  late String selectedVariant;
+  late int selectedVariant;
 
   @override
   Widget build(BuildContext context) {
     ProductModel pdt = widget.product;
-
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
@@ -107,7 +106,7 @@ class _ProductPageState extends State<ProductPage> {
                     ImageCarousel(product: pdt),
                     const SizedBox(height: 20),
                     ItemDetails(
-                      productId: pdt.id,
+                      productId: pdt.productId,
                       variantId: selectedVariant,
                       quantity: quantity,
                     ),
@@ -116,7 +115,8 @@ class _ProductPageState extends State<ProductPage> {
                       variants: variants,
                       onSizeChanged: (newVariant) {
                         if (newVariant != null) {
-                          ProductRepo.updateSelectedVariant(pdt.id, newVariant);
+                          ProductRepo.updateSelectedVariant(
+                              pdt.productId, newVariant);
                           refresh(newVariant);
                         }
                       },
@@ -132,7 +132,7 @@ class _ProductPageState extends State<ProductPage> {
                         //[ ]: Add event to add to cart
                         BlocProvider.of<CartBloc>(context).add(
                           CartAddProductEvent(
-                            productId: pdt.id,
+                            productId: pdt.productId,
                             variantId: selectedVariant,
                             quantity: quantity,
                           ),
@@ -145,7 +145,10 @@ class _ProductPageState extends State<ProductPage> {
                     const SizedBox(height: 20),
                     const InFoGredients(),
                     const SizedBox(height: 20),
-                    const ReviewsComponent(),
+
+                    /// Reviews are not currently available so not rendering the component. This component is still available in the code as and when is required.
+
+                    // const ReviewsComponent(),
                     CartRepo.products.isNotEmpty
                         ? Container(height: 65, color: Colors.white)
                         : const SizedBox.shrink(),
