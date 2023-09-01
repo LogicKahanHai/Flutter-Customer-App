@@ -10,7 +10,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<HomeInitialEvent>((event, emit) async {
       emit(HomeLoading());
-      //TODO: Check for onReady type functionality.
       await GeoRepo.getCurrentLatLong().then((locationResponse) async {
         switch (locationResponse[0]) {
           case LocationPermission.denied:
@@ -24,14 +23,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             final tempAddResponse =
                 await UserRepo.setTemporaryAddress(locationResponse[1]);
             if (!tempAddResponse[0]) {
+              print('Error setting temp address');
               emit(HomeLoadedFailure(HomeLoadedFailureType.other));
               break;
             }
             final addressResponse = await UserRepo.getAndSetAddresses();
             if (!addressResponse) {
+              print('Error getting addresses');
               emit(HomeLoadedFailure(HomeLoadedFailureType.other));
               break;
             }
+            //TODO: Add getCategories() here
+            //TODO: Add getProducts() here
+
+            final productsResponse =
+                await ProductRepo.getProductsVariantsAndCategories();
+            if (!productsResponse[0]) {
+              emit(HomeLoadedFailure(productsResponse[1]));
+              break;
+            }
+            //TODO: Add getBanners() here
             emit(HomeLoadedSuccess(
                 address:
                     "${tempAddResponse[1]['sublocality_1'] ?? 'Unnamed'} - ${tempAddResponse[1]['city']} - ${tempAddResponse[1]['postcode']}"));

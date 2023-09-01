@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
@@ -40,6 +39,14 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
           CartRepo.removeProduct(CartRepo.getCartItemById(event.cartItemId));
           emit(CartLoaded(CartRepo.products));
           hydrate();
+        } catch (_) {}
+      }
+    });
+
+    on<CartCreateOrderEvent>((event, emit) async {
+      if (state is CartLoaded) {
+        try {
+          await CartRepo.sendPaymentMethodId(event.paymentMethod);
         } catch (_) {}
       }
     });

@@ -1,20 +1,21 @@
+import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
 class CartRepo {
   static final CartModel _cart = CartModel([]);
+
+  static const String _baseUrl = RepoConstants.baseUrl;
 
   static List<CartItemModel> get products => _cart.cartProducts;
 
   static CartItemModel getCartItemById(String id) =>
       products.where((element) => element.id == id).first;
 
-
-
   static void addProduct(ProductModel product, int quant) {
     try {
       int index = _cart.cartProducts.indexWhere(
         (element) =>
-            element.productId == product.id &&
+            element.productId == product.productId &&
             element.variantId == product.selectedVariant,
       );
       if (index != -1) {
@@ -30,7 +31,6 @@ class CartRepo {
         ),
       );
       _cart.cartProducts = _cart.cartProducts.toSet().toList();
-      
     } catch (_) {}
   }
 
@@ -80,6 +80,43 @@ class CartRepo {
       _cart.cartProducts.add(item);
     }
   }
+
+  static Future<void> sendPaymentMethodId(String paymentMethodId) async {
+    const String apiCall =
+        '$_baseUrl/ms/customer/mobile/placeOrder/createOrder';
+    final body = {
+      "paymentMethodId": paymentMethodId,
+    };
+    final response = await RepoConstants.sendRequest(
+      apiCall,
+      body,
+      null,
+      RequestType.post,
+    );
+    print('call was made.');
+    //TODO: Implement this for Sending the payment method id
+  }
+
+  //TODO: Implement this for Cart
+
+  // static Future<bool> updateCart() async {
+  //   try {
+  //     const String apiCall = '$_baseUrl/ms/customer/mobile/cart/updateCart';
+  //
+  //     final body = jsonEncode({
+  //       'customerId': RepoConstants.customerId,
+  //       'cartItems': _cart.cartProducts.map((e) => e.toJson()).toList(),
+  //     });
+  //
+  //     if (jsonDecode(response.body)['statusCode'] == 200) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } catch (_) {
+  //     return false;
+  //   }
+  // }
 
   // static bool increaseQuantity(String cartItemId) {
   //   final index = _cart.cartProducts

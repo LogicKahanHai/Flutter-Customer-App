@@ -18,14 +18,6 @@ class HomeFavProducts extends StatefulWidget {
 }
 
 class _HomeFavProductsState extends State<HomeFavProducts> {
-  final _cartBloc = CartBloc();
-
-  @override
-  void initState() {
-    _cartBloc.add(CartInitEvent());
-    super.initState();
-  }
-
   void rfcTap(ProductModel product) {}
 
   void atcTap(ProductModel product) {}
@@ -66,8 +58,9 @@ class _HomeFavProductsState extends State<HomeFavProducts> {
                     scrollDirection: Axis.horizontal,
                     itemCount: ProductRepo.productCount,
                     itemBuilder: (context, index) {
+                      final product = ProductRepo.products[index];
                       return Product(
-                        id: '${index + 1}',
+                        id: product.productId,
                         onChangedSetState: () {
                           setState(() {});
                         },

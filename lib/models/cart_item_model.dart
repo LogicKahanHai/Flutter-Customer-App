@@ -4,8 +4,8 @@ import 'package:pk_customer_app/repos/product_repo.dart';
 
 class CartItemModel {
   final String id;
-  final String productId;
-  final String variantId;
+  final int productId;
+  final int variantId;
   final String productName;
   final String variantName;
   final double regPrice;
@@ -47,23 +47,23 @@ class CartItemModel {
         'quantity': quantity,
       };
 
-  CartItemModel.fromProduct(ProductModel product, int cartItemlength, int quant)
-      : id = cartItemlength.toString(),
-        productId = product.id,
+  CartItemModel.fromProduct(ProductModel product, int cartItemLength, int quant)
+      : id = cartItemLength.toString(),
+        productId = product.productId,
         variantId = product.selectedVariant,
         productName = product.name,
         variantName = ProductRepo.getVariantById(
-          product.id,
+          product.productId,
           product.selectedVariant,
         ).variantValue,
         regPrice = ProductRepo.getVariantById(
-          product.id,
+          product.productId,
           product.selectedVariant,
-        ).regPrice,
+        ).regPrice.toDouble(),
         salePrice = ProductRepo.getVariantById(
-          product.id,
+          product.productId,
           product.selectedVariant,
-        ).salePrice,
+        ).salePrice.toDouble(),
         image = product.image,
         quantity = quant;
 

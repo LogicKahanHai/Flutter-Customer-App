@@ -1,6 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/common/blocs/cart/bloc/cart_bloc.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/reusable/common_components.dart';
@@ -139,6 +141,11 @@ class _CartPageState extends State<CartPage> {
                             animationDirection: AnimationDirection.RTL,
                           ).createRoute(),
                         ).then((value) => refresh());
+                      } else {
+                        BlocProvider.of<CartBloc>(context).add(
+                            CartCreateOrderEvent(
+                                addressId: UserRepo.currentAddress!.id,
+                                paymentMethod: paymentMethod));
                       }
                     },
                     value: CartRepo.grandTotal.toStringAsFixed(2),

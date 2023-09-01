@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 
 class Payment extends StatefulWidget {
@@ -46,7 +47,8 @@ class _PaymentState extends State<Payment> {
                     if (isRazorpaySelected) return;
                     setState(() {
                       isRazorpaySelected = true;
-                      widget.updatePaymentMethod('razorpay');
+                      widget.updatePaymentMethod(
+                          RepoConstants.razorpayPaymentMethodId);
                     });
                   },
                   child: Container(
@@ -94,7 +96,9 @@ class _PaymentState extends State<Payment> {
                     if (!isRazorpaySelected) return;
                     setState(() {
                       isRazorpaySelected = false;
-                      widget.updatePaymentMethod('cod');
+                      widget.updatePaymentMethod(
+                        RepoConstants.codPaymentMethodId,
+                      );
                     });
                   },
                   child: Container(

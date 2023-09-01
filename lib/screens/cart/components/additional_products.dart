@@ -40,8 +40,9 @@ class _AdditionalProductsState extends State<AdditionalProducts> {
               scrollDirection: Axis.horizontal,
               itemCount: ProductRepo.productCount,
               itemBuilder: (context, index) {
+                final product = ProductRepo.products[index];
                 return Product(
-                  id: '${index + 1}',
+                  id: product.productId,
                   onChangedSetState: () {
                     setState(() {});
                   },
