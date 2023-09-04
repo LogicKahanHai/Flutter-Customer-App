@@ -48,7 +48,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.orderItems[index].name,
+                      widget.orderItems[index].toString(),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -58,7 +58,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                     Text(
                       ProductRepo.variants
                           .firstWhere((element) =>
-                              element.id ==
+                              element.productVariantId ==
                                   widget.orderItems[index].variantId &&
                               element.productId ==
                                   widget.orderItems[index].productId)

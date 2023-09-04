@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -397,7 +398,6 @@ class _MapComponentState extends State<MapComponent> {
                                   ).then((value) async {
                                     if (value != null) {
                                       if (isEdit) {
-                                        print('edit');
                                         try {
                                           userBloc.add(UserUpdateAddressEvent(
                                             id: widget.toBeUpdatedAddress!.id,
@@ -410,7 +410,9 @@ class _MapComponentState extends State<MapComponent> {
                                             phone: UserRepo.user.phone,
                                           ));
                                         } catch (e) {
-                                          print(e);
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
                                         }
                                         return;
                                       }

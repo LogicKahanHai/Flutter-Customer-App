@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/common/blocs/cart/bloc/cart_bloc.dart';
@@ -24,7 +25,7 @@ class _CartPageState extends State<CartPage> {
   double taxes = 0;
   double grandTotal = 0;
   bool isUpdating = false;
-  String paymentMethod = 'gpay';
+  String? paymentMethod;
 
   void refresh() {
     setState(() {
@@ -142,10 +143,24 @@ class _CartPageState extends State<CartPage> {
                           ).createRoute(),
                         ).then((value) => refresh());
                       } else {
-                        BlocProvider.of<CartBloc>(context).add(
+                        if (paymentMethod != null) {
+                          if (kDebugMode) {
+                            print(paymentMethod);
+                          }
+                          BlocProvider.of<CartBloc>(context).add(
                             CartCreateOrderEvent(
-                                addressId: UserRepo.currentAddress!.id,
-                                paymentMethod: paymentMethod));
+                              addressId: UserRepo.currentAddress!.id,
+                              paymentMethod: paymentMethod!,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please select a payment method'),
+                            ),
+                          );
+                          return;
+                        }
                       }
                     },
                     value: CartRepo.grandTotal.toStringAsFixed(2),

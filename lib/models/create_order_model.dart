@@ -1,38 +1,29 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:pk_customer_app/models/order_item_model.dart';
 
-class OrderModel {
-  final String id;
-  final String userId;
+class CreateOrderModel {
   final String addressId;
   final String paymentMethod;
-  final DateTime orderDate;
   final double totalAmount;
   final double discount;
   final double shipping;
   final double tax;
   final double subTotal;
   final List<OrderItemModel> orderItems;
-  OrderModel({
-    required this.id,
-    required this.userId,
+  CreateOrderModel({
     required this.addressId,
     required this.paymentMethod,
-    required this.orderDate,
     required this.totalAmount,
-    required this.discount,
-    required this.shipping,
-    required this.tax,
+    this.discount = 0.0,
+    this.shipping = 0.0,
+    this.tax = 0.0,
     required this.subTotal,
     required this.orderItems,
   });
 
-  OrderModel.fromJson(Map<String, dynamic> json)
-      : id = json['id'] as String,
-        userId = json['userId'] as String,
-        addressId = json['addressId'] as String,
+  CreateOrderModel.fromJson(Map<String, dynamic> json)
+      : addressId = json['addressId'] as String,
         paymentMethod = json['paymentMethod'] as String,
-        orderDate = DateTime.parse(json['orderDate'] as String),
         totalAmount = json['totalAmount'] as double,
         discount = json['discount'] as double,
         shipping = json['shipping'] as double,
@@ -43,11 +34,11 @@ class OrderModel {
             .toList();
 
   Map<String, dynamic> toJson() => {
-        '_id': id,
-        'userId': userId,
         'addressId': addressId,
         'paymentMethodId': paymentMethod,
-        'subTotal': subTotal,
-        'orderItems': orderItems.map((e) => e.toJson()).toList(),
+        'total': totalAmount,
+        'shipping_total': shipping,
+        'totalTax': tax,
+        'products': orderItems.map((e) => e.toJson()).toList(),
       };
 }
