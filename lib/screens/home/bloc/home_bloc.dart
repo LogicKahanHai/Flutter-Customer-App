@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:meta/meta.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 
 part 'home_event.dart';
@@ -23,13 +23,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             final tempAddResponse =
                 await UserRepo.setTemporaryAddress(locationResponse[1]);
             if (!tempAddResponse[0]) {
-              print('Error setting temp address');
+              if (kDebugMode) {
+                print('Error setting temp address');
+              }
               emit(HomeLoadedFailure(HomeLoadedFailureType.other));
               break;
             }
             final addressResponse = await UserRepo.getAndSetAddresses();
             if (!addressResponse) {
-              print('Error getting addresses');
+              if (kDebugMode) {
+                print('Error getting addresses');
+              }
               emit(HomeLoadedFailure(HomeLoadedFailureType.other));
               break;
             }

@@ -65,7 +65,7 @@ class UserRepo {
             AddressModel.fromJson(jsonDecode(response.body)['data'], _user.id);
         _user.addresses.add(newAddress);
         _user.addresses = _user.addresses.toSet().toList();
-        setCurrentAddressIndex(_user.addresses.length - 1);
+        setCurrentAddressIndex(index: _user.addresses.length - 1);
         return true;
       } else {
         return false;
@@ -83,7 +83,7 @@ class UserRepo {
     if (jsonDecode(response.body)['statusCode'] == 200) {
       _user.addresses.removeWhere((element) => element.id == id);
       _user.addresses = _user.addresses.toSet().toList();
-      setCurrentAddressIndex(0);
+      setCurrentAddressIndex(index: 0);
       return true;
     }
     return false;
@@ -111,7 +111,7 @@ class UserRepo {
           newAddresses.add(AddressModel.fromJson(address, _user.id));
         }
         setAddresses(newAddresses);
-        setCurrentAddressIndex(addressesLength - 1);
+        setCurrentAddressIndex(index: addressesLength - 1);
         return true;
       } else {
         return false;
@@ -134,8 +134,13 @@ class UserRepo {
     }
   }
 
-  static void setCurrentAddressIndex(int index) {
-    _user.currentAddressIndex = index;
+  static void setCurrentAddressIndex({int? index, String? id}) {
+    if (index == null) {
+      _user.currentAddressIndex =
+          _user.addresses.indexWhere((element) => element.id == id);
+    } else {
+      _user.currentAddressIndex = index;
+    }
   }
 
   static Future<List<dynamic>> setTemporaryAddress(Position position) async {

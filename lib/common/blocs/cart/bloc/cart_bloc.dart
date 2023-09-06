@@ -43,6 +43,12 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
       }
     });
 
+    on<CartClearEvent>((event, emit) {
+      CartRepo.clearCart();
+      emit(CartLoaded(const []));
+      hydrate();
+    });
+
     on<CartCreateOrderEvent>((event, emit) async {
       if (state is CartLoaded) {
         try {

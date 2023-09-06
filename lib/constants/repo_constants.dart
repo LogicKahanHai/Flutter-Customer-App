@@ -6,9 +6,7 @@ import 'package:pk_customer_app/repos/repos.dart';
 enum RequestType { get, post, delete, put }
 
 class RepoConstants {
-  static const String baseUrl = false
-      ? "https://loginc-rishi33456.loca.lt"
-      : "https://flexy-aws.coyogi.com";
+  static const String baseUrl = "https://flexy-aws.coyogi.com";
   static const String googleBaseUrl = 'https://maps.googleapis.com/maps/api';
   static const String googleApiKey = 'AIzaSyC-nQ1t--VdXbuOX06O_dGQAWiAtChVsdc';
   static const String codPaymentMethodId = 'cod';

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
@@ -81,19 +84,42 @@ class CartRepo {
     }
   }
 
+  static Future<List<dynamic>> getPaymentMethods(String addressId) async {
+    final String apiCall =
+        '$_baseUrl/ms/customer/mobile/payments/getAvailablePayment/$addressId';
+    final response = await RepoConstants.sendRequest(
+      apiCall,
+      null,
+      null,
+      RequestType.get,
+    );
+    if (jsonDecode(response.body)['statusCode'] == 200) {
+      return [true, jsonDecode(response.body)['data']];
+    } else {
+      return [false];
+    }
+  }
+
+  static Future<List<dynamic>> checkProfile() async {
+    //TODO: Implement this for Checking the profile before creating order
+    return [];
+  }
+
   static Future<void> sendPaymentMethodId(String paymentMethodId) async {
     const String apiCall =
         '$_baseUrl/ms/customer/mobile/placeOrder/createOrder';
     final body = {
       "paymentMethodId": paymentMethodId,
     };
-    final response = await RepoConstants.sendRequest(
+    await RepoConstants.sendRequest(
       apiCall,
       body,
       null,
       RequestType.post,
     );
-    print('call was made.');
+    if (kDebugMode) {
+      print('call was made.');
+    }
     //TODO: Implement this for Sending the payment method id
   }
 

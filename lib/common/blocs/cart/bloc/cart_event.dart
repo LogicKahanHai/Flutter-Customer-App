@@ -45,3 +45,5 @@ class CartCreateOrderEvent extends CartEvent {
   @override
   List<Object> get props => [addressId, paymentMethod];
 }
+
+class CartClearEvent extends CartEvent {}

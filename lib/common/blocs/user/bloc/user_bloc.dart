@@ -73,7 +73,6 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
         hydrate();
         return;
       }
-      print('failed to update address');
       emit(UserAuthState(user: UserRepo.user));
       hydrate();
     });
