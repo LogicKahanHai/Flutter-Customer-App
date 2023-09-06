@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:pk_customer_app/models/order_item_model.dart';
+import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/product_repo.dart';
 
 class OrderSummary extends StatefulWidget {
@@ -29,26 +29,46 @@ class _OrderSummaryState extends State<OrderSummary> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
-                width: 75,
-                height: 75,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(10),
-                    bottomLeft: Radius.circular(10),
+                  width: 75,
+                  height: 75,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
                   ),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/products/chakli.png'),
+                  child: Image.network(
+                    ProductRepo.products
+                        .firstWhere((element) =>
+                            element.productId ==
+                            ProductRepo.variants
+                                .firstWhere((element) =>
+                                    element.productVariantId ==
+                                    widget.orderItems[index].productVariantId)
+                                .productId)
+                        .image,
                     fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const SizedBox(
+                        width: 75,
+                        height: 75,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.grey,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      );
+                    },
+                  )),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.orderItems[index].toString(),
+                      widget.orderItems[index].name.toString(),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -59,10 +79,8 @@ class _OrderSummaryState extends State<OrderSummary> {
                       ProductRepo.variants
                           .firstWhere((element) =>
                               element.productVariantId ==
-                                  widget.orderItems[index].variantId &&
-                              element.productId ==
-                                  widget.orderItems[index].productId)
-                          .variantValue,
+                              widget.orderItems[index].productVariantId)
+                          .variantName,
                       style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 10),

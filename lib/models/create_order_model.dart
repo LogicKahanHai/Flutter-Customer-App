@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:pk_customer_app/models/order_item_model.dart';
+import 'package:pk_customer_app/models/create_order_item_model.dart';
 
 class CreateOrderModel {
   final String addressId;
@@ -9,7 +9,7 @@ class CreateOrderModel {
   final double shipping;
   final double tax;
   final double subTotal;
-  final List<OrderItemModel> orderItems;
+  final List<CreateOrderItemModel> orderItems;
   CreateOrderModel({
     required this.addressId,
     required this.paymentMethod,
@@ -30,15 +30,18 @@ class CreateOrderModel {
         tax = json['tax'] as double,
         subTotal = json['subTotal'] as double,
         orderItems = (json['orderItems'] as List<dynamic>)
-            .map((e) => OrderItemModel.fromJSON(e as Map<String, dynamic>))
+            .map(
+                (e) => CreateOrderItemModel.fromJSON(e as Map<String, dynamic>))
             .toList();
 
-  Map<String, dynamic> toJson() => {
-        'addressId': addressId,
-        'paymentMethodId': paymentMethod,
-        'total': totalAmount,
-        'shipping_total': shipping,
-        'totalTax': tax,
-        'products': orderItems.map((e) => e.toJson()).toList(),
-      };
+  Map<String, dynamic> toJson() => {};
 }
+
+// Map<String, dynamic> toJson() => {
+//       'addressId': addressId,
+//       'paymentMethodId': paymentMethod,
+//       'total': totalAmount,
+//       'shipping_total': shipping,
+//       'totalTax': tax,
+//       'products': orderItems.map((e) => e.toJson()).toList(),
+//     };

@@ -12,7 +12,9 @@ class Buttons extends StatelessWidget {
           style: PKTheme.normalElevatedButton.copyWith(
               minimumSize: MaterialStateProperty.resolveWith(
                   (states) => const Size(double.infinity, 52))),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           child: const Text(
             'Continue Shopping',
             style: TextStyle(

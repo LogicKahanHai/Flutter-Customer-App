@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/constants/theme.dart';
-
 import 'package:pk_customer_app/repos/repos.dart';
 
 class BillSummary extends StatefulWidget {
@@ -46,7 +45,7 @@ class _BillSummaryState extends State<BillSummary> {
                 ),
               ),
               Text(
-                CartRepo.total.toString(),
+                '₹ ${CartRepo.total.toString()}',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -63,7 +62,7 @@ class _BillSummaryState extends State<BillSummary> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Delivery Charges and Taxes',
+                    'Delivery Charges',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,

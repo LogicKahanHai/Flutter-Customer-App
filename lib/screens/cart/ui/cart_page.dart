@@ -2,13 +2,14 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pk_customer_app/common/blocs/cart/bloc/cart_bloc.dart';
+import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/reusable/common_components.dart';
 import 'package:pk_customer_app/screens/address/ui/address_search_page.dart';
 import 'package:pk_customer_app/screens/cart/components/cart_components.dart';
+import 'package:pk_customer_app/screens/payment/ui/final_success.dart';
+import 'package:pk_customer_app/screens/payment/ui/razorpay_page.dart';
 
 import '../../../constants/route_animations.dart';
 
@@ -35,6 +36,31 @@ class _CartPageState extends State<CartPage> {
       grandTotal = CartRepo.grandTotal;
       isUpdating = !isUpdating;
     });
+  }
+
+  void onSuccess(response) {
+    if (paymentMethod == RepoConstants.razorpayPaymentMethodId) {
+      Navigator.pushReplacement(
+        context,
+        RouteAnimations(
+          nextPage: RazorpayPage(
+            order: response,
+          ),
+          animationDirection: AnimationDirection.RTL,
+        ).createRoute(),
+      );
+    } else {
+      CartRepo.clearCart();
+      Navigator.pushReplacement(
+        context,
+        RouteAnimations(
+          nextPage: FinalSuccess(
+            order: response,
+          ),
+          animationDirection: AnimationDirection.RTL,
+        ).createRoute(),
+      );
+    }
   }
 
   @override
@@ -133,7 +159,7 @@ class _CartPageState extends State<CartPage> {
               ? Container(
                   alignment: Alignment.bottomCenter,
                   child: Teaser(
-                    onButtonPressed: () {
+                    onButtonPressed: () async {
                       if (UserRepo.addressesLength == 0) {
                         Navigator.push(
                           context,
@@ -147,12 +173,31 @@ class _CartPageState extends State<CartPage> {
                           if (kDebugMode) {
                             print(paymentMethod);
                           }
-                          BlocProvider.of<CartBloc>(context).add(
-                            CartCreateOrderEvent(
-                              addressId: UserRepo.currentAddress!.id,
-                              paymentMethod: paymentMethod!,
-                            ),
-                          );
+
+                          final orderResponse = await OrderRepo.createOrder(
+                              UserRepo.currentAddress?.id ??
+                                  UserRepo.addresses![0].id,
+                              paymentMethod!);
+
+                          if (orderResponse[0]) {
+                            onSuccess(orderResponse[1]);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Something went wrong'),
+                              ),
+                            );
+                          }
+
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   RouteAnimations(
+                          //     nextPage: FinalSuccess(
+                          //       order:
+                          //     ),
+                          //     animationDirection: AnimationDirection.RTL,
+                          //   ).createRoute(),
+                          // );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -182,11 +227,6 @@ class _CartPageState extends State<CartPage> {
                 )
               : Container(),
         ],
-      ),
-      bottomNavigationBar: bottomNavBar(
-        currentIndex: 3,
-        currentPage: 'cart',
-        context: context,
       ),
     );
   }

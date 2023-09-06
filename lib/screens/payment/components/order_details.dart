@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 
 class OrderDetails extends StatelessWidget {
-  const OrderDetails({Key? key}) : super(key: key);
+  final String orderDate;
+  final String orderId;
+  final String paymentMethod;
+  final String deliveryAddress;
+  const OrderDetails(
+      {Key? key,
+      required this.orderDate,
+      required this.orderId,
+      required this.paymentMethod,
+      required this.deliveryAddress})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,25 +19,25 @@ class OrderDetails extends StatelessWidget {
       children: [
         _buildOrderDetails(
           'Order Date',
-          '12/12/2021',
+          '${orderDate.split('-')[2]}/${orderDate.split('-')[1]}/${orderDate.split('-')[0]}',
           context,
         ),
         const SizedBox(height: 20),
         _buildOrderDetails(
           'Order ID',
-          '123456789',
+          orderId,
           context,
         ),
         const SizedBox(height: 20),
         _buildOrderDetails(
           'Payment Method',
-          'Cash on Delivery',
+          paymentMethod == 'COD' ? 'Cash on Delivery' : 'Online Payment',
           context,
         ),
         const SizedBox(height: 20),
         _buildOrderDetails(
           'Delivery Address',
-          '123, ABC Street, XYZ City, 123456',
+          deliveryAddress,
           context,
         ),
       ],

@@ -21,11 +21,11 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
-  bool isRazorpaySelected = true;
-  bool isCodAllowed = true;
-  bool isRazorpayAllowed = true;
+  bool isRazorpaySelected = false;
+  bool isCodAllowed = false;
+  bool isRazorpayAllowed = false;
 
-  void checkPaymentMethods() async {
+  Future checkPaymentMethods() async {
     if (UserRepo.addressesLength == 0) {
       isCodAllowed = false;
       isRazorpayAllowed = false;
@@ -42,6 +42,10 @@ class _PaymentState extends State<Payment> {
                     RepoConstants.razorpayPaymentMethodId &&
                 paymentMethod['isActive']) {
               isRazorpayAllowed = true;
+              isRazorpaySelected = true;
+              widget.updatePaymentMethod(
+                RepoConstants.razorpayPaymentMethodId,
+              );
             }
           }
         } catch (e) {
@@ -61,6 +65,11 @@ class _PaymentState extends State<Payment> {
   void initState() {
     checkPaymentMethods();
     super.initState();
+    // if (isRazorpayAllowed) {
+    //   widget.updatePaymentMethod(RepoConstants.razorpayPaymentMethodId);
+    // } else if (isCodAllowed) {
+    //   widget.updatePaymentMethod(RepoConstants.codPaymentMethodId);
+    // }
   }
 
   @override

@@ -70,12 +70,22 @@ Widget bottomNavBar({
         case 3:
           if (currentIndex != 3) {
             //FIXME: This is a temporary fix, remove this when the "Cart page" is ready.
-            Navigator.pushReplacement(
-                context,
-                RouteAnimations(
-                  nextPage: const CartPage(),
-                  animationDirection: AnimationDirection.RTL,
-                ).createRoute());
+            if (currentPage != 'home') {
+              Navigator.pushReplacement(
+                  context,
+                  RouteAnimations(
+                    nextPage: const CartPage(),
+                    animationDirection: AnimationDirection.RTL,
+                  ).createRoute());
+            } else {
+              Navigator.push(
+                  context,
+                  RouteAnimations(
+                    nextPage: const CartPage(),
+                    animationDirection: AnimationDirection.RTL,
+                  ).createRoute());
+            }
+
             // if (currentPage != 'home') {
             //   Navigator.pushReplacement(
             //       context,
