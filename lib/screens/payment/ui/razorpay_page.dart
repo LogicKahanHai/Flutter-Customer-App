@@ -66,17 +66,11 @@ class _RazorpayPageState extends State<RazorpayPage> {
   }
 
   _handlePaymentError(PaymentFailureResponse paymentFailureResponse) {
-    BlocProvider.of<CartBloc>(context).add(CartClearEvent());
     Navigator.pop(context);
-    Navigator.pushReplacement(
-      context,
-      RouteAnimations(
-        nextPage: FinalSuccess(
-          order: widget.order,
-        ),
-        animationDirection: AnimationDirection.RTL,
-      ).createRoute(),
-    );
+    showDialog(
+        context: context,
+        builder: (context) => const Text('Payment Failed'),
+        barrierDismissible: false);
   }
 
   _handleExternalWallet(ExternalWalletResponse externalWalletResponse) {

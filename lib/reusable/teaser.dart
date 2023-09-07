@@ -9,6 +9,7 @@ class Teaser extends StatefulWidget {
   final String value;
   final String buttonTitle;
   final ButtonStyle? buttonStyle;
+  final bool? isUpdating;
   const Teaser({
     Key? key,
     required this.onButtonPressed,
@@ -16,6 +17,7 @@ class Teaser extends StatefulWidget {
     required this.value,
     required this.buttonTitle,
     this.buttonStyle,
+    this.isUpdating,
   }) : super(key: key);
 
   @override

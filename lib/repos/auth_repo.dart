@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 class AuthRepo {
   static final String _baseUrl = dotenv.env['BASE_API_URL']!;
 
-  
   static Future<http.Response> _sendRequest(String apiCall, Map body) async {
     final response = await http.post(
       Uri.parse(apiCall),

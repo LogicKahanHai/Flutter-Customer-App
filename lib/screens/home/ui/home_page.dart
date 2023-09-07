@@ -343,6 +343,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ? Container(
                           alignment: Alignment.bottomCenter,
                           child: Teaser(
+                            isUpdating: isUpdating,
                             onButtonPressed: () {
                               Navigator.push(
                                 context,

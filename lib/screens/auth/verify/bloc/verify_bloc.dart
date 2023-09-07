@@ -14,6 +14,7 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
         //? Send the code to the user
 
         List<dynamic> result = await AuthRepo.sendOtp(event.phone);
+        print(result);
         if (result[0] == false) {
           emit(VerifyCodeSentFailure(
               error: 'Please enter a valid phone number'));
@@ -22,10 +23,9 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
 
           emit(VerifyCodeSentSuccess(phone: event.phone, rid: result[1]));
         }
-
       } catch (error) {
         //? If the code is not sent successfully, emit(VerifyCodeSentFailure(error: error));
-        
+
         emit(VerifyCodeSentFailure(error: error.toString()));
       }
     });
@@ -46,21 +46,18 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
         //? Check the condition for success
 
         if (result[0] == true) {
-
           //? Emit Success Action State
 
           emit(VerifySuccess(
               phone: event.phone, token: result[2], uid: result[1]));
         } else {
-
           //? Emit Failure State if code is invalid
 
           emit(VerifyFailure(error: 'Invalid OTP'));
         }
       } catch (e) {
-
         //?Emit Failure for any other faliure
-        
+
         emit(VerifyFailure(error: e.toString()));
       }
     });

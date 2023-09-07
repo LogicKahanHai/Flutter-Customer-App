@@ -267,6 +267,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                           isATCLoading = false;
                         });
                         controller.reset();
+                        widget.refresh();
                       });
                       if (widget.onAddToCart != null) {
                         widget.onAddToCart!();
@@ -277,6 +278,7 @@ class _ProductState extends State<Product> with TickerProviderStateMixin {
                           isAdded = false;
                         });
                       });
+                      widget.refresh();
                     },
                     style: ButtonStyle(
                       overlayColor: MaterialStateProperty.resolveWith(
