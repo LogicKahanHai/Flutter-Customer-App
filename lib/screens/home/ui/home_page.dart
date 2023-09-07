@@ -25,6 +25,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {});
   }
 
+  void homeRefresh() {
+    _homeBloc.add(HomeRefreshEvent());
+  }
+
   void initialiseStuff() {
     _homeBloc.add(HomeInitialEvent());
     _cartBloc.add(CartInitEvent());
@@ -228,6 +232,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         child: Column(
                           children: [
                             AddressContainer(
+                              refreshHome: homeRefresh,
                               shouldRefresh: isUpdating,
                               tempAddress: successState.address,
                             )
@@ -298,7 +303,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   end: 0.0,
                                 ),
                             const SizedBox(height: 20),
-                            HomeFavProducts(refresh: refresh)
+                            HomeFavProducts(
+                              refresh: refresh,
+                              isUpdating: isUpdating,
+                            )
                                 .animate(controller: _animationController)
                                 .fade(
                                   delay: 1000.ms,

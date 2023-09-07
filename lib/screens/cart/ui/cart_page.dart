@@ -160,6 +160,26 @@ class _CartPageState extends State<CartPage> {
                   alignment: Alignment.bottomCenter,
                   child: Teaser(
                     onButtonPressed: () async {
+                      if (CartRepo.products.isEmpty) {
+                        await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Empty Cart!'),
+                              content:
+                                  const Text('Please Add items to Cart first!'),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('OK'))
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      }
                       if (UserRepo.addressesLength == 0) {
                         Navigator.push(
                           context,

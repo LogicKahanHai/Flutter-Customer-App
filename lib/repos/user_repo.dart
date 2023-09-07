@@ -134,13 +134,17 @@ class UserRepo {
     }
   }
 
-  static void setCurrentAddressIndex({int? index, String? id}) {
+  static void setCurrentAddressIndex({int? index, String? id}) async {
     if (index == null) {
       _user.currentAddressIndex =
           _user.addresses.indexWhere((element) => element.id == id);
     } else {
       _user.currentAddressIndex = index;
     }
+    await setTemporaryAddress(Position.fromMap({
+      'latitude': currentAddress!.lat,
+      'longitude': currentAddress!.lng,
+    }));
   }
 
   static Future<List<dynamic>> setTemporaryAddress(Position position) async {

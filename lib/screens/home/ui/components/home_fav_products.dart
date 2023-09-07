@@ -11,7 +11,9 @@ import '../../../../repos/repos.dart';
 
 class HomeFavProducts extends StatefulWidget {
   final void Function() refresh;
-  const HomeFavProducts({Key? key, required this.refresh}) : super(key: key);
+  final bool? isUpdating;
+  const HomeFavProducts({Key? key, required this.refresh, this.isUpdating})
+      : super(key: key);
 
   @override
   _HomeFavProductsState createState() => _HomeFavProductsState();
