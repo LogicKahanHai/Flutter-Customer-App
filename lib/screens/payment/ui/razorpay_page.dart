@@ -66,11 +66,28 @@ class _RazorpayPageState extends State<RazorpayPage> {
   }
 
   _handlePaymentError(PaymentFailureResponse paymentFailureResponse) {
-    Navigator.pop(context);
     showDialog(
-        context: context,
-        builder: (context) => const Text('Payment Failed'),
-        barrierDismissible: false);
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Payment Failed'),
+        content: const Text('Please retry payment'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Retry'),
+          ),
+        ],
+      ),
+    );
   }
 
   _handleExternalWallet(ExternalWalletResponse externalWalletResponse) {

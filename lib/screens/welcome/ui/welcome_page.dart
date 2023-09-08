@@ -166,7 +166,9 @@ class _WelcomePageState extends State<WelcomePage>
                                     ),
                                 const SizedBox(height: 20.0),
                                 ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    _innerAnimations.reverse();
+                                    await _outerAnimations.reverse();
                                     _welcomeBloc.add(WelcomeRegisterEvent());
                                   },
                                   style: ButtonStyle(

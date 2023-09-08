@@ -141,6 +141,7 @@ class UserRepo {
     } else {
       _user.currentAddressIndex = index;
     }
+    print(_user.currentAddressIndex);
     await setTemporaryAddress(Position.fromMap({
       'latitude': currentAddress!.lat,
       'longitude': currentAddress!.lng,

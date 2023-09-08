@@ -16,8 +16,6 @@ class WelcomeBloc extends Bloc<WelcomeEvent, WelcomeState> {
 
   FutureOr<void> welcomeInitialEvent(
       WelcomeInitialEvent event, Emitter<WelcomeState> emit) async {
-    emit(WelcomeLoadingState());
-    await Future.delayed(const Duration(seconds: 2));
     emit(WelcomeLoadedState());
   }
 
