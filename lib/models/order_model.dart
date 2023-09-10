@@ -59,7 +59,8 @@ class OrderModel {
         paymentMethodTitle = json['payment_method_title'] as String?,
         orderDate =
             DateTime.tryParse(json['date_created'] as String? ?? '')!.toLocal(),
-        deliveryAddress = json['billing']['address_1'] as String?,
+        deliveryAddress = (json['billing']['address_1'] as String? ?? '') +
+            (json['billing']['address_2'] as String? ?? ''),
         orderItems = (json['line_items'] as List<dynamic>)
             .map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
             .toList();

@@ -25,6 +25,12 @@ class _RazorpayPageState extends State<RazorpayPage> {
     }
   };
 
+  void retry() {
+    options['order_id'] = widget.order.razorpayOrderId;
+    options['prefill']['contact'] = UserRepo.user.phone;
+    _razorpay.open(options);
+  }
+
   @override
   void initState() {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -67,6 +73,7 @@ class _RazorpayPageState extends State<RazorpayPage> {
 
   _handlePaymentError(PaymentFailureResponse paymentFailureResponse) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Payment Failed'),
@@ -82,6 +89,7 @@ class _RazorpayPageState extends State<RazorpayPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
+              retry();
             },
             child: const Text('Retry'),
           ),

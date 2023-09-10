@@ -61,16 +61,9 @@ class CartRepo {
     return tot != tot.round() ? tot : tot.round();
   }
 
-  static double get taxes => _cart.cartProducts.fold(
-        0,
-        (previousValue, element) =>
-            previousValue +
-            (element.salePrice == 0
-                ? element.regPrice * element.quantity * 0.13
-                : element.salePrice * element.quantity * 0.13),
-      );
+  static double get taxes => 0;
 
-  static double get deliveryCharge => taxes == 0 ? 0 : 20.0;
+  static double get deliveryCharge => products.isEmpty ? 0 : 20.0;
 
   static double get grandTotal => total + taxes + deliveryCharge;
 

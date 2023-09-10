@@ -21,26 +21,25 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
     });
 
     on<CartAddProductEvent>((event, emit) async {
-      if (state is CartLoaded) {
-        ProductModel product = ProductRepo.getProductById(event.productId)
-            .copyWith(selectedVariant: event.variantId);
-        try {
-          CartRepo.addProduct(product, event.quantity);
+      emit(CartLoading());
+      ProductModel product = ProductRepo.getProductById(event.productId)
+          .copyWith(selectedVariant: event.variantId);
+      try {
+        CartRepo.addProduct(product, event.quantity);
 
-          emit(CartLoaded(CartRepo.products));
-          hydrate();
-        } catch (_) {}
-      }
+        emit(CartLoaded(CartRepo.products));
+        hydrate();
+      } catch (_) {}
     });
 
     on<CartRemoveProductEvent>((event, emit) async {
-      if (state is CartLoaded) {
-        try {
-          CartRepo.removeProduct(CartRepo.getCartItemById(event.cartItemId));
-          emit(CartLoaded(CartRepo.products));
-          hydrate();
-        } catch (_) {}
-      }
+      emit(CartLoading());
+      await Future.delayed(const Duration(milliseconds: 200));
+      try {
+        CartRepo.removeProduct(CartRepo.getCartItemById(event.cartItemId));
+        emit(CartLoaded(CartRepo.products));
+        hydrate();
+      } catch (_) {}
     });
 
     on<CartClearEvent>((event, emit) {
