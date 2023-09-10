@@ -1,5 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:async';
+import 'dart:core';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/constants/repo_constants.dart';
@@ -26,9 +29,75 @@ class _CartPageState extends State<CartPage> {
   double taxes = 0;
   double grandTotal = 0;
   bool isUpdating = false;
+  bool updatePaymentMethod = false;
   String? paymentMethod;
 
+  late StreamController<Map<String, bool>> paymentMethodsController;
+
+  bool isRazorpayAllowed = false;
+  bool isCodAllowed = false;
+
+  Future<void> checkPaymentMethods() async {
+    isCodAllowed = false;
+    isRazorpayAllowed = false;
+    if (kDebugMode) {
+      print('checkPayment was called');
+    }
+    if (UserRepo.addressesLength == 0) {
+      isCodAllowed = false;
+      isRazorpayAllowed = false;
+    } else {
+      String addressId = UserRepo.currentAddress!.id;
+      if (kDebugMode) {
+        print(addressId);
+      }
+      final response = await CartRepo.getPaymentMethods(addressId);
+      if (response[0]) {
+        try {
+          for (var paymentMethod in response[1]) {
+            if (paymentMethod['name'] == RepoConstants.codPaymentMethodId &&
+                paymentMethod['isActive']) {
+              isCodAllowed = true;
+            } else if (paymentMethod['name'] ==
+                    RepoConstants.razorpayPaymentMethodId &&
+                paymentMethod['isActive']) {
+              isRazorpayAllowed = true;
+            }
+          }
+          if (kDebugMode) {
+            print(
+                'isCodAllowed: $isCodAllowed, isRazorpayAllowed: $isRazorpayAllowed');
+          }
+          paymentMethodsController
+              .add({'cod': isCodAllowed, 'razorpay': isRazorpayAllowed});
+          return;
+        } catch (e) {
+          if (kDebugMode) print(e);
+          isCodAllowed = false;
+          isRazorpayAllowed = false;
+        }
+      } else {
+        isCodAllowed = false;
+        isRazorpayAllowed = false;
+      }
+    }
+  }
+
+  void refreshCart() async {
+    await checkPaymentMethods();
+  }
+
+  initialiseStuff() {
+    subTotal = CartRepo.total.toDouble();
+    deliveryCharge = CartRepo.deliveryCharge;
+    taxes = CartRepo.taxes;
+    grandTotal = CartRepo.grandTotal;
+  }
+
   void refresh() {
+    if (kDebugMode) {
+      print('I was called');
+    }
     setState(() {
       subTotal = CartRepo.total.toDouble();
       deliveryCharge = CartRepo.deliveryCharge;
@@ -65,7 +134,9 @@ class _CartPageState extends State<CartPage> {
 
   @override
   void initState() {
-    refresh();
+    paymentMethodsController = StreamController<Map<String, bool>>();
+    checkPaymentMethods();
+    initialiseStuff();
     super.initState();
   }
 
@@ -97,6 +168,7 @@ class _CartPageState extends State<CartPage> {
                 children: [
                   const SizedBox(height: 20),
                   AddressContainer(
+                    refreshHome: refreshCart,
                     shouldRefresh: isUpdating,
                   ),
                   const SizedBox(height: 20),
@@ -139,11 +211,33 @@ class _CartPageState extends State<CartPage> {
                     grandTotal: grandTotal,
                   ),
                   const SizedBox(height: 20),
-                  Payment(updatePaymentMethod: (value) {
-                    setState(() {
-                      paymentMethod = value;
-                    });
-                  }),
+                  StreamBuilder(
+                    stream: paymentMethodsController.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Payment(
+                          isCodAllowed: snapshot.data!['cod']!,
+                          isRazorpayAllowed: snapshot.data!['razorpay']!,
+                          isRazorpaySelected: paymentMethod != null
+                              ? paymentMethod ==
+                                  RepoConstants.razorpayPaymentMethodId
+                              : snapshot.data!['razorpay']!,
+                          updatePaymentMethod: (value) {
+                            setState(() {
+                              paymentMethod = value;
+                            });
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: PKTheme.primaryColor,
+                            strokeWidth: 2,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                   const SizedBox(height: 20),
                   AdditionalProducts(
                     update: refresh,
