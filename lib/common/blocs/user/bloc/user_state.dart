@@ -9,6 +9,8 @@ abstract class UserState extends Equatable {
 
 class UserInitial extends UserState {}
 
+class UserProfileDoesNotExistState extends UserState {}
+
 class UserAuthState extends UserState {
   final UserModel? user;
   const UserAuthState({
@@ -39,3 +41,7 @@ class UserAuthState extends UserState {
 class UserLoadingState extends UserState {}
 
 class UserAddAddressSuccessState extends UserState {}
+
+class UserProfileErrorState extends UserState {}
+
+class UserProfileSuccessState extends UserState {}

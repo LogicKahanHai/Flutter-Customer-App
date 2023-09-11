@@ -10,13 +10,15 @@ part 'user_state.dart';
 
 class UserBloc extends HydratedBloc<UserEvent, UserState> {
   UserBloc() : super(UserInitial()) {
-    on<UserInitEvent>((event, emit) {
-      if (state is UserAuthState) {
-        emit(state);
-      } else {
-        emit(const UserAuthState());
-      }
-    });
+    on<UserInitEvent>(
+      (event, emit) {
+        if (state is UserAuthState) {
+          emit(state);
+        } else {
+          emit(const UserAuthState());
+        }
+      },
+    );
 
     on<UserLoginEvent>((event, emit) {
       UserRepo(event.user);
@@ -27,6 +29,35 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
     on<UserLogoutEvent>((event, emit) {
       emit(const UserAuthState(user: null));
       hydrate();
+    });
+
+    on<UserGetProfileEvent>((event, emit) async {
+      emit(UserLoadingState());
+      final profileExists = await UserRepo.profileExists();
+      if (profileExists[0]) {
+        final user = profileExists[1];
+        emit(UserAuthState(user: user));
+        hydrate();
+        emit(UserProfileSuccessState());
+      } else {
+        emit(UserProfileDoesNotExistState());
+      }
+    });
+
+    on<UserUpdateProfileEvent>((event, emit) async {
+      emit(UserLoadingState());
+      final response = await UserRepo.updateProfile(
+        event.firstName,
+        event.lastName,
+      );
+      if (response[0]) {
+        emit(UserAuthState(user: response[1]));
+        hydrate();
+        return;
+      }
+      emit(const UserAuthState(user: null));
+      hydrate();
+      emit(UserProfileErrorState());
     });
 
     on<UserAddAddressEvent>((event, emit) async {
