@@ -44,7 +44,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void refresh() {
-    print('i am refreshing');
     if (CartRepo.products.isNotEmpty) {
       showTeaserController.add(true);
     } else {
@@ -54,7 +53,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    showTeaserController = StreamController<bool>();
+    showTeaserController = StreamController<bool>.broadcast();
     refresh();
     initialiseStuff();
     super.initState();

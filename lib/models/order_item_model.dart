@@ -56,10 +56,8 @@ class OrderItemModel {
       };
 
   Map<String, dynamic> createOrder() => {
-        'itemId': id,
-        'sku': sku,
         'qty': quantity,
-        'price': price,
+        'sku': sku,
       };
 
   OrderItemModel.fromCartItemModel(CartItemModel cartItemModel)

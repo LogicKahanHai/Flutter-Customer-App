@@ -47,14 +47,6 @@ class CartBloc extends HydratedBloc<CartEvent, CartState> {
       emit(CartLoaded(const []));
       hydrate();
     });
-
-    on<CartCreateOrderEvent>((event, emit) async {
-      if (state is CartLoaded) {
-        try {
-          await CartRepo.sendPaymentMethodId(event.paymentMethod);
-        } catch (_) {}
-      }
-    });
   }
 
   @override

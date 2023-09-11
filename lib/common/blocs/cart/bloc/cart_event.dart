@@ -34,16 +34,4 @@ class CartRemoveProductEvent extends CartEvent {
   List<Object> get props => [cartItemId];
 }
 
-class CartCreateOrderEvent extends CartEvent {
-  final String addressId;
-  final String paymentMethod;
-  const CartCreateOrderEvent({
-    required this.addressId,
-    required this.paymentMethod,
-  });
-
-  @override
-  List<Object> get props => [addressId, paymentMethod];
-}
-
 class CartClearEvent extends CartEvent {}

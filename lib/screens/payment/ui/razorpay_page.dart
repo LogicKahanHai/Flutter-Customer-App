@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
+import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/repos.dart';
 import 'package:pk_customer_app/screens/payment/ui/final_success.dart';
@@ -52,7 +53,10 @@ class _RazorpayPageState extends State<RazorpayPage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: PKTheme.primaryColor,
+          strokeWidth: 2,
+        ),
       ),
     );
   }

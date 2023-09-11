@@ -138,18 +138,18 @@ class UserRepo {
       String firstName, String lastName) async {
     const String apiCall = '$_baseUrl/ms/customer/mobile/profile/updateProfile';
     final body = {
-      "first_name": _user.firstName,
-      "last_name": _user.lastName,
+      "first_name": firstName,
+      "last_name": lastName,
     };
     final response =
         await RepoConstants.sendRequest(apiCall, body, null, RequestType.put);
     if (jsonDecode(response.body)['statusCode'] == 200) {
-      final Map<String, dynamic>? profile = jsonDecode(response.body)['data'];
+      final profile = jsonDecode(response.body)['data'];
       if (profile == null) {
         return [false];
       }
-      _user.firstName = profile['first_name'] as String?;
-      _user.lastName = profile['last_name'] as String?;
+      _user.firstName = firstName;
+      _user.lastName = lastName;
       return [true, user];
     } else {
       return [false];

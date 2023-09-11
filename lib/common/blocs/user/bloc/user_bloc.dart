@@ -27,7 +27,7 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
     });
 
     on<UserLogoutEvent>((event, emit) {
-      emit(const UserAuthState(user: null));
+      emit(const UserAuthState());
       hydrate();
     });
 
@@ -55,7 +55,7 @@ class UserBloc extends HydratedBloc<UserEvent, UserState> {
         hydrate();
         return;
       }
-      emit(const UserAuthState(user: null));
+      emit(const UserAuthState());
       hydrate();
       emit(UserProfileErrorState());
     });

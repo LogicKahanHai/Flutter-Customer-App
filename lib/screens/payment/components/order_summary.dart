@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/models/models.dart';
 import 'package:pk_customer_app/repos/product_repo.dart';
 
@@ -55,7 +56,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                         height: 75,
                         child: Center(
                           child: CircularProgressIndicator(
-                            color: Colors.grey,
+                            color: PKTheme.primaryColor,
                             strokeWidth: 2,
                           ),
                         ),
@@ -68,7 +69,13 @@ class _OrderSummaryState extends State<OrderSummary> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.orderItems[index].name.toString(),
+                      ProductRepo.products
+                          .firstWhere(
+                            (element) =>
+                                element.productId ==
+                                widget.orderItems[index].productId,
+                          )
+                          .name,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

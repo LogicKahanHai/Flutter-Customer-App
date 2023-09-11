@@ -373,6 +373,8 @@ class _CreateProfilePageState extends State<CreateProfilePage>
                                   ElevatedButton(
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
+                                        print(_firstNameController.text);
+                                        print(_lastNameController.text);
                                         userBloc.add(UserUpdateProfileEvent(
                                           firstName: _firstNameController.text,
                                           lastName: _lastNameController.text,

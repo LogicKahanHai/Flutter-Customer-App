@@ -5,6 +5,8 @@ import 'dart:core';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pk_customer_app/common/blocs/cart/bloc/cart_bloc.dart';
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
@@ -54,14 +56,15 @@ class _CartPageState extends State<CartPage> {
       final response = await CartRepo.getPaymentMethods(addressId);
       if (response[0]) {
         try {
-          for (var paymentMethod in response[1]) {
-            if (paymentMethod['name'] == RepoConstants.codPaymentMethodId &&
-                paymentMethod['isActive']) {
+          for (var paymentMethods in response[1]) {
+            if (paymentMethods['name'] == RepoConstants.codPaymentMethodId &&
+                paymentMethods['isActive']) {
               isCodAllowed = true;
-            } else if (paymentMethod['name'] ==
+            } else if (paymentMethods['name'] ==
                     RepoConstants.razorpayPaymentMethodId &&
-                paymentMethod['isActive']) {
+                paymentMethods['isActive']) {
               isRazorpayAllowed = true;
+              paymentMethod = RepoConstants.razorpayPaymentMethodId;
             }
           }
           if (kDebugMode) {
@@ -119,7 +122,7 @@ class _CartPageState extends State<CartPage> {
         ).createRoute(),
       );
     } else {
-      CartRepo.clearCart();
+      BlocProvider.of<CartBloc>(context).add(CartClearEvent());
       Navigator.pushReplacement(
         context,
         RouteAnimations(

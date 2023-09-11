@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
@@ -92,72 +91,4 @@ class CartRepo {
       return [false];
     }
   }
-
-  static Future<List<dynamic>> checkProfile() async {
-    //TODO: Implement this for Checking the profile before creating order
-    return [];
-  }
-
-  static Future<void> sendPaymentMethodId(String paymentMethodId) async {
-    const String apiCall =
-        '$_baseUrl/ms/customer/mobile/placeOrder/createOrder';
-    final body = {
-      "paymentMethodId": paymentMethodId,
-    };
-    await RepoConstants.sendRequest(
-      apiCall,
-      body,
-      null,
-      RequestType.post,
-    );
-    if (kDebugMode) {
-      print('call was made.');
-    }
-    //TODO: Implement this for Sending the payment method id
-  }
-
-  //TODO: Implement this for Cart
-
-  // static Future<bool> updateCart() async {
-  //   try {
-  //     const String apiCall = '$_baseUrl/ms/customer/mobile/cart/updateCart';
-  //
-  //     final body = jsonEncode({
-  //       'customerId': RepoConstants.customerId,
-  //       'cartItems': _cart.cartProducts.map((e) => e.toJson()).toList(),
-  //     });
-  //
-  //     if (jsonDecode(response.body)['statusCode'] == 200) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (_) {
-  //     return false;
-  //   }
-  // }
-
-  // static bool increaseQuantity(String cartItemId) {
-  //   final index = _cart.cartProducts
-  //       .toList()
-  //       .indexWhere((element) => element.id == cartItemId);
-  //   if (index != -1) {
-  //     cart.cartProducts.toList()[index].quantity++;
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
-  // static bool decreaseQuantity(String cartItemId) {
-  //   final index = cart.cartProducts
-  //       .toList()
-  //       .indexWhere((element) => element.id == cartItemId);
-  //   if (index != -1) {
-  //     cart.cartProducts.toList()[index].quantity--;
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
 }

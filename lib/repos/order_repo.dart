@@ -41,11 +41,7 @@ class OrderRepo {
     final body = createOrder.createOrder();
     final response =
         await RepoConstants.sendRequest(apiCall, body, null, RequestType.post);
-
-    print(jsonDecode(response.body));
-
     if (jsonDecode(response.body)['statusCode'] == 200) {
-      print('order success');
       final responseOrder = OrderModel.fromJson(
           jsonDecode(response.body)['data'] as Map<String, dynamic>);
       return [true, responseOrder];
