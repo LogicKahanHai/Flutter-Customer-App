@@ -237,36 +237,37 @@ class _WelcomePageState extends State<WelcomePage>
                                     end: 0.0,
                                   ),
                             ).animate(controller: _innerAnimations),
-                            TextButton(
-                              onPressed: () {
-                                _welcomeBloc.add(WelcomeGuestEvent());
-                              },
-                              style: TextButton.styleFrom(
-                                splashFactory: NoSplash.splashFactory,
-                              ),
-                              child: const Text(
-                                'Continue as a guest',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            )
-                                .animate(controller: _innerAnimations)
-                                .fade(
-                                  delay: 750.ms,
-                                  duration: 400.ms,
-                                  begin: 0.0,
-                                  end: 1.0,
-                                  curve: Curves.easeInOut,
-                                )
-                                .slideY(
-                                  curve: Curves.easeInOut,
-                                  duration: 400.ms,
-                                  delay: 750.ms,
-                                  begin: -0.1,
-                                  end: 0.0,
-                                ),
+                            // TextButton(
+                            //   onPressed: () {
+                            //     _welcomeBloc.add(WelcomeGuestEvent());
+                            //   },
+                            //   style: TextButton.styleFrom(
+                            //     splashFactory: NoSplash.splashFactory,
+                            //   ),
+                            //   child: const Text(
+                            //     'Continue as a guest',
+                            //     style: TextStyle(
+                            //       fontSize: 16.0,
+                            //       decoration: TextDecoration.underline,
+                            //     ),
+                            //   ),
+                            // )
+                            //     .animate(controller: _innerAnimations)
+                            //     .fade(
+                            //       delay: 750.ms,
+                            //       duration: 400.ms,
+                            //       begin: 0.0,
+                            //       end: 1.0,
+                            //       curve: Curves.easeInOut,
+                            //     )
+                            //     .slideY(
+                            //       curve: Curves.easeInOut,
+                            //       duration: 400.ms,
+                            //       delay: 750.ms,
+                            //       begin: -0.1,
+                            //       end: 0.0,
+                            //     ),
+                            const SizedBox.shrink()
                           ],
                         ),
                       ),
