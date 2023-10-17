@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'order_model.dart';
 import 'user_address_model.dart';
 
 class UserModel {
@@ -10,6 +11,7 @@ class UserModel {
   String? lastName;
   List<AddressModel> addresses;
   int currentAddressIndex;
+  List<OrderModel>? pastOrders;
   UserModel({
     required this.id,
     required this.token,
@@ -18,6 +20,7 @@ class UserModel {
     this.lastName,
     this.addresses = const [],
     this.currentAddressIndex = 0,
+    this.pastOrders,
   });
 
   UserModel.fromJson(Map<String, dynamic> map)

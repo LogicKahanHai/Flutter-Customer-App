@@ -20,10 +20,18 @@ class RepoConstants {
     };
     switch (requestType) {
       case RequestType.get:
-        return await http.get(
-          Uri.parse(apiCall),
-          headers: headers ?? defaultHeader,
-        );
+        print('GET: $apiCall');
+        try {
+          final response = await http.get(
+            Uri.parse(apiCall),
+            headers: headers ?? defaultHeader,
+          );
+          print('Response: ${response.body}');
+          return response;
+        } catch (e) {
+          print(e);
+          return http.Response('{"error": "Something went wrong"}', 500);
+        }
       case RequestType.post:
         return await http.post(
           Uri.parse(apiCall),

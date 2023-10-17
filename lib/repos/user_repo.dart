@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
@@ -14,11 +15,10 @@ class UserRepo {
     _user = user;
   }
 
-  // ignore: unnecessary_getters_setters
   static UserModel get user => _user;
   static String get token => _user.token;
 
-  static set user(UserModel newUser) {
+  static set setUser(UserModel newUser) {
     _user = newUser;
   }
 
@@ -148,9 +148,11 @@ class UserRepo {
       if (profile == null) {
         return [false];
       }
-      _user.firstName = firstName;
-      _user.lastName = lastName;
-      return [true, user];
+      UserModel newUser = user;
+      newUser.firstName = firstName;
+      newUser.lastName = lastName;
+      setUser = newUser;
+      return [true, newUser];
     } else {
       return [false];
     }
@@ -165,9 +167,12 @@ class UserRepo {
       if (profile == null) {
         return [false];
       }
-      _user.firstName = profile['first_name'] as String?;
-      _user.lastName = profile['last_name'] as String?;
-      return [true, user];
+      UserModel newUser = user;
+      newUser.firstName = profile['first_name'];
+      newUser.lastName = profile['last_name'];
+      setUser = newUser;
+      print('newUser set');
+      return [true, newUser];
     } else {
       return [false];
     }
@@ -229,6 +234,39 @@ class UserRepo {
       await getAndSetAddresses();
       return true;
     } else {
+      return false;
+    }
+  }
+
+  static Future<bool> getUser() async {
+    print('getUser called');
+    const String apiCall = '$_baseUrl/ms/customer/mobile/placeOrder/';
+    late final http.Response response;
+    print('getUser calling');
+    try {
+      response =
+          await RepoConstants.sendRequest(apiCall, null, null, RequestType.get);
+    } catch (e) {
+      print('getUser failed');
+      return false;
+    }
+
+    if (jsonDecode(response.body)['statusCode'] == 200) {
+      final Map<String, dynamic>? orderJson = jsonDecode(response.body)['data'];
+      if (orderJson == null) {
+        print('orderJson is null');
+        return false;
+      }
+      UserModel newUser = user;
+      user.pastOrders = [];
+      for (final order in orderJson['orders']) {
+        user.pastOrders!.add(OrderModel.fromJson(order));
+      }
+      setUser = newUser;
+      print('newUser set');
+      return true;
+    } else {
+      print('getUser failed');
       return false;
     }
   }
