@@ -11,6 +11,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<bool> getProfile() async {
+    return await UserRepo.getUser();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PKTheme.bgColor,

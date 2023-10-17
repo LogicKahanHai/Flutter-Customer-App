@@ -53,5 +53,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
       });
     });
+
+    on<HomeRefreshEvent>((event, emit) async {
+      emit(HomeLoading());
+      final productsResponse =
+          await ProductRepo.getProductsVariantsAndCategories();
+      if (!productsResponse[0]) {
+        emit(HomeLoadedFailure(productsResponse[1]));
+        return;
+      }
+      emit(HomeLoadedSuccess());
+    });
   }
 }

@@ -20,6 +20,7 @@ class _AddressFormPageState extends State<AddressFormPage> {
   late final TextEditingController _houseController;
   late final TextEditingController _apartmentController;
   late final TextEditingController _saveAsController;
+  bool profileExists = true;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _AddressFormPageState extends State<AddressFormPage> {
         TextEditingController(text: widget.toBeUpdatedAddress?.line2 ?? '');
     _saveAsController = TextEditingController(
         text: widget.toBeUpdatedAddress?.addressName ?? '');
+
     super.initState();
   }
 

@@ -14,7 +14,6 @@ class VerifyBloc extends Bloc<VerifyEvent, VerifyState> {
         //? Send the code to the user
 
         List<dynamic> result = await AuthRepo.sendOtp(event.phone);
-        print(result);
         if (result[0] == false) {
           emit(VerifyCodeSentFailure(
               error: 'Please enter a valid phone number'));

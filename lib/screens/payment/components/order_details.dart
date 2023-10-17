@@ -31,7 +31,9 @@ class OrderDetails extends StatelessWidget {
         const SizedBox(height: 20),
         _buildOrderDetails(
           'Payment Method',
-          paymentMethod == 'COD' ? 'Cash on Delivery' : 'Online Payment',
+          paymentMethod.toLowerCase() == 'cod'
+              ? 'Cash on Delivery'
+              : 'Online Payment',
           context,
         ),
         const SizedBox(height: 20),

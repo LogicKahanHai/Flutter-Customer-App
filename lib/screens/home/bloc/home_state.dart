@@ -7,6 +7,7 @@ enum HomeLoadedFailureType {
   categories,
   variants,
   banners,
+  profile,
   other
 }
 

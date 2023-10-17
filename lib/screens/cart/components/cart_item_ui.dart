@@ -1,19 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/models/models.dart';
-import 'package:pk_customer_app/repos/repos.dart';
-
-import '../../../common/blocs/export_blocs.dart';
 
 class CartItemUi extends StatefulWidget {
-  final int index;
-  final void Function() updateCart;
+  final void Function() increment;
+  final void Function() decrement;
+  final CartItemModel cartItem;
   const CartItemUi({
     Key? key,
-    required this.index,
-    required this.updateCart,
+    required this.increment,
+    required this.decrement,
+    required this.cartItem,
   }) : super(key: key);
 
   @override
@@ -25,7 +23,7 @@ class _CartItemUiState extends State<CartItemUi> {
 
   @override
   void initState() {
-    cartItem = CartRepo.products[widget.index];
+    cartItem = widget.cartItem;
     super.initState();
   }
 
@@ -95,40 +93,7 @@ class _CartItemUiState extends State<CartItemUi> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            if (cartItem.quantity > 1) {
-                              BlocProvider.of<CartBloc>(context).add(
-                                CartRemoveProductEvent(
-                                  cartItemId: cartItem.id,
-                                ),
-                              );
-                              widget.updateCart();
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Remove item'),
-                                  content: const Text(
-                                      'Are you sure you want to remove this item from cart?'),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text('No')),
-                                    TextButton(
-                                        onPressed: () {
-                                          BlocProvider.of<CartBloc>(context)
-                                              .add(
-                                            CartRemoveProductEvent(
-                                              cartItemId: cartItem.id,
-                                            ),
-                                          );
-                                          Navigator.pop(context);
-                                          widget.updateCart();
-                                        },
-                                        child: const Text('Yes')),
-                                  ],
-                                ),
-                              );
-                            }
+                            widget.decrement();
                           },
                           child: Container(
                             width: 30,
@@ -171,14 +136,7 @@ class _CartItemUiState extends State<CartItemUi> {
                         const SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {
-                            BlocProvider.of<CartBloc>(context).add(
-                              CartAddProductEvent(
-                                productId: cartItem.productId,
-                                variantId: cartItem.variantId,
-                                quantity: 1,
-                              ),
-                            );
-                            widget.updateCart();
+                            widget.increment();
                           },
                           child: Container(
                             width: 30,

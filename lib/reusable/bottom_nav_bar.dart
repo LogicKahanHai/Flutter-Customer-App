@@ -3,6 +3,7 @@ import 'package:pk_customer_app/constants/route_animations.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/screens/cart/ui/cart_page.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
+import 'package:pk_customer_app/screens/profile/ui/profile_page.dart';
 
 Widget bottomNavBar({
   required int currentIndex,
@@ -49,22 +50,21 @@ Widget bottomNavBar({
           break;
         case 2:
           if (currentIndex != 2) {
-            //FIXME: This is a temporary fix, remove this when the "Profile page" is ready.
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Coming soon'),
-                backgroundColor: PKTheme.primaryColor,
-                duration: Duration(milliseconds: 500),
-              ),
-            );
-            // if (currentPage != 'home') {
-            //   Navigator.pushReplacement(
-            //       context,
-            //       RouteAnimations(
-            //         nextPage: const HomePage(),
-            //         animationDirection: AnimationDirection.leftToRight,
-            //       ).createRoute());
-            // }
+            if (currentPage != 'home') {
+              Navigator.pushReplacement(
+                  context,
+                  RouteAnimations(
+                    nextPage: const ProfilePage(),
+                    animationDirection: AnimationDirection.LTR,
+                  ).createRoute());
+            } else {
+              Navigator.push(
+                  context,
+                  RouteAnimations(
+                    nextPage: const ProfilePage(),
+                    animationDirection: AnimationDirection.RTL,
+                  ).createRoute());
+            }
           }
           break;
         case 3:

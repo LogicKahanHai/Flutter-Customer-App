@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,8 +23,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final AnimationController _animationController;
   final HomeBloc _homeBloc = HomeBloc();
   final CartBloc _cartBloc = CartBloc();
+
+  late StreamController<bool> showTeaserController;
+
   void refreshStuff() {
     setState(() {});
+  }
+
+  void homeRefresh() {
+    _homeBloc.add(HomeRefreshEvent());
   }
 
   void initialiseStuff() {
@@ -35,13 +44,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void refresh() {
-    setState(() {
-      isUpdating = !isUpdating;
-    });
+    if (CartRepo.products.isNotEmpty) {
+      showTeaserController.add(true);
+    } else {
+      showTeaserController.add(false);
+    }
   }
 
   @override
   void initState() {
+    showTeaserController = StreamController<bool>.broadcast();
+    refresh();
     initialiseStuff();
     super.initState();
   }
@@ -53,6 +66,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   bool isUpdating = false;
+  bool showTeaser = false;
 
   @override
   Widget build(BuildContext context) {
@@ -228,6 +242,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         child: Column(
                           children: [
                             AddressContainer(
+                              refreshHome: homeRefresh,
                               shouldRefresh: isUpdating,
                               tempAddress: successState.address,
                             )
@@ -298,7 +313,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   end: 0.0,
                                 ),
                             const SizedBox(height: 20),
-                            HomeFavProducts(refresh: refresh)
+                            HomeFavProducts(
+                              refresh: refresh,
+                              isUpdating: isUpdating,
+                            )
                                 .animate(controller: _animationController)
                                 .fade(
                                   delay: 1000.ms,
@@ -339,74 +357,82 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  CartRepo.products.isNotEmpty
-                      ? Container(
-                          alignment: Alignment.bottomCenter,
-                          child: Teaser(
-                            isUpdating: isUpdating,
-                            onButtonPressed: () {
-                              Navigator.push(
-                                context,
-                                RouteAnimations(
-                                  nextPage: const CartPage(),
-                                  animationDirection: AnimationDirection.RTL,
-                                ).createRoute(),
-                              ).then((value) => refreshStuff());
-                            },
-                            value: CartRepo.total.toStringAsFixed(2),
-                            buttonTitle: 'Checkout',
-                            description: Row(
-                              children: [
-                                Text(
-                                  'Sub Total',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  '|',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  CartRepo.products.length == 1
-                                      ? '1 item'
-                                      : '${CartRepo.products.length} items',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                          .animate(
-                            controller: _animationController,
-                          )
-                          .fade(
-                            delay: 1250.ms,
-                            duration: 400.ms,
-                            begin: 0.0,
-                            end: 1.0,
-                            curve: Curves.easeInOut,
-                          )
-                          .slideY(
-                            curve: Curves.easeInOut,
-                            duration: 400.ms,
-                            delay: 1250.ms,
-                            begin: 0.1,
-                            end: 0.0,
-                          )
-                      : Container(),
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    child: StreamBuilder<bool>(
+                        stream: showTeaserController.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return snapshot.data!
+                                ? Teaser(
+                                    isUpdating: showTeaser,
+                                    onButtonPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        RouteAnimations(
+                                          nextPage: const CartPage(),
+                                          animationDirection:
+                                              AnimationDirection.RTL,
+                                        ).createRoute(),
+                                      ).then((value) => refresh());
+                                    },
+                                    value: CartRepo.total.toStringAsFixed(2),
+                                    buttonTitle: 'Checkout',
+                                    description: Row(
+                                      children: [
+                                        Text(
+                                          'Sub Total',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          '|',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          CartRepo.products.length == 1
+                                              ? '1 item'
+                                              : '${CartRepo.products.length} items',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
+                          }
+                          return const SizedBox.shrink();
+                        }),
+                  )
+                      .animate(
+                        controller: _animationController,
+                      )
+                      .fade(
+                        delay: 1250.ms,
+                        duration: 400.ms,
+                        begin: 0.0,
+                        end: 1.0,
+                        curve: Curves.easeInOut,
+                      )
+                      .slideY(
+                        curve: Curves.easeInOut,
+                        duration: 400.ms,
+                        delay: 1250.ms,
+                        begin: 0.1,
+                        end: 0.0,
+                      )
                 ],
               ),
               bottomNavigationBar: bottomNavBar(

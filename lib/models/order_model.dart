@@ -46,7 +46,7 @@ class OrderModel {
         number = json['number'] as String?,
         status = json['status'] as String?,
         addressId = json['addressId'] as String?,
-        paymentMethod = json['paymentMethod'] as String?,
+        paymentMethod = json['payment_method'] as String?,
         discount = double.tryParse(json['discount_total'] as String? ?? '0.0'),
         discountTax = double.tryParse(json['discount_tax'] as String? ?? '0.0'),
         shipping = double.tryParse(json['shipping_total'] as String? ?? '0.0'),
@@ -59,7 +59,8 @@ class OrderModel {
         paymentMethodTitle = json['payment_method_title'] as String?,
         orderDate =
             DateTime.tryParse(json['date_created'] as String? ?? '')!.toLocal(),
-        deliveryAddress = json['billing']['address_1'] as String?,
+        deliveryAddress =
+            '${json['billing']['address_1'] as String? ?? ''}\n${json['billing']['address_2'] as String? ?? ''}\n${json['billing']['postcode'] as String? ?? ''}',
         orderItems = (json['line_items'] as List<dynamic>)
             .map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
             .toList();
