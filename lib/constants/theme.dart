@@ -6,6 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 class PKTheme {
   static const Color primaryColor = Color(0xFFff6b00);
   static const Color bottomNavBarBg = Color(0xFFF8E9E4);
+  static const Color blackColor = Colors.black;
+  static const Color greyColor = Colors.grey;
+  static Color bgColor = Colors.grey.shade200;
 
   static ButtonStyle hollowButtonWithBorder = ButtonStyle(
     overlayColor: MaterialStateProperty.resolveWith(
