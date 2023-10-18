@@ -22,6 +22,20 @@ class UserLoginEvent extends UserEvent {
 
 class UserLogoutEvent extends UserEvent {}
 
+class UserGetProfileEvent extends UserEvent {}
+
+class UserUpdateProfileEvent extends UserEvent {
+  final String firstName;
+  final String lastName;
+  const UserUpdateProfileEvent({
+    required this.firstName,
+    required this.lastName,
+  });
+
+  @override
+  List<Object> get props => [firstName, lastName];
+}
+
 class UserAddAddressEvent extends UserEvent {
   final String placeId;
   final String address1;

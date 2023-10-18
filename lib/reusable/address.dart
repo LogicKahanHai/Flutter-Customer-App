@@ -10,8 +10,12 @@ import 'package:pk_customer_app/screens/address/ui/address_search_page.dart';
 class AddressContainer extends StatefulWidget {
   final bool shouldRefresh;
   final String? tempAddress;
+  final void Function()? refreshHome;
   const AddressContainer(
-      {Key? key, required this.shouldRefresh, this.tempAddress})
+      {Key? key,
+      required this.shouldRefresh,
+      this.tempAddress,
+      this.refreshHome})
       : super(key: key);
 
   @override
@@ -186,6 +190,7 @@ class _AddressContainerState extends State<AddressContainer> {
                     setState(() {
                       tempAddress = null;
                     });
+                    if (widget.refreshHome != null) widget.refreshHome!();
                   }
                 });
               },

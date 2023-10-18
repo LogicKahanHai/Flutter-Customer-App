@@ -19,7 +19,7 @@ class AuthRepo {
 
   static Future<List<dynamic>> sendOtp(String phone) async {
     var apiCall = '$_baseUrl/ms/customer/mobile/auth/login';
-    final body = {"method": "otp", "phone": "91$phone"};
+    final body = {"method": "otp", "phone": phone};
     try {
       final response = await _sendRequest(apiCall, body);
       if (response.statusCode == 200) {

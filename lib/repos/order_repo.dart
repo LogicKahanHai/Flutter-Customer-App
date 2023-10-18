@@ -7,6 +7,16 @@ import 'package:pk_customer_app/repos/repos.dart';
 class OrderRepo {
   static const String _baseUrl = RepoConstants.baseUrl;
 
+  static Future<List<dynamic>> getProfile() async {
+    const apiCall = '$_baseUrl/ms/customer/mobile/profile/getProfile';
+    final response =
+        await RepoConstants.sendRequest(apiCall, null, null, RequestType.get);
+    if (jsonDecode(response.body)['data'] == null) {
+      return [false];
+    }
+    return [true];
+  }
+
   static Future<List<dynamic>> createOrder(
       String addressId, String paymentMethod) async {
     List<OrderItemModel> orderItems = [];
@@ -31,7 +41,6 @@ class OrderRepo {
     final body = createOrder.createOrder();
     final response =
         await RepoConstants.sendRequest(apiCall, body, null, RequestType.post);
-
     if (jsonDecode(response.body)['statusCode'] == 200) {
       final responseOrder = OrderModel.fromJson(
           jsonDecode(response.body)['data'] as Map<String, dynamic>);

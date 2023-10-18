@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, library_private_types_in_public_api
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/constants/route_animations.dart';
@@ -11,9 +10,15 @@ import 'package:pk_customer_app/screens/address/ui/address_map_page.dart';
 
 class Payment extends StatefulWidget {
   final void Function(String) updatePaymentMethod;
+  final bool isRazorpayAllowed;
+  final bool isCodAllowed;
+  final bool isRazorpaySelected;
   const Payment({
     Key? key,
     required this.updatePaymentMethod,
+    required this.isRazorpayAllowed,
+    required this.isCodAllowed,
+    required this.isRazorpaySelected,
   }) : super(key: key);
 
   @override
@@ -21,57 +26,6 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
-  bool isRazorpaySelected = false;
-  bool isCodAllowed = false;
-  bool isRazorpayAllowed = false;
-
-  Future checkPaymentMethods() async {
-    if (UserRepo.addressesLength == 0) {
-      isCodAllowed = false;
-      isRazorpayAllowed = false;
-    } else {
-      String addressId = UserRepo.currentAddress!.id;
-      final response = await CartRepo.getPaymentMethods(addressId);
-      if (response[0]) {
-        try {
-          for (var paymentMethod in response[1]) {
-            if (paymentMethod['name'] == RepoConstants.codPaymentMethodId &&
-                paymentMethod['isActive']) {
-              isCodAllowed = true;
-            } else if (paymentMethod['name'] ==
-                    RepoConstants.razorpayPaymentMethodId &&
-                paymentMethod['isActive']) {
-              isRazorpayAllowed = true;
-              isRazorpaySelected = true;
-              widget.updatePaymentMethod(
-                RepoConstants.razorpayPaymentMethodId,
-              );
-            }
-          }
-        } catch (e) {
-          if (kDebugMode) print(e);
-          isCodAllowed = false;
-          isRazorpayAllowed = false;
-        }
-      } else {
-        isCodAllowed = false;
-        isRazorpayAllowed = false;
-      }
-    }
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    checkPaymentMethods();
-    super.initState();
-    // if (isRazorpayAllowed) {
-    //   widget.updatePaymentMethod(RepoConstants.razorpayPaymentMethodId);
-    // } else if (isCodAllowed) {
-    //   widget.updatePaymentMethod(RepoConstants.codPaymentMethodId);
-    // }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -95,13 +49,12 @@ class _PaymentState extends State<Payment> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (isRazorpayAllowed)
+              if (widget.isRazorpayAllowed)
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      if (isRazorpaySelected) return;
+                      if (widget.isRazorpaySelected) return;
                       setState(() {
-                        isRazorpaySelected = true;
                         widget.updatePaymentMethod(
                           RepoConstants.razorpayPaymentMethodId,
                         );
@@ -110,7 +63,7 @@ class _PaymentState extends State<Payment> {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: isRazorpaySelected
+                      decoration: widget.isRazorpaySelected
                           ? BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
@@ -123,37 +76,39 @@ class _PaymentState extends State<Payment> {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
                             ),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            'assets/icons/razorpay.png',
-                            height: 30,
-                            width: 30,
-                            color: isRazorpaySelected
-                                ? null
-                                : Colors.grey.shade400,
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            'Razorpay',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/icons/razorpay.png',
+                              height: 30,
+                              width: 30,
+                              color: widget.isRazorpaySelected
+                                  ? null
+                                  : Colors.grey.shade400,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 10),
+                            const Text(
+                              'Razorpay',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              if (isCodAllowed)
+              if (widget.isCodAllowed)
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      if (!isRazorpaySelected) return;
+                      if (!widget.isRazorpaySelected) return;
                       setState(() {
-                        isRazorpaySelected = false;
                         widget.updatePaymentMethod(
                           RepoConstants.codPaymentMethodId,
                         );
@@ -162,7 +117,7 @@ class _PaymentState extends State<Payment> {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.only(left: 4.4),
-                      decoration: !isRazorpaySelected
+                      decoration: !widget.isRazorpaySelected
                           ? BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
@@ -176,16 +131,16 @@ class _PaymentState extends State<Payment> {
                               color: Colors.white,
                             ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/icons/cod.png',
-                            height: 30,
-                            width: 30,
-                            color: !isRazorpaySelected
+                          Icon(
+                            Icons.currency_rupee,
+                            size: 30,
+                            color: !widget.isRazorpaySelected
                                 ? Colors.green
                                 : Colors.grey.shade400,
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 05),
                           const Text(
                             'Cash on Delivery',
                             style: TextStyle(
@@ -199,13 +154,12 @@ class _PaymentState extends State<Payment> {
                     ),
                   ),
                 ),
-              if (!isCodAllowed && !isRazorpayAllowed)
+              if (!widget.isCodAllowed && !widget.isRazorpayAllowed)
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      if (!isRazorpaySelected) return;
+                      if (!widget.isRazorpaySelected) return;
                       setState(() {
-                        isRazorpaySelected = false;
                         widget.updatePaymentMethod(
                           RepoConstants.codPaymentMethodId,
                         );

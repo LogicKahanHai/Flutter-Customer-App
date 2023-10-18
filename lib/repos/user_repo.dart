@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:pk_customer_app/constants/repo_constants.dart';
 import 'package:pk_customer_app/models/models.dart';
 
@@ -14,11 +15,10 @@ class UserRepo {
     _user = user;
   }
 
-  // ignore: unnecessary_getters_setters
   static UserModel get user => _user;
   static String get token => _user.token;
 
-  static set user(UserModel newUser) {
+  static set setUser(UserModel newUser) {
     _user = newUser;
   }
 
@@ -134,13 +134,61 @@ class UserRepo {
     }
   }
 
-  static void setCurrentAddressIndex({int? index, String? id}) {
+  static Future<List<dynamic>> updateProfile(
+      String firstName, String lastName) async {
+    const String apiCall = '$_baseUrl/ms/customer/mobile/profile/updateProfile';
+    final body = {
+      "first_name": firstName,
+      "last_name": lastName,
+    };
+    final response =
+        await RepoConstants.sendRequest(apiCall, body, null, RequestType.put);
+    if (jsonDecode(response.body)['statusCode'] == 200) {
+      final profile = jsonDecode(response.body)['data'];
+      if (profile == null) {
+        return [false];
+      }
+      UserModel newUser = user;
+      newUser.firstName = firstName;
+      newUser.lastName = lastName;
+      setUser = newUser;
+      return [true, newUser];
+    } else {
+      return [false];
+    }
+  }
+
+  static Future<List<dynamic>> profileExists() async {
+    const apiCall = '$_baseUrl/ms/customer/mobile/profile/getProfile';
+    final response =
+        await RepoConstants.sendRequest(apiCall, null, null, RequestType.get);
+    if (jsonDecode(response.body)['statusCode'] == 200) {
+      final Map<String, dynamic>? profile = jsonDecode(response.body)['data'];
+      if (profile == null) {
+        return [false];
+      }
+      UserModel newUser = user;
+      newUser.firstName = profile['first_name'];
+      newUser.lastName = profile['last_name'];
+      setUser = newUser;
+      print('newUser set');
+      return [true, newUser];
+    } else {
+      return [false];
+    }
+  }
+
+  static void setCurrentAddressIndex({int? index, String? id}) async {
     if (index == null) {
       _user.currentAddressIndex =
           _user.addresses.indexWhere((element) => element.id == id);
     } else {
       _user.currentAddressIndex = index;
     }
+    await setTemporaryAddress(Position.fromMap({
+      'latitude': currentAddress!.lat,
+      'longitude': currentAddress!.lng,
+    }));
   }
 
   static Future<List<dynamic>> setTemporaryAddress(Position position) async {
@@ -186,6 +234,39 @@ class UserRepo {
       await getAndSetAddresses();
       return true;
     } else {
+      return false;
+    }
+  }
+
+  static Future<bool> getUser() async {
+    print('getUser called');
+    const String apiCall = '$_baseUrl/ms/customer/mobile/placeOrder/';
+    late final http.Response response;
+    print('getUser calling');
+    try {
+      response =
+          await RepoConstants.sendRequest(apiCall, null, null, RequestType.get);
+    } catch (e) {
+      print('getUser failed');
+      return false;
+    }
+
+    if (jsonDecode(response.body)['statusCode'] == 200) {
+      final Map<String, dynamic>? orderJson = jsonDecode(response.body)['data'];
+      if (orderJson == null) {
+        print('orderJson is null');
+        return false;
+      }
+      UserModel newUser = user;
+      user.pastOrders = [];
+      for (final order in orderJson['orders']) {
+        user.pastOrders!.add(OrderModel.fromJson(order));
+      }
+      setUser = newUser;
+      print('newUser set');
+      return true;
+    } else {
+      print('getUser failed');
       return false;
     }
   }
