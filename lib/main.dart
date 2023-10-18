@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pk_customer_app/common/blocs/export_blocs.dart';
 import 'package:pk_customer_app/constants/theme.dart';
 import 'package:pk_customer_app/repos/repos.dart';
+import 'package:pk_customer_app/screens/category/ui/category.dart';
 import 'package:pk_customer_app/screens/home/ui/home_page.dart';
+import 'package:pk_customer_app/screens/profile/ui/profile_page.dart';
 import 'package:pk_customer_app/screens/welcome/ui/welcome_page.dart';
 
 //TODO: Figure a way to make the Bottom Navbar stay after the home page animation. pages change in the above portion of the code but the navbar stays the same.

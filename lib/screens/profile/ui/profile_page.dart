@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dash/flutter_dash.dart';
 import 'package:pk_customer_app/constants/theme.dart';
+import 'package:pk_customer_app/screens/profile/components/profile_past_orders.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -109,99 +109,14 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(height: 8,),
           Expanded(
             child: ListView.builder(
-              itemCount: 2,
+              itemCount: 1,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.only(left: 15,right: 15,bottom: 10,top: 20),
-                  margin: EdgeInsets.only(bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text("Work Kitchen",style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),),
-                          Spacer(),
-                          Text("Delivered",style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),),
-                          SizedBox(width: 8,),
-                          Icon(Icons.check_circle,size: 15,color: Colors.green,)
-                        ],
-                      ),
-                      SizedBox(height: 5,),
-                      Text("Kharghar",style: TextStyle(
-                        color: PKTheme.greyColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),),
-                      SizedBox(height: 8,),
-                      Row(
-                        children: [
-                          Text("\u{20B9}97",style: TextStyle(
-                            color: PKTheme.greyColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),),
-                          SizedBox(width: 5,),
-                          Icon(Icons.arrow_forward_ios_rounded,size: 15,color: PKTheme.greyColor,)
-                        ],
-                      ),
-                      SizedBox(height: 10,),
-                      Dash(
-                        direction: Axis.horizontal,
-                        length: MediaQuery.of(context).size.width * 0.9,
-                        dashColor: PKTheme.greyColor,
-                        dashLength: 1.5,
-                      ),
-                      SizedBox(height: 10,),
-                      Text("Chicken Steam Momos (1)",style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: PKTheme.greyColor,
-                      ),),
-                      SizedBox(height: 5,),
-                      Text("September 6, 2:58 AM",style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: PKTheme.greyColor,
-                      ),),
-                      SizedBox(height: 10,),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(onPressed: (){
-
-                            }, child: Text("REORDER"),style: PKTheme.hollowButtonWithBorder.copyWith(
-                              foregroundColor: MaterialStatePropertyAll(PKTheme.blackColor),
-                              shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                side: BorderSide(color: PKTheme.blackColor)
-                              ))
-                            ),),
-                          ),
-                          SizedBox(width: 10,),
-                          Expanded(
-                            child: ElevatedButton(onPressed: (){
-
-                            }, child: Text("RATE ORDER"),style: PKTheme.hollowButtonWithBorder.copyWith(
-                              shape: MaterialStatePropertyAll(RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color: PKTheme.primaryColor
-                                )
-                              ))
-                            ),),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                return PastOrders(
+                  addressLine: "kharghar",
+                  addressName: "wor kitchen",
+                  orderDate: DateTime.now().toString(),
+                  orderItems: [],
+                  price: "89",
                 );
               },
             ),
