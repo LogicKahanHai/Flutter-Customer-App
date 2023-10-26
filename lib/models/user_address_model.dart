@@ -33,7 +33,7 @@ class AddressModel {
   AddressModel.fromJson(Map<String, dynamic> json, String uid)
       : line1 = json['line_1'] as String,
         id = json['_id'] as String,
-        userId = json['uid'] ?? uid,
+        userId = json['uid']['_id'] ?? uid,
         addressName = json['tag'] as String? ?? "Other",
         lat = json['lat'] as double,
         lng = json['lng'] as double,
